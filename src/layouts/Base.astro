@@ -1,0 +1,68 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { t, otherLangPath, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  title?: string;
+  description?: string;
+  image?: string; // absolute or root-relative URL for social cards
+  jsonLd?: object | object[];
+  noindex?: boolean;
+  hasTranslation?: boolean; // false when the other language falls back
+  overlayHeader?: boolean;
+}
+const { lang, title, description, image, jsonLd, noindex = false, hasTranslation = true, overlayHeader = true } = Astro.props;
+const s = t(lang);
+const site = Astro.site!;
+const path = Astro.url.pathname;
+const canonical = new URL(path, site).href;
+const enPath = lang === 'en' ? path : otherLangPath('tr', path);
+const trPath = lang === 'tr' ? path : otherLangPath('en', path);
+const fullTitle = title ? `${title} · ${s.siteName}` : `${s.siteName} · ${s.tagline}`;
+const desc = description ?? s.metaDescription;
+const ogImage = new URL(image ?? '/og-default.jpg', site).href;
+const org = {
+  '@context': 'https://schema.org', '@type': 'Organization', name: 'Orange Tree Events',
+  legalName: 'Orange Tree Group Pty Ltd', url: site.href, logo: new URL('/emblem.svg', site).href,
+  email: 'info@orangetree.events', sameAs: ['https://www.instagram.com/orangetree.events/', 'https://www.facebook.com/orangetree.events'],
+};
+const ld = [org, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
+---
+<!doctype html>
+<html lang={lang === 'tr' ? 'tr' : 'en-AU'}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{fullTitle}</title>
+  <meta name="description" content={desc} />
+  <link rel="canonical" href={canonical} />
+  {hasTranslation && <link rel="alternate" hreflang="en-AU" href={new URL(enPath, site).href} />}
+  {hasTranslation && <link rel="alternate" hreflang="tr" href={new URL(trPath, site).href} />}
+  {hasTranslation && <link rel="alternate" hreflang="x-default" href={new URL(enPath, site).href} />}
+  {noindex && <meta name="robots" content="noindex" />}
+  <meta name="theme-color" content="#0D0B0A" />
+  <link rel="icon" href="/emblem.svg" type="image/svg+xml" />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Orange Tree Events" />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={desc} />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:locale" content={lang === 'tr' ? 'tr_TR' : 'en_AU'} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  <slot name="head" />
+</head>
+<body>
+  <a class="skip" href="#main">{s.skip}</a>
+  <Header lang={lang} overlay={overlayHeader} />
+  <main id="main" tabindex="-1">
+    <slot />
+  </main>
+  <Footer lang={lang} />
+</body>
+</html>

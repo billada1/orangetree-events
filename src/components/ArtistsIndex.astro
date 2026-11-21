@@ -1,0 +1,28 @@
+---
+import Base from '../layouts/Base.astro';
+import { artists } from '../data/artists';
+import { events } from '../data/events';
+import { t, href, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
+const firstYear = (slug: string) => events.filter((e) => e.artists?.includes(slug)).map((e) => e.date?.slice(0, 4) ?? e.year).filter(Boolean).sort()[0];
+const list = [...artists].sort((a, b) => a.name.localeCompare(b.name, 'tr'));
+---
+<Base lang={lang} title={s.nav.artists} overlayHeader={false}>
+  <section class="wrap pg">
+    <p class="eyebrow">{s.siteName}</p>
+    <h1 class="h2">{s.nav.artists}</h1>
+    <ul class="grid">
+      {list.map((a) => (
+        <li class="card"><a href={href(lang, `/artists/${a.slug}/`)}><span class="n">{a.name}</span><span class="muted">{a.role[lang]}{firstYear(a.slug) && ` · ${firstYear(a.slug)}`}</span></a></li>
+      ))}
+    </ul>
+  </section>
+</Base>
+<style>
+  .pg { padding-block: 64px 96px; }
+  .grid { list-style: none; padding: 0; margin: 32px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .grid a { display: flex; flex-direction: column; padding: 22px; }
+  .n { font-family: var(--display); font-weight: 700; font-size: 24px; }
+</style>

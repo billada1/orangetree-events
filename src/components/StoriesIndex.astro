@@ -1,0 +1,30 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { storySlugs, getStory, isoDate } from '../data/stories';
+import { photos } from '../data/photos';
+import { t, href, fmtDate, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
+const list = storySlugs().map((slug) => ({ slug, st: getStory(slug, lang) })).sort((a, b) => isoDate(b.st.fm.date).localeCompare(isoDate(a.st.fm.date)));
+---
+<Base lang={lang} title={s.stories.h} overlayHeader={false}>
+  <section class="wrap pg">
+    <h1 class="h2">{s.stories.h}</h1>
+    <div class="cards">
+      {list.map(({ slug, st }) => (
+        <article class="card">
+          <Image src={photos[st.fm.hero].src} alt="" widths={[480, 720]} sizes="(max-width: 760px) 100vw, 33vw" />
+          <div class="b"><p class="eyebrow">{fmtDate(isoDate(st.fm.date), lang)}</p><h2><a href={href(lang, `/stories/${slug}/`)}>{st.fm.title}</a></h2><p class="muted">{st.fm.excerpt}</p></div>
+        </article>
+      ))}
+    </div>
+  </section>
+</Base>
+<style>
+  .pg { padding-block: 64px 96px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 32px; }
+  .card { overflow: hidden; } .card :global(img) { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+  .b { padding: 22px; } h2 { font-size: 24px; }
+</style>

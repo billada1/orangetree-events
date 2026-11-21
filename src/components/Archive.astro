@@ -1,0 +1,109 @@
+---
+import { past, type Kind } from '../data/events';
+import { t, href, type Lang } from '../i18n/ui';
+interface Props { lang: Lang; headingLevel?: 'h1' | 'h2' }
+const { lang, headingLevel = 'h2' } = Astro.props;
+const s = t(lang);
+const list = past();
+const kinds: Kind[] = ['presented', 'nye', 'fundraiser', 'promotion', 'supported'];
+const counts = Object.fromEntries(kinds.map((k) => [k, list.filter((e) => e.kind === k).length])) as Record<Kind, number>;
+const groups = new Map<string, typeof list>();
+for (const e of list) {
+  const y = e.date?.slice(0, 4) ?? e.year ?? 'tbc';
+  if (!groups.has(y)) groups.set(y, []);
+  groups.get(y)!.push(e);
+}
+const order = [...groups.keys()].sort((a, b) => (a === 'tbc' ? 1 : b === 'tbc' ? -1 : b.localeCompare(a)));
+const dateLabel = (e: (typeof list)[number]) => {
+  if (e.date) { const d = new Date(e.date + 'T12:00:00Z'); return `${d.getUTCDate()} ${s.months[d.getUTCMonth()]}`; }
+  return e.year ?? s.past.dateToConfirm;
+};
+const H = headingLevel;
+const YH = headingLevel === 'h1' ? 'h2' : 'h3';
+---
+<section id="past-events" class="wrap archive" aria-labelledby="past-h">
+  <p class="eyebrow">{s.nav.past}</p>
+  <H id="past-h" class="h2">{s.past.h}</H>
+  <p class="lead intro">{s.past.p}</p>
+  <dl class="stats">
+    <div><dt>{s.past.stat.presented}</dt><dd>{counts.presented}</dd></div>
+    <div><dt>{s.past.stat.nye}</dt><dd>{counts.nye}</dd></div>
+    <div><dt>{s.past.stat.supported}</dt><dd>{counts.supported}</dd></div>
+    <div><dt>{s.past.stat.promotion}</dt><dd>{counts.promotion}</dd></div>
+  </dl>
+  <div class="chips" role="group" aria-label={s.past.filter} data-chips hidden>
+    <button type="button" class="chip" data-k="all" aria-pressed="true">{s.past.all} <span class="n">{list.length}</span></button>
+    {kinds.map((k) => <button type="button" class="chip" data-k={k} aria-pressed="false">{s.kindsPlural[k]} <span class="n">{counts[k]}</span></button>)}
+  </div>
+  <p class="sr-only" aria-live="polite" data-live></p>
+  {order.map((y) => (
+    <div class="year" data-year>
+      <YH class="yh">{y === 'tbc' ? s.past.toConfirm : y}</YH>
+      <ul>
+        {groups.get(y)!.map((e) => (
+          <li class="row" data-kind={e.kind}>
+            <span class="date">{dateLabel(e)}</span>
+            <span class="what">
+              <a href={href(lang, `/events/${e.slug}/`)} class="title">{e.title[lang]}{e.soldOut && <span class="so"> · {s.past.soldOut}</span>}</a>
+              <span class="venue">{[e.venue, e.partner && `${lang === 'tr' ? e.partner + ' ' + s.past.with : s.past.with + ' ' + e.partner}`, e.confirm && s.past.toConfirm].filter(Boolean).join(' · ')}</span>
+            </span>
+            <span class={`badge badge-${e.kind}`}>{s.kinds[e.kind]}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+  <p class="note">{s.past.confirmNote}</p>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.archive').forEach((root) => {
+    const chips = root.querySelector<HTMLElement>('[data-chips]');
+    const live = root.querySelector<HTMLElement>('[data-live]');
+    if (!chips) return;
+    chips.hidden = false;
+    const apply = (k: string) => {
+      let n = 0;
+      root.querySelectorAll<HTMLElement>('[data-year]').forEach((y) => {
+        let any = false;
+        y.querySelectorAll<HTMLElement>('.row').forEach((r) => { const on = k === 'all' || r.dataset.kind === k; r.hidden = !on; if (on) { any = true; n++; } });
+        y.hidden = !any;
+      });
+      chips.querySelectorAll<HTMLButtonElement>('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.k === k)));
+      if (live) live.textContent = String(n);
+    };
+    chips.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.chip'); if (b) apply(b.dataset.k!); });
+    const fromHash = new URLSearchParams(location.search).get('type');
+    if (fromHash) apply(fromHash);
+  });
+</script>
+
+<style>
+  .archive { padding-block: 96px 40px; }
+  .intro { max-width: 760px; margin: 14px 0 0; }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 36px 0; }
+  .stats div { display: flex; flex-direction: column-reverse; border-top: 2px solid var(--accent); padding-top: 12px; }
+  .stats dd { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(40px, 5vw, 64px); line-height: 1; }
+  .stats dt { color: var(--muted); font-size: 15px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+  .chips[hidden] { display: none; }
+  .year { display: grid; grid-template-columns: 120px 1fr; gap: 0 24px; border-top: 1px solid var(--line); padding: 18px 0; }
+  .year[hidden] { display: none; }
+  .yh { font-size: 32px; font-weight: 800; color: var(--accent); }
+  .year ul { list-style: none; margin: 0; padding: 0; }
+  .row { display: flex; align-items: center; gap: 18px; padding: 12px 14px; border-radius: 14px; transition: background .2s; }
+  .row:hover { background: #1C1815; }
+  .row[hidden] { display: none; }
+  .date { flex: 0 0 90px; font-weight: 700; font-size: 15px; color: var(--ink-2); }
+  .what { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .title { font-weight: 600; font-size: 18px; }
+  .so { color: var(--peach); font-weight: 600; }
+  .venue { font-size: 14px; color: var(--muted); }
+  .note { font-size: 14px; color: var(--muted); margin-top: 18px; }
+  @media (max-width: 760px) {
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .year { grid-template-columns: 1fr; }
+    .row { flex-wrap: wrap; gap: 4px 12px; padding: 12px 0; }
+    .date { flex: 0 0 auto; } .what { flex-basis: 100%; order: 3; }
+  }
+</style>

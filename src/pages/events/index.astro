@@ -1,0 +1,9 @@
+---
+import Base from '../../layouts/Base.astro';
+import Archive from '../../components/Archive.astro';
+import { t } from '../../i18n/ui';
+const s = t('en');
+---
+<Base lang="en" title={s.nav.past} description={s.past.p} overlayHeader={false}>
+  <Archive lang="en" headingLevel="h1" />
+</Base>

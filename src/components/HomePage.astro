@@ -1,0 +1,191 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Hero from './Hero.astro';
+import Archive from './Archive.astro';
+import Countdown from './Countdown.astro';
+import Divider from './Divider.astro';
+import { upcoming } from '../data/events';
+import { artists } from '../data/artists';
+import { photos } from '../data/photos';
+import { stories, isoDate } from '../data/stories';
+import { t, href, fmtDate, type Lang } from '../i18n/ui';
+import { eventJsonLd } from '../data/schema';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
+const up = upcoming();
+const featured = up.find((e) => e.tickets) ;
+const others = up.filter((e) => e !== featured);
+const marquee = artists.map((a) => a.name);
+const storyCards = stories.filter((x) => x.lang === lang || !stories.some((y) => y.slug === x.slug && y.lang === lang)).slice(0, 3);
+const moments = ['thankYou', 'nye2023floor', 'nye2025floor', 'crowd', 'queue', 'bwStage', 'nye2025stage'];
+const day = (iso: string) => new Date(iso + 'T12:00:00Z');
+const wk = (iso: string) => new Intl.DateTimeFormat(lang === 'tr' ? 'tr-TR' : 'en-AU', { weekday: 'short', timeZone: 'UTC' }).format(day(iso));
+const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}:00+11:00` : '';
+---
+<Base lang={lang} jsonLd={up.map((e) => eventJsonLd(e, lang, Astro.site!)).filter(Boolean) as object[]}>
+  <Hero lang={lang} />
+
+  <div class="marquee" aria-label={lang === 'tr' ? 'Sydney’e getirdiğimiz sanatçılar' : 'Artists we’ve brought to Sydney'}>
+    <ul class="track">
+      {[...marquee, ...marquee].map((n, i) => <li aria-hidden={i >= marquee.length ? 'true' : undefined}>{n}<img src="/emblem.svg" alt="" width="22" height="25" /></li>)}
+    </ul>
+  </div>
+
+  <section id="whats-on" class="wrap on" aria-labelledby="on-h">
+    <p class="eyebrow">{s.on.h}</p>
+    <h2 id="on-h" class="h2">{s.on.sub}</h2>
+    <div class="on-grid">
+      {featured && (
+        <article class="feature reveal">
+          <Image src={photos[featured.image ?? 'nye2025stage'].src} alt={photos[featured.image ?? 'nye2025stage'].alt[lang]} widths={[640, 960, 1280]} sizes="(max-width: 900px) 100vw, 60vw" class="bg" />
+          <div class="shade" aria-hidden="true"></div>
+          <div class="body">
+            <p class="pill"><span class="dotp" aria-hidden="true"></span>{s.on.onSale}</p>
+            <p class="when">{fmtDate(featured.date!, lang, { weekday: true })} · {s.on.doors} {featured.doors}</p>
+            <h3><a href={href(lang, `/events/${featured.slug}/`)}>{featured.title[lang]}</a></h3>
+            <p class="where">{featured.venue}. {featured.note?.[lang]}</p>
+            <Countdown lang={lang} target={doorsIso} />
+            <div class="row">
+              <a class="btn btn-primary" href={href(lang, `/events/${featured.slug}/`)}>{s.on.choose}</a>
+              <span class="price">{featured.tickets!.label[lang]}</span>
+            </div>
+          </div>
+        </article>
+      )}
+      <div class="side">
+        {others.map((e) => {
+          const d = day(e.date!);
+          return (
+            <article class="card mini reveal">
+              <div class="cal" aria-hidden="true"><span class="m">{s.months[d.getUTCMonth()].toUpperCase()}</span><span class="d">{d.getUTCDate()}</span><span class="w">{wk(e.date!)}</span></div>
+              <div>
+                <p class="tag">{e.kind === 'supported' ? s.on.support : s.kinds[e.kind]}</p>
+                <h3><a href={href(lang, `/events/${e.slug}/`)}>{e.title[lang]}</a></h3>
+                <p class="muted small"><span class="sr-only">{fmtDate(e.date!, lang, { weekday: true })}. </span>{e.note?.[lang]} {e.venue}.</p>
+              </div>
+            </article>
+          );
+        })}
+        <form class="next reveal" action="/api/subscribe" method="post">
+          <h3>{s.on.nextH}</h3>
+          <p>{s.on.nextP}</p>
+          <label for="on-email">{s.on.email}</label>
+          <div class="f"><input id="on-email" class="field" type="email" name="email" autocomplete="email" required placeholder={s.on.emailPh} /><input type="hidden" name="lang" value={lang} /><input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" /><button class="btn btn-dark" type="submit">{s.on.notify}</button></div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <Divider />
+  <Archive lang={lang} />
+  <Divider />
+
+  <section id="giving-back" class="giving" aria-labelledby="give-h">
+    <img class="spin" src="/emblem.svg" alt="" width="520" height="600" />
+    <div class="wrap">
+      <p class="eyebrow">{s.nav.giving}</p>
+      <h2 id="give-h" class="h2">{s.giving.h}</h2>
+      <p class="lead">{s.giving.p}</p>
+      <ul class="orgs">{s.giving.orgs.map((o) => <li>{o}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="wrap stories" aria-labelledby="st-h">
+    <div class="head"><h2 id="st-h" class="h2">{s.stories.h}</h2><a href={href(lang, '/stories/')}>{s.stories.all}</a></div>
+    <div class="cards">
+      {storyCards.map((x) => (
+        <article class="card story reveal">
+          <Image src={photos[x.fm.hero].src} alt="" widths={[480, 720]} sizes="(max-width: 760px) 100vw, 33vw" />
+          <div class="b">
+            <p class="tag">{s.stories.fromArchive} · {fmtDate(isoDate(x.fm.date), lang)}</p>
+            <h3><a href={href(lang, `/stories/${x.slug}/`)}>{x.fm.title}</a></h3>
+            <p class="muted small">{x.fm.excerpt}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="moments" aria-labelledby="mo-h">
+    <div class="wrap"><h2 id="mo-h" class="h2">{s.moments.h}</h2></div>
+    <div class="strip">
+      {moments.map((k) => <Image src={photos[k].src} alt={photos[k].alt[lang]} widths={[400, 640]} sizes="(max-width: 760px) 70vw, 28vw" />)}
+    </div>
+    <p class="wrap muted small">{s.moments.removeQ} <a class="u" href="mailto:info@orangetree.events?subject=Photo%20removal">{s.moments.remove}</a></p>
+  </section>
+
+  <section id="partner" class="wrap partner" aria-labelledby="pa-h">
+    <div class="card pbox">
+      <div><h2 id="pa-h" class="h2">{s.partner.h}</h2><p class="lead">{s.partner.p}</p></div>
+      <a class="btn btn-primary" href="mailto:info@orangetree.events?subject=Sponsorship">{s.partner.cta}</a>
+    </div>
+    <p class="replay"><button type="button" data-replay-intro>{s.intro.replay}</button></p>
+  </section>
+</Base>
+
+<style>
+  .marquee { overflow: hidden; border-block: 1px solid var(--line); padding: 18px 0; background: #110E0C; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .track { display: flex; width: max-content; gap: 28px; list-style: none; margin: 0; padding: 0; animation: marq 60s linear infinite; font-family: var(--display); font-weight: 700; font-size: 28px; white-space: nowrap; }
+  .marquee:hover .track { animation-play-state: paused; }
+  .track li { display: flex; align-items: center; gap: 28px; }
+  @keyframes marq { to { transform: translateX(-50%); } }
+
+  .on { padding-block: 96px 40px; }
+  .on-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-top: 32px; }
+  .feature { position: relative; border-radius: 28px; overflow: hidden; min-height: 560px; display: flex; align-items: flex-end; }
+  .feature :global(.bg) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .feature .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,11,10,.2), rgba(13,11,10,.92) 70%); }
+  .feature .body { position: relative; padding: 32px; width: 100%; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; margin: 0 0 14px; background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 13px; padding: 6px 12px; border-radius: 999px; }
+  .dotp { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-ink); animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .3; } }
+  .when { margin: 0 0 6px; font-weight: 600; color: var(--peach); }
+  .feature h3 { font-weight: 800; font-size: clamp(34px, 4vw, 52px); }
+  .where { color: var(--ink-2); margin: 10px 0 20px; }
+  .feature .row { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 22px; }
+  .price { font-weight: 600; color: var(--ink-2); }
+  .side { display: flex; flex-direction: column; gap: 20px; }
+  .mini { display: flex; gap: 18px; padding: 22px; }
+  .cal { flex: 0 0 64px; text-align: center; display: flex; flex-direction: column; border: 1px solid var(--line-2); border-radius: 14px; padding: 8px 0; height: fit-content; }
+  .cal .m { font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: .1em; }
+  .cal .d { font-family: var(--display); font-weight: 800; font-size: 28px; line-height: 1.1; }
+  .cal .w { font-size: 12px; color: var(--muted); }
+  .tag { margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--peach); }
+  .mini h3 { font-size: 22px; }
+  .small { font-size: 15px; margin: 6px 0 0; }
+  .next { background: var(--accent); color: var(--accent-ink); border-radius: 24px; padding: 24px; }
+  .next h3 { font-size: 24px; } .next p { margin: 8px 0 14px; }
+  .next label { display: block; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+  .f { display: flex; flex-wrap: wrap; gap: 8px; } .f .field { flex: 1 1 180px; }
+
+  .giving { position: relative; overflow: hidden; padding-block: 96px; background: #120F0D; border-block: 1px solid var(--line); }
+  .spin { position: absolute; right: -120px; top: -80px; width: 520px; height: auto; opacity: .07; animation: spin 80s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .giving .lead { max-width: 720px; margin-top: 16px; }
+  .orgs { list-style: none; padding: 0; margin: 28px 0 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .orgs li { border: 1.5px solid var(--line-2); border-radius: 999px; padding: 10px 18px; font-weight: 600; }
+
+  .stories { padding-block: 96px 40px; }
+  .head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 28px; }
+  .head a { font-weight: 600; color: var(--coral); }
+  .cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .story { overflow: hidden; }
+  .story :global(img) { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+  .story .b { padding: 22px; } .story h3 { font-size: 24px; }
+
+  .moments { padding-block: 56px; }
+  .strip { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 24px var(--pad); }
+  .strip :global(img) { flex: 0 0 auto; width: min(70vw, 420px); aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; scroll-snap-align: start; }
+  .u { color: var(--coral); text-decoration: underline; }
+
+  .partner { padding-block: 40px 96px; }
+  .pbox { padding: 36px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px; }
+  .pbox .lead { max-width: 640px; margin: 12px 0 0; }
+  .replay { text-align: right; margin: 18px 0 0; }
+  .replay button { font: inherit; font-size: 13px; color: var(--muted); background: none; border: 0; text-decoration: underline; cursor: pointer; }
+
+  @media (max-width: 1000px) { .on-grid { grid-template-columns: 1fr; } .cards { grid-template-columns: 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .track { animation: none; flex-wrap: wrap; width: auto; } .spin, .dotp { animation: none; } }
+</style>

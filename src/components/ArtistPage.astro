@@ -1,0 +1,91 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { events } from '../data/events';
+import { artists, type Artist } from '../data/artists';
+import { photos } from '../data/photos';
+import { t, href, fmtDate, type Lang } from '../i18n/ui';
+interface Props { lang: Lang; a: Artist }
+const { lang, a } = Astro.props;
+const s = t(lang);
+const shows = events.filter((e) => e.artists?.includes(a.slug));
+const ph = a.image ? photos[a.image] : null;
+const more = artists.filter((x) => x.slug !== a.slug && x.bio).concat(artists.filter((x) => x.slug !== a.slug && !x.bio)).slice(0, 8);
+const ld = { '@context': 'https://schema.org', '@type': a.slug === 'manga' ? 'MusicGroup' : 'Person', name: a.name, description: a.role.en, url: new URL((lang === 'tr' ? '/tr' : '') + `/artists/${a.slug}/`, Astro.site!).href };
+---
+<Base lang={lang} title={a.name} description={a.bio?.[lang][0] ?? `${a.name} · ${a.role[lang]} · ${s.siteName}`} jsonLd={ld} overlayHeader={!!ph} noindex={!a.bio}>
+  <section class:list={['top', { plain: !ph }]}>
+    {ph && <Image src={ph.src} alt={ph.alt[lang]} widths={[640, 1024, 1600]} sizes="100vw" class="bg" loading="eager" fetchpriority="high" />}
+    {ph && <div class="shade" aria-hidden="true"></div>}
+    <div class="wrap in">
+      <p class="eyebrow"><a href={href(lang, '/artists/')}>{s.nav.artists}</a> · {a.role[lang]}</p>
+      <h1 class="name">{a.name}</h1>
+    </div>
+  </section>
+  <div class="wrap body">
+    {a.bio && (
+      <section class="about" aria-labelledby="ab-h">
+        <div><h2 id="ab-h" class="h3">{s.artist.about}</h2>{a.bio[lang].map((p) => <p class="lead">{p}</p>)}</div>
+        {a.facts && <dl>{a.facts.map((f) => <div><dt>{f.label[lang]}</dt><dd>{f.value}</dd></div>)}</dl>}
+      </section>
+    )}
+    {shows.length > 0 && (
+      <section aria-labelledby="sh-h">
+        <h2 id="sh-h" class="h3">{s.artist.withUs}</h2>
+        <ul class="shows">
+          {shows.map((e) => (
+            <li class="card">
+              <span class="d">{e.date ? fmtDate(e.date, lang) : (e.year ?? s.past.dateToConfirm)}</span>
+              <a href={href(lang, `/events/${e.slug}/`)}>{e.title[lang]}</a>
+              <span class="muted">{e.venue}</span>
+              {e.story && <a class="btn btn-ghost btn-sm" href={href(lang, `/stories/${e.story}/`)}>{s.stories.read}</a>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
+    {a.gallery && (
+      <section aria-labelledby="ga-h">
+        <h2 id="ga-h" class="h3">{s.stories.photos}</h2>
+        <div class="gal">{a.gallery.map((k) => <Image src={photos[k].src} alt={photos[k].alt[lang]} widths={[480, 800]} sizes="(max-width: 760px) 100vw, 33vw" />)}</div>
+        <p class="muted small">{s.moments.removeQ} <a class="u" href="mailto:info@orangetree.events?subject=Photo%20removal">{s.moments.remove}</a></p>
+      </section>
+    )}
+    <form class="notify" action="/api/subscribe" method="post">
+      <div><h2 class="h3">{s.artist.notifyH(a.name)}</h2><p>{s.artist.notifyP}</p></div>
+      <div class="f"><label class="sr-only" for="ar-email">{s.on.email}</label><input id="ar-email" class="field" type="email" name="email" autocomplete="email" required placeholder={s.on.emailPh} /><input type="hidden" name="lang" value={lang} /><input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" /><input type="hidden" name="artist" value={a.slug} /><button class="btn btn-dark" type="submit">{s.artist.notify}</button></div>
+    </form>
+    <nav aria-labelledby="more-h" class="more">
+      <h2 id="more-h" class="eyebrow">{s.artist.more}</h2>
+      <ul>{more.map((x) => <li><a href={href(lang, `/artists/${x.slug}/`)}>{x.name}</a></li>)}</ul>
+    </nav>
+  </div>
+</Base>
+<style>
+  .top { position: relative; min-height: 600px; height: 84vh; max-height: 860px; display: flex; align-items: flex-end; overflow: hidden; }
+  .top.plain { min-height: 0; height: auto; padding-top: 80px; }
+  .top :global(.bg) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 70% 30%; }
+  .shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,11,10,.9), rgba(13,11,10,.2) 60%), linear-gradient(180deg, rgba(13,11,10,.5), transparent 30%, rgba(13,11,10,.95)); }
+  .in { position: relative; width: 100%; padding-bottom: 56px; }
+  .name { font-weight: 800; font-size: clamp(52px, 8vw, 128px); line-height: .92; letter-spacing: -.02em; animation: nm 1s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes nm { from { opacity: 0; transform: translateY(30px); letter-spacing: .06em; } to { opacity: 1; transform: none; } }
+  .body { display: flex; flex-direction: column; gap: 64px; padding-block: 72px 96px; }
+  .h3 { font-size: 40px; font-weight: 700; margin-bottom: 18px; }
+  .about { display: grid; grid-template-columns: 2fr 1fr; gap: 48px; }
+  .about .lead { margin: 0 0 16px; }
+  dl { margin: 0; border-top: 1px solid var(--line); } dl div { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  dt { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; } dd { margin: 4px 0 0; font-weight: 600; }
+  .shows { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .shows li { padding: 20px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; }
+  .shows .d { font-weight: 700; color: var(--accent); } .shows a:not(.btn) { font-weight: 700; font-size: 20px; }
+  .gal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .gal :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; }
+  .small { font-size: 14px; } .u { color: var(--coral); text-decoration: underline; }
+  .notify { background: var(--accent); color: var(--accent-ink); border-radius: 24px; padding: 30px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; }
+  .notify .h3 { font-size: 30px; margin: 0; } .notify p { margin: 6px 0 0; }
+  .f { display: flex; flex-wrap: wrap; gap: 8px; flex: 1 1 340px; max-width: 520px; } .f .field { flex: 1 1 200px; }
+  .more ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .more a { display: inline-block; border: 1.5px solid var(--line-2); border-radius: 999px; padding: 10px 18px; font-weight: 600; }
+  @media (max-width: 900px) { .about { grid-template-columns: 1fr; } .gal { grid-template-columns: 1fr 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .name { animation: none; } }
+</style>

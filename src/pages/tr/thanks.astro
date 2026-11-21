@@ -1,0 +1,14 @@
+---
+import SimplePage from '../../components/SimplePage.astro';
+---
+<SimplePage lang="tr" title="Teşekkürler" noindex={true}>
+  <p data-ok>Listemize eklendiniz. E-postanızı onaylamak için gelen kutunuza bakın; yeni konserlerden ilk siz haberdar olacaksınız.</p>
+  <p><a href="/tr/">Ana sayfaya dön</a></p>
+  <p data-err hidden>E-posta adresi hatalı görünüyor ya da bizim tarafımızda bir sorun oldu. Lütfen geri dönüp tekrar deneyin veya info@orangetree.events adresine yazın.</p>
+</SimplePage>
+<script>
+  if (new URLSearchParams(location.search).has('error')) {
+    document.querySelector<HTMLElement>('[data-ok]')!.hidden = true;
+    document.querySelector<HTMLElement>('[data-err]')!.hidden = false;
+  }
+</script>

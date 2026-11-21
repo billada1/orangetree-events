@@ -1,0 +1,70 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/logo-horizontal.svg';
+import { t, href, otherLangPath, type Lang } from '../i18n/ui';
+interface Props { lang: Lang; overlay?: boolean }
+const { lang, overlay = true } = Astro.props;
+const s = t(lang);
+const path = Astro.url.pathname;
+const links = [
+  [href(lang, '/#whats-on'), s.nav.on], [href(lang, '/events/'), s.nav.past], [href(lang, '/artists/'), s.nav.artists],
+  [href(lang, '/stories/'), s.nav.stories], [href(lang, '/#giving-back'), s.nav.giving], [href(lang, '/#partner'), s.nav.partner],
+];
+const cur = (u: string) => (path === u ? 'page' : undefined);
+---
+<header class:list={['hdr', { overlay }]}>
+  <a href={href(lang, '/')} class="logo" aria-label={s.siteName}>
+    <Image src={logo} alt="Orange Tree" height={44} loading="eager" />
+  </a>
+  <nav class="nav" aria-label={s.nav.main}>
+    {links.map(([u, l]) => <a href={u} aria-current={cur(u)}>{l}</a>)}
+  </nav>
+  <div class="right">
+    <a class="lang" href={otherLangPath(lang, path)} hreflang={lang === 'en' ? 'tr' : 'en'} lang={lang === 'en' ? 'tr' : 'en'}>{lang === 'en' ? 'TR' : 'EN'}<span class="sr-only"> · {s.switchTo}</span></a>
+    <a class="tix" href={href(lang, '/my-tickets/')}>{s.nav.tickets}</a>
+    <a class="btn btn-primary btn-sm" href={href(lang, '/#whats-on')}>{s.nav.getTickets}</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-menu">{s.nav.menu}</button>
+  </div>
+  <div id="site-menu" class="menu" hidden>
+    <button class="close" type="button">{s.nav.close}</button>
+    <nav aria-label={s.nav.main}>
+      {links.map(([u, l]) => <a href={u}>{l}</a>)}
+      <a href={href(lang, '/my-tickets/')}>{s.nav.tickets}</a>
+      <a href={otherLangPath(lang, path)} lang={lang === 'en' ? 'tr' : 'en'}>{s.switchTo}</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.menu-btn');
+  const menu = document.getElementById('site-menu');
+  const close = menu?.querySelector<HTMLButtonElement>('.close');
+  const set = (open: boolean) => {
+    if (!btn || !menu) return;
+    menu.hidden = !open; btn.setAttribute('aria-expanded', String(open));
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+    (open ? close : btn)?.focus();
+  };
+  btn?.addEventListener('click', () => set(true));
+  close?.addEventListener('click', () => set(false));
+  menu?.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) set(false); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu && !menu.hidden) set(false); });
+</script>
+
+<style>
+  .hdr { position: relative; z-index: 20; padding: 20px var(--pad); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .hdr.overlay { position: absolute; inset: 0 0 auto 0; }
+  .hdr:not(.overlay) { border-bottom: 1px solid var(--line); }
+  .logo img { height: 44px; width: auto; }
+  .nav { display: flex; flex-wrap: wrap; gap: 4px 26px; font-size: 15px; font-weight: 500; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
+  .nav a[aria-current="page"] { color: var(--coral); }
+  .right { display: flex; align-items: center; gap: 18px; font-size: 14px; font-weight: 600; }
+  .menu-btn { display: none; font: inherit; font-weight: 600; color: var(--ink); background: rgba(13,11,10,.6); border: 1.5px solid var(--line-2); border-radius: 999px; padding: 10px 16px; cursor: pointer; }
+  .menu { position: fixed; inset: 0; z-index: 50; background: var(--bg); padding: 24px var(--pad); display: flex; flex-direction: column; }
+  .menu[hidden] { display: none; }
+  .menu .close { align-self: flex-end; font: inherit; font-weight: 600; color: var(--ink); background: none; border: 1.5px solid var(--line-2); border-radius: 999px; padding: 10px 16px; cursor: pointer; }
+  .menu nav { display: flex; flex-direction: column; gap: 6px; margin-top: 24px; }
+  .menu nav a { font-family: var(--display); font-weight: 700; font-size: 34px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+  @media (max-width: 1100px) { .nav { display: none; } .menu-btn { display: inline-flex; } }
+  @media (max-width: 560px) { .tix, .lang, .right .btn { display: none; } .logo img { height: 38px; } }
+</style>

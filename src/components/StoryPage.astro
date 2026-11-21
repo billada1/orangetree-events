@@ -1,0 +1,83 @@
+---
+import { Image, getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { getStory, isoDate } from '../data/stories';
+import { artistBySlug } from '../data/artists';
+import { photos } from '../data/photos';
+import { t, href, fmtDate, type Lang } from '../i18n/ui';
+interface Props { lang: Lang; slug: string }
+const { lang, slug } = Astro.props;
+const s = t(lang);
+const st = getStory(slug, lang);
+const { fm, Content } = st;
+const translated = st.lang === lang;
+const date = isoDate(fm.date);
+const hero = photos[fm.hero];
+const artist = fm.artist ? artistBySlug(fm.artist) : undefined;
+const heroImg = await getImage({ src: hero.src, width: 1200, format: 'jpg' });
+const ld = {
+  '@context': 'https://schema.org', '@type': 'Article', headline: fm.title, datePublished: date, inLanguage: st.lang,
+  image: new URL(heroImg.src, Astro.site!).href, author: { '@type': 'Organization', name: 'Orange Tree Events' },
+  publisher: { '@type': 'Organization', name: 'Orange Tree Events', logo: { '@type': 'ImageObject', url: new URL('/emblem.svg', Astro.site!).href } },
+};
+---
+<Base lang={lang} title={fm.title} description={fm.excerpt} image={heroImg.src} jsonLd={ld} hasTranslation={translated}>
+  <div class="progress" aria-hidden="true"></div>
+  <section class="top">
+    <Image src={hero.src} alt={hero.alt[lang]} widths={[640, 1024, 1600]} sizes="100vw" class="bg" loading="eager" fetchpriority="high" />
+    <div class="shade" aria-hidden="true"></div>
+    <div class="in">
+      <p class="eyebrow">{s.stories.fromArchive} · <time datetime={date}>{fmtDate(date, lang, { weekday: true })}</time></p>
+      <h1>{fm.title}</h1>
+      <p class="by">Orange Tree Events · {lang === 'tr' ? 'Fotoğraflar' : 'Photos'}: [photographer]{artist && <> · <a href={href(lang, `/artists/${artist.slug}/`)}>{artist.name}</a></>}</p>
+    </div>
+  </section>
+  <article class="prose" lang={st.lang === 'tr' ? 'tr' : 'en-AU'}>
+    <Content />
+  </article>
+  <figure class="wide reveal">
+    <Image src={photos.queue.src} alt={photos.queue.alt[lang]} widths={[800, 1328]} sizes="(max-width: 1440px) 100vw, 1328px" />
+  </figure>
+  {fm.timeline && (
+    <section class="tl reveal" aria-labelledby="tl-h">
+      <h2 id="tl-h">{s.stories.ranHow}</h2>
+      <ol>{fm.timeline.map(([tm, what]) => <li><strong>{tm}</strong> · {what}</li>)}</ol>
+    </section>
+  )}
+  {fm.gallery && (
+    <section class="gal reveal" aria-label={s.stories.photos}>
+      {fm.gallery.map((k) => <Image src={photos[k].src} alt={photos[k].alt[lang]} widths={[480, 900]} sizes="(max-width: 760px) 100vw, 50vw" />)}
+    </section>
+  )}
+  <div class="end">
+    <p class="muted small">{s.moments.removeQ} <a class="u" href="mailto:info@orangetree.events?subject=Photo%20removal">{s.moments.remove}</a></p>
+    {artist && <a class="card nxt" href={href(lang, `/artists/${artist.slug}/`)}><span class="muted small">{s.event.seeArtist}</span><span class="t">{artist.name} →</span></a>}
+  </div>
+</Base>
+<style>
+  .progress { position: fixed; inset: 0 0 auto 0; height: 4px; z-index: 40; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
+  @supports (animation-timeline: scroll()) { .progress { animation: prog linear both; animation-timeline: scroll(root); } }
+  @keyframes prog { to { transform: scaleX(1); } }
+  .top { position: relative; min-height: 600px; height: 86vh; max-height: 880px; display: flex; align-items: flex-end; overflow: hidden; }
+  .top :global(.bg) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,11,10,.5), transparent 30%, rgba(13,11,10,.96)); }
+  .in { position: relative; width: 100%; max-width: 980px; margin: 0 auto; padding: 0 var(--pad) 56px; }
+  h1 { font-weight: 800; font-size: clamp(40px, 6vw, 84px); line-height: .98; letter-spacing: -.02em; }
+  .by { margin: 18px 0 0; font-size: 15px; color: var(--ink-2); } .by a { color: var(--coral); text-decoration: underline; }
+  .prose { max-width: 760px; margin: 0 auto; padding: 72px var(--pad) 24px; font: 400 21px/1.7 var(--serif); color: #E9E1D8; }
+  .prose :global(p) { margin: 0 0 24px; }
+  .prose :global(p:first-child) { font-size: 25px; line-height: 1.55; color: var(--ink); }
+  .wide { max-width: var(--max); margin: 48px auto; padding: 0 var(--pad); }
+  .wide :global(img) { width: 100%; height: clamp(320px, 52vw, 680px); object-fit: cover; border-radius: 20px; }
+  .tl { max-width: 760px; margin: 0 auto; padding: 24px var(--pad) 48px; }
+  .tl h2 { font-size: 32px; margin-bottom: 18px; }
+  .tl ol { list-style: none; margin: 0; padding: 0; border-left: 2px solid var(--accent); }
+  .tl li { position: relative; padding: 0 0 18px 22px; }
+  .tl li::before { content: ''; position: absolute; left: -7px; top: 8px; width: 12px; height: 12px; border-radius: 50%; background: var(--accent); }
+  .gal { max-width: 1440px; margin: 0 auto; padding: 0 var(--pad) 48px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .gal :global(img) { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 16px; }
+  .end { max-width: 760px; margin: 0 auto; padding: 0 var(--pad) 96px; display: flex; flex-direction: column; gap: 20px; }
+  .small { font-size: 15px; } .u { color: var(--coral); text-decoration: underline; }
+  .nxt { padding: 22px; display: flex; flex-direction: column; } .nxt .t { font-family: var(--display); font-weight: 700; font-size: 22px; }
+  @media (max-width: 760px) { .gal { grid-template-columns: 1fr; } }
+</style>

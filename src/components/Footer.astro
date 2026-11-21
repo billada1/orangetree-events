@@ -1,0 +1,39 @@
+---
+import { t, href, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
+const year = new Date().getFullYear();
+---
+<footer class="ftr">
+  <div class="wrap grid">
+    <div class="brand">
+      <img src="/emblem.svg" alt="" width="40" height="46" />
+      <p>{s.footer.blurb}</p>
+      <form class="sub" action="/api/subscribe" method="post">
+        <label for="ftr-email">{s.on.email}</label>
+        <div><input id="ftr-email" class="field" name="email" type="email" autocomplete="email" required placeholder={s.on.emailPh} /><input type="hidden" name="lang" value={lang} /><input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" /><button class="btn btn-primary btn-sm" type="submit">{s.on.notify}</button></div>
+      </form>
+    </div>
+    <nav aria-label={s.footer.events}><h2>{s.footer.events}</h2><a href={href(lang, '/#whats-on')}>{s.nav.on}</a><a href={href(lang, '/events/')}>{s.nav.past}</a><a href={href(lang, '/artists/')}>{s.nav.artists}</a><a href={href(lang, '/stories/')}>{s.nav.stories}</a></nav>
+    <nav aria-label={s.footer.help}><h2>{s.footer.help}</h2><a href={href(lang, '/my-tickets/')}>{s.nav.tickets}</a><a href={href(lang, '/help/tickets/')}>{s.footer.refunds}</a><a href={href(lang, '/help/accessibility/')}>{s.footer.access}</a><a href="mailto:info@orangetree.events">{s.footer.contact}</a></nav>
+    <nav aria-label={s.footer.family}><h2>{s.footer.family}</h2><a href="https://orangetree.org.au/">orangetree.org.au</a><a href="https://atam.asn.au/">atam.asn.au</a><a href="https://www.instagram.com/orangetree.events/">Instagram @orangetree.events</a><a href="https://www.facebook.com/orangetree.events">Facebook</a></nav>
+  </div>
+  <div class="wrap legal">
+    <p>© {year} Orange Tree Group Pty Ltd · ABN [ABN] · <a href={href(lang, '/terms/')}>{s.footer.terms}</a> · <a href={href(lang, '/privacy/')}>{s.footer.privacy}</a></p>
+    <p>{s.footer.ack}</p>
+  </div>
+</footer>
+<style>
+  .ftr { border-top: 1px solid var(--line); padding: 56px 0 32px; font-size: 15px; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .brand p { margin: 12px 0 20px; max-width: 340px; }
+  .sub label { display: block; font-weight: 600; color: var(--ink); margin-bottom: 8px; font-size: 14px; }
+  .sub div { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sub .field { flex: 1 1 200px; }
+  nav { display: flex; flex-direction: column; gap: 8px; }
+  nav h2 { font-family: var(--body); font-size: 13px; text-transform: uppercase; letter-spacing: .12em; color: var(--peach); margin-bottom: 6px; }
+  .legal { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 13px; display: flex; flex-direction: column; gap: 8px; }
+  .legal p { margin: 0; } .legal a { text-decoration: underline; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr 1fr; } .brand { grid-column: 1 / -1; } }
+</style>

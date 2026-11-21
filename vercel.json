@@ -1,0 +1,349 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "astro",
+  "buildCommand": "astro build",
+  "outputDirectory": "dist",
+  "trailingSlash": true,
+  "cleanUrls": false,
+  "redirects": [
+    {
+      "source": "/about",
+      "destination": "/#giving-back",
+      "permanent": true
+    },
+    {
+      "source": "/affiliate-area",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/affiliate-program-faq",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/affiliate-program-terms",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/become-an-affiliate",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/blog",
+      "destination": "/stories/",
+      "permanent": true
+    },
+    {
+      "source": "/buray-live-sydney-concert",
+      "destination": "/events/buray-2023/",
+      "permanent": true
+    },
+    {
+      "source": "/cart",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/checkout",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/contact",
+      "destination": "/#partner",
+      "permanent": true
+    },
+    {
+      "source": "/event",
+      "destination": "/events/",
+      "permanent": true
+    },
+    {
+      "source": "/event/2020-nye-celebration",
+      "destination": "/events/nye-2020/",
+      "permanent": true
+    },
+    {
+      "source": "/event/2022-nye-celebration",
+      "destination": "/events/nye-2022/",
+      "permanent": true
+    },
+    {
+      "source": "/event/2023-nye",
+      "destination": "/events/nye-2023/",
+      "permanent": true
+    },
+    {
+      "source": "/event/buray-live-in-sydney",
+      "destination": "/events/buray-2023/",
+      "permanent": true
+    },
+    {
+      "source": "/event/ilyas-yalcintas",
+      "destination": "/events/ilyas-yalcintas-2018/",
+      "permanent": true
+    },
+    {
+      "source": "/event/kibariye-live-sydney",
+      "destination": "/events/kibariye-2018/",
+      "permanent": true
+    },
+    {
+      "source": "/event/koray-avci-unplugged",
+      "destination": "/events/koray-avci-2018/",
+      "permanent": true
+    },
+    {
+      "source": "/event/nye-celebration",
+      "destination": "/events/nye-2018/",
+      "permanent": true
+    },
+    {
+      "source": "/event/teoman-rockfest-2017",
+      "destination": "/events/teoman-rockfest-2017/",
+      "permanent": true
+    },
+    {
+      "source": "/event/turkish-vibes-2019",
+      "destination": "/events/turkish-vibes-2019/",
+      "permanent": true
+    },
+    {
+      "source": "/event/turkishvibes2018",
+      "destination": "/events/turkish-vibes-2018/",
+      "permanent": true
+    },
+    {
+      "source": "/event/yilmaz-erdogan-munasaka",
+      "destination": "/events/munasaka-2017/",
+      "permanent": true
+    },
+    {
+      "source": "/event_cat/fundraiser",
+      "destination": "/events/?type=fundraiser",
+      "permanent": true
+    },
+    {
+      "source": "/event_cat/nye",
+      "destination": "/events/?type=nye",
+      "permanent": true
+    },
+    {
+      "source": "/galleries",
+      "destination": "/stories/",
+      "permanent": true
+    },
+    {
+      "source": "/my-account",
+      "destination": "/my-tickets/",
+      "permanent": true
+    },
+    {
+      "source": "/ot-events",
+      "destination": "/events/",
+      "permanent": true
+    },
+    {
+      "source": "/ot-events/2022-nye-celebration",
+      "destination": "/events/nye-2022/",
+      "permanent": true
+    },
+    {
+      "source": "/ot-events/buray-live-in-sydney",
+      "destination": "/events/buray-2023/",
+      "permanent": true
+    },
+    {
+      "source": "/ot-events/kibariye",
+      "destination": "/events/kibariye-2018/",
+      "permanent": true
+    },
+    {
+      "source": "/ot-events/turkish-vibes-2019",
+      "destination": "/events/turkish-vibes-2019/",
+      "permanent": true
+    },
+    {
+      "source": "/ot-events/turkishvibes",
+      "destination": "/events/turkish-vibes-2018/",
+      "permanent": true
+    },
+    {
+      "source": "/past-events",
+      "destination": "/events/",
+      "permanent": true
+    },
+    {
+      "source": "/performer",
+      "destination": "/artists/",
+      "permanent": true
+    },
+    {
+      "source": "/performer/buray",
+      "destination": "/artists/buray/",
+      "permanent": true
+    },
+    {
+      "source": "/performer/cahit-berkay",
+      "destination": "/artists/cahit-berkay/",
+      "permanent": true
+    },
+    {
+      "source": "/performer/emrah-karaca-mogollar",
+      "destination": "/artists/emrah-karaca/",
+      "permanent": true
+    },
+    {
+      "source": "/performer/ilyas-yalcintas",
+      "destination": "/artists/ilyas-yalcintas/",
+      "permanent": true
+    },
+    {
+      "source": "/performer/kibariye",
+      "destination": "/artists/kibariye/",
+      "permanent": true
+    },
+    {
+      "source": "/performer/koray-avci",
+      "destination": "/artists/koray-avci/",
+      "permanent": true
+    },
+    {
+      "source": "/performer/teoman",
+      "destination": "/artists/teoman/",
+      "permanent": true
+    },
+    {
+      "source": "/performer/tibet-agirtan",
+      "destination": "/artists/tibet-agirtan/",
+      "permanent": true
+    },
+    {
+      "source": "/performer/yilmaz-erdogan",
+      "destination": "/artists/yilmaz-erdogan/",
+      "permanent": true
+    },
+    {
+      "source": "/privacy-policy",
+      "destination": "/privacy/",
+      "permanent": true
+    },
+    {
+      "source": "/shop",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/sponsors",
+      "destination": "/#partner",
+      "permanent": true
+    },
+    {
+      "source": "/sponsors/firebrandbbq",
+      "destination": "/#partner",
+      "permanent": true
+    },
+    {
+      "source": "/sponsors/kekilli-jewellery",
+      "destination": "/#partner",
+      "permanent": true
+    },
+    {
+      "source": "/ga-ilyas2018",
+      "destination": "/events/ilyas-yalcintas-2018/",
+      "permanent": true
+    },
+    {
+      "source": "/vip-ilyas2018",
+      "destination": "/events/ilyas-yalcintas-2018/",
+      "permanent": true
+    },
+    {
+      "source": "/event_cat/:path*",
+      "destination": "/events/",
+      "permanent": true
+    },
+    {
+      "source": "/ot-events-category/:path*",
+      "destination": "/events/",
+      "permanent": true
+    },
+    {
+      "source": "/performer_cat/:path*",
+      "destination": "/artists/",
+      "permanent": true
+    },
+    {
+      "source": "/tickets-:path*",
+      "destination": "/my-tickets/",
+      "permanent": true
+    },
+    {
+      "source": "/wp-content/:path*",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/feed",
+      "destination": "/stories/",
+      "permanent": true
+    },
+    {
+      "source": "/:year(\\d{4})/:month(\\d{2})/:path*",
+      "destination": "/stories/",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=(self \"https://js.stripe.com\")"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        }
+      ]
+    },
+    {
+      "source": "/_astro/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(emblem.svg|og-default.jpg)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400"
+        }
+      ]
+    }
+  ]
+}

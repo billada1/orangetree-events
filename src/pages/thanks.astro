@@ -1,0 +1,14 @@
+---
+import SimplePage from '../components/SimplePage.astro';
+---
+<SimplePage lang="en" title="Thank you" noindex={true}>
+  <p data-ok>You're on the list. Check your inbox to confirm your email, then you'll hear about new shows first.</p>
+  <p><a href="/">Back to the home page</a></p>
+  <p data-err hidden>That email address didn't look right, or something went wrong on our side. Please go back and try again, or email info@orangetree.events.</p>
+</SimplePage>
+<script>
+  if (new URLSearchParams(location.search).has('error')) {
+    document.querySelector<HTMLElement>('[data-ok]')!.hidden = true;
+    document.querySelector<HTMLElement>('[data-err]')!.hidden = false;
+  }
+</script>
