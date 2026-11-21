@@ -344,6 +344,21 @@
           "value": "public, max-age=86400"
         }
       ]
+    },
+    {
+      "source": "/(.*)",
+      "missing": [
+        {
+          "type": "host",
+          "value": "(www\\.)?orangetree\\.events"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
     }
   ]
 }
