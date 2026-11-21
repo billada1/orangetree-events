@@ -10,7 +10,7 @@ const year = new Date().getFullYear();
     <div class="brand">
       <img src="/emblem.svg" alt="" width="40" height="46" />
       <p>{s.footer.blurb}</p>
-      <form class="sub" action="/api/subscribe" method="post">
+      <form class="sub" action="/api/subscribe/" method="post">
         <label for="ftr-email">{s.on.email}</label>
         <div><input id="ftr-email" class="field" name="email" type="email" autocomplete="email" required placeholder={s.on.emailPh} /><input type="hidden" name="lang" value={lang} /><input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" /><button class="btn btn-primary btn-sm" type="submit">{s.on.notify}</button></div>
       </form>

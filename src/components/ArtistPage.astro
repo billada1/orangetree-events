@@ -51,7 +51,7 @@ const ld = { '@context': 'https://schema.org', '@type': a.slug === 'manga' ? 'Mu
         <p class="muted small">{s.moments.removeQ} <a class="u" href="mailto:info@orangetree.events?subject=Photo%20removal">{s.moments.remove}</a></p>
       </section>
     )}
-    <form class="notify" action="/api/subscribe" method="post">
+    <form class="notify" action="/api/subscribe/" method="post">
       <div><h2 class="h3">{s.artist.notifyH(a.name)}</h2><p>{s.artist.notifyP}</p></div>
       <div class="f"><label class="sr-only" for="ar-email">{s.on.email}</label><input id="ar-email" class="field" type="email" name="email" autocomplete="email" required placeholder={s.on.emailPh} /><input type="hidden" name="lang" value={lang} /><input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" /><input type="hidden" name="artist" value={a.slug} /><button class="btn btn-dark" type="submit">{s.artist.notify}</button></div>
     </form>
