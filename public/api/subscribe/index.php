@@ -1,7 +1,7 @@
 <?php
 // Mailing-list sign-up for WPX hosting → Brevo (double opt-in). Mirrors api/subscribe.js (used on the Vercel preview).
 // Secrets live OUTSIDE the web root in ../../../ot-config.php (written by the deploy workflow):
-//   <?php return ['BREVO_API_KEY' => '...', 'BREVO_LIST_EN' => 1, 'BREVO_LIST_TR' => 2, 'BREVO_DOI_TEMPLATE_ID' => 0];
+//   <?php return ['BREVO_API_KEY' => '...', 'BREVO_LIST_EN' => 3, 'BREVO_LIST_TR' => 4, 'BREVO_DOI_TEMPLATE_ID' => 0];
 declare(strict_types=1);
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
@@ -25,11 +25,8 @@ $cfg = is_file($cfgFile) ? (require $cfgFile) : [];
 $key = (string)($cfg['BREVO_API_KEY'] ?? '');
 if ($key === '') { error_log('subscribe: missing Brevo config'); $go($back . '?error=server'); }
 
-$attributes = ['LANGUAGE' => strtoupper($lang)];
-foreach (['event' => 'INTEREST_EVENT', 'artist' => 'INTEREST_ARTIST'] as $field => $attr) {
-  $v = (string)($_POST[$field] ?? '');
-  if (preg_match('/^[a-z0-9-]{1,80}$/', $v)) $attributes[$attr] = $v;
-}
+// Language is carried by the list itself (EN or TR), so no custom Brevo attributes are needed.
+$attributes = new stdClass();
 $listId = (int)($lang === 'tr' ? ($cfg['BREVO_LIST_TR'] ?? 0) : ($cfg['BREVO_LIST_EN'] ?? 0));
 $doi = (int)($cfg['BREVO_DOI_TEMPLATE_ID'] ?? 0);
 $host = $_SERVER['HTTP_HOST'] ?? 'orangetree.events';
@@ -49,8 +46,9 @@ curl_setopt_array($ch, [
   CURLOPT_HTTPHEADER => ['api-key: ' . $key, 'content-type: application/json', 'accept: application/json'],
   CURLOPT_POSTFIELDS => json_encode($body),
 ]);
-curl_exec($ch);
+$res = (string)curl_exec($ch);
 $status = (int)curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
 curl_close($ch);
-if ($status >= 300 && $status !== 400) { error_log('subscribe: brevo ' . $status); $go($back . '?error=server'); } // 400 = already on the list
+$code = (string)(json_decode($res, true)['code'] ?? '');
+if ($status >= 300 && $code !== 'duplicate_parameter') { error_log('subscribe: brevo ' . $status . ' ' . $code); $go($back . '?error=server'); } // duplicate = already on the list
 $go($back);

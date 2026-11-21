@@ -41,12 +41,13 @@ GitHub → Settings → Secrets and variables → Actions:
 
 | Kind | Name | Value |
 | --- | --- | --- |
-| Secret | `WPX_SFTP_HOST`, `WPX_SFTP_USER`, `WPX_SFTP_PASSWORD` (`WPX_SFTP_PORT` if not 22) | From WPX → website → FTP/SFTP |
+| Variable | `WPX_SFTP_HOST`, `WPX_SFTP_USER`, `WPX_SFTP_PORT` | `au1.wpxhosting.com`, the orangetree.events FTP user, `2222` |
+| Secret | `WPX_SFTP_PASSWORD` | That FTP user's password |
 | Secret | `BREVO_API_KEY` | ATAM's Brevo key |
 | Variable | `WPX_WEBROOT` | `/new.orangetree.events/public_html` for staging, later the live site's folder |
 | Variable | `SITE_ENV` | `staging` (hidden from Google) or `production` |
 | Variable | `SITE_URL` | e.g. `https://new.orangetree.events` (enables the smoke test) |
-| Variable | `BREVO_LIST_EN`, `BREVO_LIST_TR`, `BREVO_DOI_TEMPLATE_ID` | Brevo list and template numbers |
+| Variable | `BREVO_LIST_EN`, `BREVO_LIST_TR`, `BREVO_DOI_TEMPLATE_ID` | `3`, `4` (ATAM's Brevo), and a double opt-in template number when one exists |
 
 The workflow stays off until `WPX_WEBROOT` is set. It never uploads secrets into the web folder: the Brevo settings go to `ot-config.php` one level above it.
 
@@ -54,7 +55,7 @@ The workflow stays off until `WPX_WEBROOT` is set. It never uploads secrets into
 
 - [ ] ABN in footer, terms of sale, privacy policy, refund policy (placeholders in square brackets).
 - [ ] Photographer credit for the 2018 photos.
-- [ ] Mailing list: `api/subscribe.js` sends sign-ups to Brevo (double opt-in). Set `BREVO_API_KEY`, `BREVO_LIST_EN`, `BREVO_LIST_TR`, `BREVO_DOI_TEMPLATE_ID` in Vercel, and create contact attributes `LANGUAGE`, `INTEREST_EVENT`, `INTEREST_ARTIST`.
+- [ ] Mailing list: `api/subscribe.js` sends sign-ups to Brevo (double opt-in). Set `BREVO_API_KEY`, `BREVO_LIST_EN`, `BREVO_LIST_TR`, `BREVO_DOI_TEMPLATE_ID` in Vercel,.
 - [ ] Live hosting is WPX (paid plan you already have). The Vercel project is only a free preview.
 - [ ] Ticket sales (box office spec in the plan doc) come in phase 2.
 - [ ] DNS: follow the "Redirects and DNS" checklist; keep the WPX mail records.

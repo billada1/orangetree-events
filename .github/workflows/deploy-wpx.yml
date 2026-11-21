@@ -47,9 +47,9 @@ jobs:
 
       - name: Upload by SFTP
         env:
-          HOST: ${{ secrets.WPX_SFTP_HOST }}
-          PORT: ${{ secrets.WPX_SFTP_PORT || '22' }}
-          USER: ${{ secrets.WPX_SFTP_USER }}
+          HOST: ${{ vars.WPX_SFTP_HOST }}
+          PORT: ${{ vars.WPX_SFTP_PORT || '2222' }}
+          USER: ${{ vars.WPX_SFTP_USER }}
           PASS: ${{ secrets.WPX_SFTP_PASSWORD }}
           WEBROOT: ${{ vars.WPX_WEBROOT }} # e.g. /new.orangetree.events/public_html (staging) or /orangetree.events/public_html
         run: |
