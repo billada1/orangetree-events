@@ -89,11 +89,11 @@ export const events: EventItem[] = [
   { slug: 'manga', kind: 'presented', title: { en: 'maNga', tr: 'maNga' }, venue: '', artists: ['manga'], confirm: true },
   { slug: 'emre-aydin', kind: 'presented', title: { en: 'Emre Aydın', tr: 'Emre Aydın' }, venue: '', artists: ['emre-aydin'], confirm: true },
   { slug: 'oguz-aksac', kind: 'presented', title: { en: 'Oğuz Aksaç', tr: 'Oğuz Aksaç' }, venue: '', artists: ['oguz-aksac'], confirm: true },
-  { slug: 'sevcan-orhan', kind: 'presented', title: { en: 'Sevcan Orhan', tr: 'Sevcan Orhan' }, venue: '', artists: ['sevcan-orhan'], confirm: true },
-  { slug: 'erkan-kolcak-kostendil', kind: 'presented', title: { en: 'Erkan Kolçak Köstendil: stand-up', tr: 'Erkan Kolçak Köstendil: stand-up' }, venue: '', artists: ['erkan-kolcak-kostendil'], confirm: true },
-  { slug: 'gulben-ergen', kind: 'promotion', title: { en: 'Gülben Ergen', tr: 'Gülben Ergen' }, venue: '', artists: ['gulben-ergen'], confirm: true },
-  { slug: 'isin-karaca', kind: 'promotion', title: { en: 'Işın Karaca', tr: 'Işın Karaca' }, venue: '', artists: ['isin-karaca'], confirm: true },
-  { slug: 'hakan-altun', kind: 'promotion', title: { en: 'Hakan Altun', tr: 'Hakan Altun' }, venue: '', artists: ['hakan-altun'], confirm: true },
+  { slug: 'sevcan-orhan-2022', kind: 'promotion', date: '2022-05-20', title: { en: 'Sevcan Orhan live in Sydney', tr: 'Sevcan Orhan Sydney konseri' }, venue: 'Club Burwood', partner: 'Waves Sydney', artists: ['sevcan-orhan'], note: { en: 'Folk singer Sevcan Orhan with her band from Türkiye. Organised by Waves Sydney.', tr: 'Türk halk müziğinin güçlü sesi Sevcan Orhan, Türkiye’den müzisyen kadrosuyla. Organizasyon: Waves Sydney.' } },
+  { slug: 'erkan-kolcak-kostendil-2019', kind: 'presented', date: '2019-05-03', title: { en: 'Erkan Kolçak Köstendil: 12 Numaralı Adam', tr: 'Erkan Kolçak Köstendil: 12 Numaralı Adam' }, venue: 'C3 Church, Silverwater', artists: ['erkan-kolcak-kostendil'], note: { en: 'One-man theatre show by the actor known as Vartolu in Çukur.', tr: 'Çukur dizisinin Vartolu’su Erkan Kolçak Köstendil’in tek kişilik tiyatro gösterisi.' } },
+  { slug: 'gulben-ergen-2024', kind: 'promotion', date: '2024-11-29', title: { en: 'Gülben Ergen: first Australian concert', tr: 'Gülben Ergen: Avustralya’daki ilk konseri' }, venue: 'Grand Royale, Sydney', partner: 'Diamond Stage Events and Turkuaz Nights', artists: ['gulben-ergen'], note: { en: 'Also Laila Reception, Melbourne, 30 November.', tr: 'Ayrıca 30 Kasım’da Laila Reception, Melbourne.' } },
+  { slug: 'isin-karaca-2022', kind: 'promotion', date: '2022-03-25', title: { en: 'Işın Karaca live in Sydney', tr: 'Işın Karaca Sydney konseri' }, venue: 'Club Burwood', partner: 'Diamond Stage Events', artists: ['isin-karaca'] },
+  { slug: 'hakan-altun-2020', kind: 'promotion', date: '2020-02-22', title: { en: 'Hakan Altun live in Sydney', tr: 'Hakan Altun Sydney konseri' }, venue: 'Bankstown Sports Club', partner: 'Diamond Stage Events and Turkuaz Nights', artists: ['hakan-altun'], note: { en: 'Also La Mirage, Melbourne, 21 February.', tr: 'Ayrıca 21 Şubat’ta La Mirage, Melbourne.' } },
 ];
 
 // "Today" in Sydney, so upcoming/past flips at local midnight even when built elsewhere.
