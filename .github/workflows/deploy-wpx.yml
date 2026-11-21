@@ -1,0 +1,71 @@
+name: Deploy to WPX
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '7 14 * * *' # about 01:07 Sydney: finished events move to the archive overnight
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-wpx
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    # Stays off until the WPX settings are added in GitHub (Settings → Secrets and variables → Actions).
+    if: vars.WPX_WEBROOT != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SITE_ENV: ${{ vars.SITE_ENV || 'staging' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: node scripts/htaccess.mjs
+
+      - name: Write server config (outside the web root)
+        env:
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          BREVO_LIST_EN: ${{ vars.BREVO_LIST_EN || '0' }}
+          BREVO_LIST_TR: ${{ vars.BREVO_LIST_TR || '0' }}
+          BREVO_DOI_TEMPLATE_ID: ${{ vars.BREVO_DOI_TEMPLATE_ID || '0' }}
+        run: |
+          mkdir -p private
+          php -r '
+            $c = ["BREVO_API_KEY" => getenv("BREVO_API_KEY") ?: "", "BREVO_LIST_EN" => (int)getenv("BREVO_LIST_EN"),
+                  "BREVO_LIST_TR" => (int)getenv("BREVO_LIST_TR"), "BREVO_DOI_TEMPLATE_ID" => (int)getenv("BREVO_DOI_TEMPLATE_ID")];
+            file_put_contents("private/ot-config.php", "<?php return " . var_export($c, true) . ";\n");'
+
+      - name: Upload by SFTP
+        env:
+          HOST: ${{ secrets.WPX_SFTP_HOST }}
+          PORT: ${{ secrets.WPX_SFTP_PORT || '22' }}
+          USER: ${{ secrets.WPX_SFTP_USER }}
+          PASS: ${{ secrets.WPX_SFTP_PASSWORD }}
+          WEBROOT: ${{ vars.WPX_WEBROOT }} # e.g. /new.orangetree.events/public_html (staging) or /orangetree.events/public_html
+        run: |
+          test -n "$HOST" && test -n "$USER" && test -n "$WEBROOT" || { echo "WPX secrets or WPX_WEBROOT not set"; exit 1; }
+          sudo apt-get -qq update && sudo apt-get -qq install -y lftp
+          lftp -e "
+            set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20;
+            open -u \"$USER\",\"$PASS\" -p $PORT sftp://$HOST;
+            put private/ot-config.php -o \"$(dirname "$WEBROOT")/ot-config.php\";
+            mirror -R --delete --parallel=4 --exclude-glob .well-known/ --exclude-glob wp-*/ --exclude-glob wp-*.php dist/ \"$WEBROOT\";
+            bye"
+
+      - name: Smoke test
+        if: vars.SITE_URL != ''
+        run: |
+          for p in / /tr/ /events/ /event/2023-nye/; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "${{ vars.SITE_URL }}$p"); echo "$p $code"
+            case "$code" in 200|301|308) ;; *) exit 1;; esac
+          done
