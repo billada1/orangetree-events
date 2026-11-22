@@ -1,0 +1,40 @@
+name: Fetch old WordPress images (read-only)
+
+# One-off helper: copies the original-size images from the archived WordPress uploads
+# on WPX into a short-lived workflow artifact, so the best photos can be reused on the new site.
+# It only reads from the server.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Download images by SFTP
+        env:
+          HOST: ${{ vars.WPX_SFTP_HOST }}
+          PORT: ${{ vars.WPX_SFTP_PORT || '2222' }}
+          USER: ${{ vars.WPX_SFTP_USER }}
+          LFTP_PASSWORD: ${{ secrets.WPX_SFTP_PASSWORD }}
+        run: |
+          sudo apt-get -qq update && sudo apt-get -qq install -y lftp
+          U=$(printf %s "$USER" | tr -d '[:space:]'); H=$(printf %s "$HOST" | tr -d '[:space:]')
+          mkdir -p old
+          lftp --env-password -u "$U" -p "$PORT" "sftp://$H" -e "
+            set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20;
+            cls -1 /_wp-archive-2026-11/;
+            mirror --parallel=6 --exclude-glob *-[0-9]*x[0-9]*.* --include-glob *.jpg --include-glob *.jpeg --include-glob *.JPG --include-glob *.png --include-glob *.webp /_wp-archive-2026-11/wp-content/uploads old/uploads;
+            bye"
+          # Keep only reasonably large originals.
+          find old -type f -size -120k -delete
+          find old -type f | wc -l
+          du -sh old
+      - uses: actions/upload-artifact@v4
+        with:
+          name: old-uploads
+          path: old
+          retention-days: 2
