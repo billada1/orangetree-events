@@ -25,6 +25,12 @@ $pre = $lang === 'tr' ? '/tr' : '';
 $go = function (string $to): void { header('Location: ' . $to, true, 303); exit; };
 $fail = function (string $why) use ($go, $pre): void { $go($pre . '/thanks/?sent=enquiry&error=' . $why); };
 
+$types = ['concert' => 'Bring a concert to Sydney', 'promotion' => 'Promote my event', 'sponsor' => 'Sponsor or partner', 'venue' => 'Venue or supplier',
+  'general' => 'General question', 'tickets' => 'Ticket help', 'volunteer' => 'Volunteer or crew', 'media' => 'Media and press'];
+$src = (($_POST['src'] ?? '') === 'contact') ? 'contact' : 'work-with-us';
+$type = substr(preg_replace('/[^a-z]/', '', (string)($_POST['type'] ?? '')), 0, 20);
+if (!isset($types[$type])) $fail('type');
+
 // Spam checks: honeypot, too fast (under 3 s), too many links.
 if (!empty($_POST['website'])) $go($pre . '/thanks/?sent=enquiry&topic=' . $type);
 $t = (int)($_POST['t'] ?? 0);
@@ -37,11 +43,7 @@ $clean = function ($v, int $max = 300): string {
 };
 $oneLine = fn(string $v) => str_replace(["\r", "\n"], ' ', $v);
 
-$types = ['concert' => 'Bring a concert to Sydney', 'promotion' => 'Promote my event', 'sponsor' => 'Sponsor or partner', 'venue' => 'Venue or supplier',
-  'general' => 'General question', 'tickets' => 'Ticket help', 'volunteer' => 'Volunteer or crew', 'media' => 'Media and press'];
-$src = (($_POST['src'] ?? '') === 'contact') ? 'contact' : 'work-with-us';
-$type = $clean($_POST['type'] ?? '', 20);
-if (!isset($types[$type])) $fail('type');
+
 $name = $oneLine($clean($_POST['name'] ?? '', 120));
 $email = strtolower($oneLine($clean($_POST['email'] ?? '', 254)));
 $message = $clean($_POST['message'] ?? '', 4000);
