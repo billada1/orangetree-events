@@ -3,12 +3,15 @@
 import '@fontsource-variable/dosis';
 import '@fontsource-variable/manrope';
 import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import QRCode from 'qrcode';
 import Logo from './Logo.astro';
 import { events } from '../data/events';
 import { artists } from '../data/artists';
 import { photos } from '../data/photos';
-import { posterWall } from '../data/media';
+import { posters } from '../data/media';
+import nye2018Full from '../assets/brochure/nye-2018-full.jpg';
+import korayLive from '../assets/brochure/koray-avci-live.jpg';
 import type { Lang } from '../i18n/ui';
 interface Props { lang: Lang; kind: 'artists' | 'sponsors' }
 const { lang, kind } = Astro.props;
@@ -23,9 +26,16 @@ const stats = [
   [String(n('supported') + n('promotion') + n('fundraiser')), tr ? 'desteklediğimiz ve tanıttığımız gece' : 'nights supported and promoted'],
   ['10,000+', tr ? 'kişiye ulaşan topluluk ağları' : 'people across our community networks'],
 ];
-const visiting = artists.filter((a) => !a.local).map((a) => a.name);
+const leaveOut = ['mehmet-erdem', 'burak-bulut'];
+const visiting = artists.filter((a) => !a.local && !leaveOut.includes(a.slug)).map((a) => a.name);
 const local = artists.filter((a) => a.local).map((a) => a.name);
-const wall = posterWall().filter(({ e }) => e.kind === 'presented' || e.kind === 'nye' || e.kind === 'promotion').slice(0, 12);
+// Our own posters (Orange Tree logo on them), plus a live photo for Koray Avcı, who has no poster.
+const wall: { src: ImageMetadata; label?: string }[] = [
+  { src: posters['teoman-rockfest-2017'] }, { src: posters['ilyas-yalcintas-2018'] }, { src: posters['buray-2023'] }, { src: posters['kibariye-2018'] },
+  { src: korayLive, label: tr ? 'Koray Avcı · Unplugged · 25 Ocak 2018' : 'Koray Avcı · Unplugged · 25 Jan 2018' }, { src: posters['munasaka-2017'] },
+  { src: nye2018Full }, { src: posters['nye-2020'] }, { src: posters['nye-2022'] }, { src: posters['nye-2025'] },
+  { src: posters['turkish-vibes-2019'] }, { src: posters['meyhane-night-2025'] },
+].filter((w) => w.src);
 const venues = ['Max Watt’s', 'Liberty Hall', 'Metro Theatre', 'Enmore Theatre', 'The Star, Marquee', 'Seymour Centre', 'Bankstown Sports Club', 'The Renaissance, Lidcombe', 'Club Burwood RSL', 'Mary’s Underground'];
 const partners = ['ATAM', 'Culture Crew Australia', 'Turkuaz Nights', 'ITSA', 'Wish Events', 'Waves Sydney', 'Austolian Youth Association', 'Turkish Association NSW'];
 
@@ -149,7 +159,7 @@ const mid = kind === 'artists' ? photos.crowd : photos.nye2023floor;
   <section class="page dark">
     <p class="kick">{L.track}</p>
     <h2>{tr ? 'Afişlerimizden bir seçki' : 'A few of our posters'}</h2>
-    <ul class="wall">{wall.map(({ src }) => <li><Image src={src} alt="" widths={[420]} sizes="45mm" format="jpg" quality={76} /></li>)}</ul>
+    <ul class="wall">{wall.map(({ src, label }) => <li class:list={[{ ph: label }]}><Image src={src} alt="" widths={[420]} sizes="45mm" format="jpg" quality={76} />{label && <span class="wl">{label}</span>}</li>)}</ul>
     <div class="cols2 names">
       <div><h3>{L.visiting}</h3><p>{visiting.join(' · ')}</p></div>
       <div><h3>{L.local}</h3><p>{local.join(' · ')}</p></div>
@@ -242,7 +252,10 @@ const mid = kind === 'artists' ? photos.crowd : photos.nye2023floor;
 
   .wall { list-style: none; margin: 0 0 9mm; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.5mm; }
   .wall li { aspect-ratio: 4 / 5; border-radius: 3mm; overflow: hidden; background: #222; }
+  .wall li { position: relative; }
   .wall img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .wall .ph img { filter: grayscale(1) contrast(1.1); }
+  .wall .wl { position: absolute; left: 0; right: 0; bottom: 0; padding: 8mm 3mm 3mm; background: linear-gradient(transparent, rgba(13,11,10,.92)); font-family: 'Dosis Variable', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; font-size: 9pt; line-height: 1.15; color: #F5EFE8; }
   .names h3 { color: #FF8466; } .names p { font-size: 9.5pt; line-height: 1.6; margin: 0; color: #E2D8CE; }
 
   .svc { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
