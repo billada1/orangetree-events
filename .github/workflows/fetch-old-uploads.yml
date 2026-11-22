@@ -33,8 +33,9 @@ jobs:
           find old -type f -size -120k -delete
           find old -type f | wc -l
           du -sh old
+          tar -czf old-uploads.tgz old
       - uses: actions/upload-artifact@v4
         with:
           name: old-uploads
-          path: old
+          path: old-uploads.tgz
           retention-days: 2
