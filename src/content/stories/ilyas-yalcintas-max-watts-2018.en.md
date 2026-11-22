@@ -4,6 +4,8 @@ date: 2018-12-15
 event: ilyas-yalcintas-2018
 artist: ilyas-yalcintas
 hero: thankYou
+wide: queue
+photographer: "[photographer]"
 excerpt: "One night only, a full band, and a room that knew every word."
 timeline:
   - ["6:00pm", "Box office opens"]

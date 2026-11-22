@@ -2,7 +2,7 @@ import type { Lang } from '../i18n/ui';
 
 export interface StoryFrontmatter {
   title: string; date: string | Date; event?: string; artist?: string; hero: string;
-  excerpt: string; timeline?: [string, string][]; gallery?: string[];
+  excerpt: string; timeline?: [string, string][]; gallery?: string[]; wide?: string; photographer?: string;
 }
 export interface Story { slug: string; lang: Lang; fm: StoryFrontmatter; Content: any; }
 

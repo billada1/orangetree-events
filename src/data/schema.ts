@@ -14,7 +14,7 @@ export function eventJsonLd(e: EventItem, lang: Lang, site: URL) {
     location: { '@type': 'Place', name: e.venue || 'Sydney', address: { '@type': 'PostalAddress', streetAddress: e.address, addressLocality: 'Sydney', addressRegion: 'NSW', addressCountry: 'AU' } },
     ...(performers.length ? { performer: performers } : {}),
     organizer: e.kind === 'supported' ? undefined : { '@type': 'Organization', name: 'Orange Tree Events', url: site.href },
-    ...(e.tickets ? { offers: { '@type': 'Offer', url, price: e.tickets.from, priceCurrency: 'AUD', availability: 'https://schema.org/InStock' } } : {}),
+    ...(e.tickets ? { offers: { '@type': 'Offer', url: e.tickets.url ?? url, price: e.tickets.from, priceCurrency: 'AUD', availability: 'https://schema.org/InStock' } } : {}),
     description: e.note?.[lang],
   };
 }

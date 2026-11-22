@@ -27,3 +27,16 @@ export const posterWall = () =>
     .filter((e) => e.poster && posters[e.poster])
     .sort((a, b) => (b.date ?? b.year ?? '').localeCompare(a.date ?? a.year ?? ''))
     .map((e) => ({ e, src: posters[e.poster!] }));
+
+// Story images: a site photo key, or "poster:<event-slug>" for an event poster.
+export function storyImage(key: string, lang: 'en' | 'tr'): { src: ImageMetadata; alt: string; poster: boolean } {
+  if (key.startsWith('poster:')) {
+    const e = events.find((x) => x.poster === key.slice(7) || x.slug === key.slice(7));
+    const src = e?.poster ? posters[e.poster] : undefined;
+    if (!e || !src) throw new Error(`No poster for ${key}`);
+    return { src, alt: (lang === 'tr' ? 'Afiş: ' : 'Poster: ') + e.title[lang], poster: true };
+  }
+  const p = photos[key];
+  if (!p) throw new Error(`No photo ${key}`);
+  return { src: p.src, alt: p.alt[lang], poster: false };
+}

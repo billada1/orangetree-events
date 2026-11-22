@@ -46,6 +46,7 @@ export const artists: Artist[] = [
   { slug: 'kibariye', image: 'kibariye', name: 'Kibariye', role: { en: 'Singer', tr: 'Şarkıcı' } },
   { slug: 'haluk-levent', instagram: 'halukleventacil', name: 'Haluk Levent', role: { en: 'Rock singer', tr: 'Rock şarkıcısı' } },
   { slug: 'manga', name: 'maNga', role: { en: 'Rock band', tr: 'Rock grubu' } },
+  { slug: 'eypio', name: 'Eypio', role: { en: 'Rapper', tr: 'Rapçi' } },
   { slug: 'emre-aydin', name: 'Emre Aydın', role: singer },
   { slug: 'oguz-aksac', name: 'Oğuz Aksaç', role: musician },
   { slug: 'sevcan-orhan', instagram: 'sevcanorhan', name: 'Sevcan Orhan', role: { en: 'Folk singer', tr: 'Türkü sanatçısı' } },

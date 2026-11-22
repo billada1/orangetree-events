@@ -12,6 +12,7 @@ import { upcoming } from '../data/events';
 import { artists } from '../data/artists';
 import { photos } from '../data/photos';
 import { stories, isoDate } from '../data/stories';
+import { storyImage } from '../data/media';
 import { t, href, fmtDate, type Lang } from '../i18n/ui';
 import { eventJsonLd } from '../data/schema';
 interface Props { lang: Lang }
@@ -21,7 +22,7 @@ const up = upcoming();
 const featured = up.find((e) => e.tickets) ;
 const others = up.filter((e) => e !== featured);
 const marquee = artists.map((a) => a.name);
-const storyCards = stories.filter((x) => x.lang === lang || !stories.some((y) => y.slug === x.slug && y.lang === lang)).slice(0, 3);
+const storyCards = stories.filter((x) => x.lang === lang || !stories.some((y) => y.slug === x.slug && y.lang === lang)).sort((a, b) => isoDate(b.fm.date).localeCompare(isoDate(a.fm.date))).slice(0, 3);
 const moments = ['thankYou', 'nye2023floor', 'nye2025floor', 'crowd', 'queue', 'bwStage', 'nye2025stage'];
 const day = (iso: string) => new Date(iso + 'T12:00:00Z');
 const wk = (iso: string) => new Intl.DateTimeFormat(lang === 'tr' ? 'tr-TR' : 'en-AU', { weekday: 'short', timeZone: 'UTC' }).format(day(iso));
@@ -104,7 +105,7 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
     <div class="cards">
       {storyCards.map((x) => (
         <article class="card story reveal">
-          <Image src={photos[x.fm.hero].src} alt="" widths={[480, 720]} sizes="(max-width: 760px) 100vw, 33vw" />
+          <Image src={storyImage(x.fm.hero, lang).src} alt="" widths={[480, 720]} sizes="(max-width: 760px) 100vw, 33vw" />
           <div class="b">
             <p class="tag">{s.stories.fromArchive} · {fmtDate(isoDate(x.fm.date), lang)}</p>
             <h3><a href={href(lang, `/stories/${x.slug}/`)}>{x.fm.title}</a></h3>

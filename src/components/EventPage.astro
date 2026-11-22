@@ -62,7 +62,11 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
       {up && e.tickets && (
         <div class="tix">
           <p class="price">{e.tickets.label[lang]}</p>
-          <p class="muted small">{s.event.ticketsSoon}</p>
+          {e.tickets.url ? (<>
+            <a class="btn btn-primary book" href={e.tickets.url} rel="noopener">{s.event.book} <span aria-hidden="true">↗</span></a>
+            <p class="muted small">{s.event.bookVia.replace('{via}', e.tickets.via ?? '')}</p>
+            <p class="muted small">{s.event.orNotify}</p>
+          </>) : <p class="muted small">{s.event.ticketsSoon}</p>}
           <form action="/api/subscribe/" method="post" class="f">
             <label class="sr-only" for="ev-email">{s.on.email}</label>
             <input id="ev-email" class="field" type="email" name="email" autocomplete="email" required placeholder={s.on.emailPh} />
@@ -75,6 +79,7 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
   </div>
 </Base>
 <style>
+  .book { display: flex; justify-content: center; width: 100%; margin: 6px 0 10px; }
   .top { position: relative; min-height: 560px; height: 70vh; max-height: 760px; display: flex; align-items: flex-end; overflow: hidden; }
   .top :global(.bg) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,11,10,.55), rgba(13,11,10,.15) 35%, rgba(13,11,10,.95)); }

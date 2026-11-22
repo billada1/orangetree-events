@@ -2,7 +2,7 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import { storySlugs, getStory, isoDate } from '../data/stories';
-import { photos } from '../data/photos';
+import { storyImage } from '../data/media';
 import { t, href, fmtDate, type Lang } from '../i18n/ui';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -15,7 +15,7 @@ const list = storySlugs().map((slug) => ({ slug, st: getStory(slug, lang) })).so
     <div class="cards">
       {list.map(({ slug, st }) => (
         <article class="card">
-          <Image src={photos[st.fm.hero].src} alt="" widths={[480, 720]} sizes="(max-width: 760px) 100vw, 33vw" />
+          <Image src={storyImage(st.fm.hero, lang).src} alt="" widths={[480, 720]} sizes="(max-width: 760px) 100vw, 33vw" />
           <div class="b"><p class="eyebrow">{fmtDate(isoDate(st.fm.date), lang)}</p><h2><a href={href(lang, `/stories/${slug}/`)}>{st.fm.title}</a></h2><p class="muted">{st.fm.excerpt}</p></div>
         </article>
       ))}
