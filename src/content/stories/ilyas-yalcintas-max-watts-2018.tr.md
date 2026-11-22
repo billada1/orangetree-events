@@ -5,7 +5,6 @@ event: ilyas-yalcintas-2018
 artist: ilyas-yalcintas
 hero: thankYou
 wide: queue
-photographer: "[photographer]"
 excerpt: "Tek gece, tam kadro bir grup ve her şarkıya eşlik eden bir salon."
 timeline:
   - ["18.00", "Gişe açılıyor"]
