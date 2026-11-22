@@ -16,7 +16,7 @@ const groups = [
   { id: 'visiting', h: s.artistsUi.visiting, p: '', list: visiting },
   { id: 'local', h: s.artistsUi.local, p: s.artistsUi.localP, list: local },
 ];
-const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('');
+const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(Boolean).slice(0, 2).map((w) => w[0].toLocaleUpperCase('tr')).join('');
 ---
 <Base lang={lang} title={s.nav.artists} overlayHeader={false}>
   <section class="wrap pg">
@@ -35,7 +35,7 @@ const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(
                 <a class="card art" href={href(lang, `/artists/${a.slug}/`)}>
                   <span class="pic">
                     {img
-                      ? <Image src={img.src} alt="" width={420} height={420} fit="cover" position={img.poster ? 'top' : 'center'} />
+                      ? <Image src={img.src} alt="" width={420} height={420} fit="cover" position="top" />
                       : <span class="mono" aria-hidden="true">{initials(a.name)}</span>}
                   </span>
                   <span class="meta">
@@ -58,10 +58,11 @@ const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(
   .grid { list-style: none; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
   .art { display: flex; flex-direction: column; overflow: hidden; height: 100%; transition: transform .3s var(--ease), border-color .3s; }
   .art:hover { transform: translateY(-4px); border-color: var(--accent); color: inherit; }
-  .pic { aspect-ratio: 1; overflow: hidden; background: radial-gradient(circle at 30% 20%, #3A2018, #14110F 70%); display: grid; place-items: center; }
-  .pic :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease); }
-  .art:hover .pic :global(img) { transform: scale(1.06); }
-  .mono { font-family: var(--display); font-weight: 800; font-size: 56px; color: var(--accent); letter-spacing: .02em; }
+  .pic { position: relative; aspect-ratio: 1; overflow: hidden; background: radial-gradient(120% 100% at 20% 0%, #4A2416, #1A1311 55%, #120F0D); display: grid; place-items: center; }
+  .pic:has(.mono)::before { content: ''; position: absolute; right: -18%; bottom: -14%; width: 70%; aspect-ratio: 490 / 566; background: url('/emblem.svg') no-repeat center / contain; opacity: .08; filter: grayscale(1) brightness(2); }
+  .pic :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; transition: transform .9s cubic-bezier(.22,1,.36,1); }
+  .art:hover .pic :global(img) { transform: scale(1.04); }
+  .mono { position: relative; font-family: var(--display); font-weight: 800; font-size: 64px; letter-spacing: .04em; color: transparent; background: linear-gradient(160deg, #FFB199, var(--accent) 60%, #C2401F); -webkit-background-clip: text; background-clip: text; }
   .meta { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 4px; }
   .n { font-family: var(--display); font-weight: 700; font-size: 18px; }
   .meta .muted { font-size: 14px; }

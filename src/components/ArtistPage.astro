@@ -20,6 +20,8 @@ const firstYear = shows.map((e) => key(e).slice(0, 4)).filter(Boolean).sort()[0]
 const img = artistImage(a);
 const ph = img && !img.poster ? img.src : null;
 const posterImg = img?.poster ? img.src : null;
+// Press photos are often under 1100px wide: show them crisp in a frame over a soft blur of the same photo instead of stretching them full-bleed.
+const framed = !!ph && ph.width < 1100;
 
 // Gallery: own photos first, then every poster from their shows.
 type G = { src: ImageMetadata; alt: string; poster: boolean };
@@ -39,7 +41,7 @@ const creditUrl = a.credit ? `https://commons.wikimedia.org/wiki/File:${encodeUR
 const kindLabel = (k: string) => (s.kinds as Record<string, string>)[k] ?? '';
 const others = artists.filter((x) => x.slug !== a.slug && x.local === a.local);
 const more = [...others.filter((x) => artistImage(x)), ...others.filter((x) => !artistImage(x))].slice(0, 10);
-const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('');
+const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(Boolean).slice(0, 2).map((w) => w[0].toLocaleUpperCase('tr')).join('');
 
 const sections = [
   a.bio && { id: 'about', label: s.artist.about },
@@ -63,7 +65,8 @@ const ld = {
 ---
 <Base lang={lang} title={a.name} description={desc} jsonLd={ld} overlayHeader={!!(ph || posterImg)} noindex={!a.bio && shows.length === 0}>
   <section class:list={['top', { plain: !ph && !posterImg }]}>
-    {ph && <Image src={ph} alt={a.name} widths={[640, 1024, 1600]} sizes="100vw" class="bg" loading="eager" fetchpriority="high" />}
+    {ph && !framed && <Image src={ph} alt={a.name} widths={[640, 1024, 1600]} sizes="100vw" class="bg" loading="eager" fetchpriority="high" />}
+    {framed && <Image src={ph!} alt="" widths={[320]} sizes="100vw" class="bg blur" loading="eager" />}
     {posterImg && <Image src={posterImg} alt="" widths={[480, 960]} sizes="100vw" class="bg blur" loading="eager" />}
     {(ph || posterImg) && <div class="shade" aria-hidden="true"></div>}
     <div class="wrap in">
@@ -88,6 +91,7 @@ const ld = {
           </span>
         </div>
       </div>
+      {framed && <figure class="portrait"><Image src={ph!} alt={a.name} widths={[360, 640]} sizes="(max-width: 900px) 70vw, 360px" loading="eager" fetchpriority="high" /></figure>}
       {posterImg && <figure class="poster"><Image src={posterImg} alt={`${a.name}: ${lang === 'tr' ? 'afiş' : 'poster'}`} widths={[360, 540]} sizes="(max-width: 900px) 60vw, 320px" loading="eager" /></figure>}
     </div>
   </section>
@@ -104,11 +108,12 @@ const ld = {
         <div>
           <h2 id="ab-h" class="h3">{s.artist.about}</h2>
           {a.bio[lang].map((p, i) => <p class:list={['lead', { first: i === 0 }]}>{p}</p>)}
-          {(wikiUrl || a.credit) && (
+          {(wikiUrl || a.credit || a.official) && (
             <p class="src">
               {wikiUrl && <>{P.source}: <a href={wikiUrl} rel="noopener" target="_blank">Wikipedia</a></>}
               {wikiUrl && a.credit && ' · '}
               {a.credit && <>{P.photoBy}: <a href={creditUrl!} rel="noopener" target="_blank">{a.credit.by}</a>, {a.credit.licence}</>}
+              {a.official && !a.credit && <>{wikiUrl && ' · '}{lang === 'tr' ? 'Fotoğraf: sanatçının resmî basın fotoğrafı' : 'Photo: official artist press photo'}</>}
             </p>
           )}
         </div>
@@ -284,6 +289,9 @@ const ld = {
   .soc a { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); transition: background .2s, transform .2s; }
   .soc a:hover, .soc a:focus-visible { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
   svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; } svg .f { fill: currentColor; stroke: none; }
+  .portrait { flex: 0 0 auto; width: min(360px, 32vw); margin: 0; animation: nm 1.6s cubic-bezier(.22,1,.36,1) .15s both; }
+  .portrait :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 20%; border-radius: 22px; box-shadow: 0 40px 100px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08); }
+  @media (max-width: 760px) { .in:has(.portrait) { flex-direction: column-reverse; align-items: flex-start; } .portrait { width: min(300px, 70vw); } }
   .poster { flex: 0 0 auto; width: min(320px, 30vw); margin: 0; transform: rotate(-2deg); }
   .poster :global(img) { display: block; width: auto; max-width: 100%; max-height: min(460px, 55vh); border-radius: 14px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
 

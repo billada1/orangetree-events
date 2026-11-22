@@ -5,6 +5,7 @@ export interface Artist {
   bio?: { en: string[]; tr: string[] };
   facts?: { label: { en: string; tr: string }; value: string }[];
   links?: { label: string; url: string }[];
+  official?: boolean;
   image?: string; // key in photos map, or a file in src/assets/artists (without .jpg)
   local?: boolean; // Sydney-based act
   instagram?: string; // handle without @
@@ -23,7 +24,7 @@ import { extra } from './artist-extra';
 
 const list: Artist[] = [
   {
-    slug: 'ilyas-yalcintas', instagram: 'ilyasyalcintas', name: 'İlyas Yalçıntaş', role: singer, image: 'artistCrowd',
+    slug: 'ilyas-yalcintas', instagram: 'ilyasyalcintas', name: 'İlyas Yalçıntaş', role: singer, image: 'ilyas-yalcintas',
     gallery: ['band', 'guitar', 'bwStage', 'crowd', 'stageWide'],
     bio: {
       en: [
@@ -48,22 +49,22 @@ const list: Artist[] = [
   { slug: 'emrah-karaca', image: 'emrah-karaca', name: 'Emrah Karaca', role: { en: 'Lead singer, Moğollar', tr: 'Solist, Moğollar' } },
   { slug: 'tibet-agirtan', image: 'tibet-agirtan', name: 'Tibet Ağırtan', role: { en: 'Rock musician, Mavi Sakal', tr: 'Rock müzisyeni, Mavi Sakal' } },
   { slug: 'yilmaz-erdogan', image: 'yilmaz-erdogan', name: 'Yılmaz Erdoğan', role: { en: 'Actor, poet and comedian', tr: 'Oyuncu, şair, komedyen' } },
-  { slug: 'koray-avci', image: 'koray-avci-2', name: 'Koray Avcı', role: singer },
+  { slug: 'koray-avci', image: 'koray-avci', name: 'Koray Avcı', role: singer },
   { slug: 'kibariye', image: 'kibariye', name: 'Kibariye', role: { en: 'Singer', tr: 'Şarkıcı' } },
   { slug: 'haluk-levent', image: 'haluk-levent', instagram: 'halukleventacil', name: 'Haluk Levent', role: { en: 'Rock singer', tr: 'Rock şarkıcısı' } },
   { slug: 'manga', name: 'maNga', role: { en: 'Rock band', tr: 'Rock grubu' } },
   { slug: 'eypio', image: 'eypio', name: 'Eypio', role: { en: 'Rapper', tr: 'Rapçi' } },
-  { slug: 'emre-aydin', name: 'Emre Aydın', role: singer },
-  { slug: 'oguz-aksac', name: 'Oğuz Aksaç', role: musician },
-  { slug: 'sevcan-orhan', instagram: 'sevcanorhan', name: 'Sevcan Orhan', role: { en: 'Folk singer', tr: 'Türkü sanatçısı' } },
+  { slug: 'emre-aydin', image: 'emre-aydin', name: 'Emre Aydın', role: singer },
+  { slug: 'oguz-aksac', image: 'oguz-aksac', name: 'Oğuz Aksaç', role: musician },
+  { slug: 'sevcan-orhan', image: 'sevcan-orhan', instagram: 'sevcanorhan', name: 'Sevcan Orhan', role: { en: 'Folk singer', tr: 'Türkü sanatçısı' } },
   { slug: 'erkan-kolcak-kostendil', instagram: 'erkankeka', name: 'Erkan Kolçak Köstendil', role: { en: 'Actor, known as Vartolu in Çukur', tr: 'Oyuncu, Çukur’un Vartolu’su' } },
-  { slug: 'gulben-ergen', instagram: 'gulben123', name: 'Gülben Ergen', role: { en: 'Singer', tr: 'Şarkıcı' } },
+  { slug: 'gulben-ergen', image: 'gulben-ergen', instagram: 'gulben123', name: 'Gülben Ergen', role: { en: 'Singer', tr: 'Şarkıcı' } },
   { slug: 'isin-karaca', image: 'isin-karaca', instagram: 'isinkaraca', name: 'Işın Karaca', role: { en: 'Singer', tr: 'Şarkıcı' } },
-  { slug: 'hakan-altun', instagram: 'hakanaltunmusic', name: 'Hakan Altun', role: { en: 'Singer', tr: 'Şarkıcı' } },
+  { slug: 'hakan-altun', image: 'hakan-altun', instagram: 'hakanaltunmusic', name: 'Hakan Altun', role: { en: 'Singer', tr: 'Şarkıcı' } },
   // Sydney acts
   { slug: 'nida-rock', name: 'Nida Rock', local: true, instagram: 'nida_rock', role: { en: 'Sydney band: meyhane songs, Anatolian rock and Turkish classics', tr: 'Sydney grubu: meyhane şarkıları, Anadolu rock ve Türkçe klasikler' } },
   { slug: 'levent-ozkan', name: 'Levent & Özkan', local: true, instagram: 'leventartn', role: { en: 'Sydney duo', tr: 'Sydney’li ikili' } },
-  { slug: 'muharrem-aslan', name: 'Muharrem Aslan', local: true, instagram: 'muharremaslanofficial', role: { en: 'Musician and music therapist: Sounds of Anatolia', tr: 'Müzisyen ve müzik terapisti: Anadolu’nun Sesleri' } },
+  { slug: 'muharrem-aslan', image: 'muharrem-aslan', name: 'Muharrem Aslan', local: true, instagram: 'muharremaslanofficial', role: { en: 'Musician and music therapist: Sounds of Anatolia', tr: 'Müzisyen ve müzik terapisti: Anadolu’nun Sesleri' } },
   { slug: 'dj-ilka', name: 'DJ Ilka', local: true, instagram: 'dj.ilka', role: { en: 'DJ, Turkish Vibes resident', tr: 'DJ, Turkish Vibes’ın DJ’i' } },
   { slug: 'dj-ada', name: 'DJ Göksel Ada', local: true, instagram: 'djada_goksel', role: { en: 'DJ, Turkish Vibes resident', tr: 'DJ, Turkish Vibes’ın DJ’i' } },
   { slug: 'dj-gurbz', name: 'DJ Gurbz', local: true, instagram: 'djgurbuzaslan', role: { en: 'DJ', tr: 'DJ' } },
@@ -71,10 +72,10 @@ const list: Artist[] = [
   { slug: 'ekol', name: 'EKOL', local: true, role: { en: 'Sydney Turkish band', tr: 'Sydney’li Türk grubu' } },
   { slug: 'kintala', name: 'KINTALA', local: true, role: { en: 'Sydney Turkish-Balkan band', tr: 'Sydney’li Türk-Balkan grubu' } },
   { slug: 'funkatolia', name: 'Funkatolia', local: true, role: { en: 'Sydney Turkish funk band', tr: 'Sydney’li Türk funk grubu' } },
-  { slug: 'selcuk-balci', name: 'Selçuk Balcı', instagram: 'selcukbalcii', role: { en: 'Black Sea folk singer, kemençe', tr: 'Karadeniz türküleri, kemençe' } },
-  { slug: 'baris-komurcuoglu', name: 'Barış Kömürcüoğlu', instagram: 'bariskomurcuogluofficial', role: { en: 'Singer', tr: 'Şarkıcı' } },
-  { slug: 'mehmet-erdem', name: 'Mehmet Erdem', instagram: 'mehmetmusic', role: singer },
-  { slug: 'burak-bulut', name: 'Burak Bulut', instagram: 'burakkbulut23', role: singer },
+  { slug: 'selcuk-balci', image: 'selcuk-balci', name: 'Selçuk Balcı', instagram: 'selcukbalcii', role: { en: 'Black Sea folk singer, kemençe', tr: 'Karadeniz türküleri, kemençe' } },
+  { slug: 'baris-komurcuoglu', image: 'baris-komurcuoglu', name: 'Barış Kömürcüoğlu', instagram: 'bariskomurcuogluofficial', role: { en: 'Singer', tr: 'Şarkıcı' } },
+  { slug: 'mehmet-erdem', image: 'mehmet-erdem', name: 'Mehmet Erdem', instagram: 'mehmetmusic', role: singer },
+  { slug: 'burak-bulut', image: 'burak-bulut', name: 'Burak Bulut', instagram: 'burakkbulut23', role: singer },
   { slug: 'serhan-ilbeyi', name: 'Serhan İlbeyi', instagram: 'serhanilbeyi', role: { en: 'Singer', tr: 'Şarkıcı' } },
   { slug: 'tahir-bilgic', instagram: 'tahircomedian', name: 'Tahir Bilgiç', role: comedian },
 ];

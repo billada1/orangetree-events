@@ -11,14 +11,10 @@ const artistImgs = load(import.meta.glob<{ default: ImageMetadata }>('../assets/
 
 export const posterFor = (e: EventItem): ImageMetadata | undefined => (e.poster ? posters[e.poster] : undefined);
 
-// Artist picture: their own photo, else a site photo, else the newest poster they appear on.
+// Artist picture: a clean photo of the artist only (never a poster). Without one, pages show a designed monogram.
 export function artistImage(a: Artist): { src: ImageMetadata; poster: boolean } | undefined {
   if (a.image && artistImgs[a.image]) return { src: artistImgs[a.image], poster: false };
-  if (a.image && photos[a.image]) return { src: photos[a.image].src, poster: false };
-  const withPoster = events
-    .filter((e) => e.artists?.includes(a.slug) && e.poster && posters[e.poster])
-    .sort((x, y) => (y.date ?? '').localeCompare(x.date ?? ''));
-  return withPoster[0] ? { src: posters[withPoster[0].poster!], poster: true } : undefined;
+  return undefined;
 }
 
 // Every poster with its event, newest first, for the poster wall.
