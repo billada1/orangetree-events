@@ -1,0 +1,39 @@
+name: Fetch candidate images
+
+# Helper: downloads candidate photos (Wikimedia Commons files listed in .github/fetch/commons.txt,
+# and direct URLs in .github/fetch/urls.txt) into a short-lived artifact for review. Nothing is published.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with: { sparse-checkout: .github/fetch }
+      - name: Download
+        run: |
+          UA="OrangeTreeEventsSite/1.0 (https://orangetree.events; info@orangetree.events)"
+          mkdir -p out
+          i=0
+          if [ -f .github/fetch/commons.txt ]; then
+            while IFS='|' read -r slug name; do
+              [ -z "$slug" ] && continue; i=$((i+1))
+              enc=$(python3 -c 'import sys,urllib.parse;print(urllib.parse.quote(sys.argv[1].replace(" ","_")))' "$name")
+              curl -sL -A "$UA" --max-time 60 -o "out/${slug}__c$(printf %02d $i).jpg" "https://commons.wikimedia.org/wiki/Special:FilePath/${enc}?width=1600" || true
+              sleep 1
+            done < .github/fetch/commons.txt
+          fi
+          if [ -f .github/fetch/urls.txt ]; then
+            while IFS='|' read -r slug url; do
+              [ -z "$slug" ] && continue; i=$((i+1))
+              curl -sL -A "Mozilla/5.0" --max-time 60 -o "out/${slug}__u$(printf %02d $i).img" "$url" || true
+            done < .github/fetch/urls.txt
+          fi
+          ls -la out | head -80
+      - uses: actions/upload-artifact@v4
+        with: { name: candidates, path: out, retention-days: 2 }
