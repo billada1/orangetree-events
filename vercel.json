@@ -117,16 +117,6 @@
       "permanent": true
     },
     {
-      "source": "/contact/",
-      "destination": "/#partner",
-      "permanent": true
-    },
-    {
-      "source": "/contact",
-      "destination": "/#partner",
-      "permanent": true
-    },
-    {
       "source": "/event/",
       "destination": "/events/",
       "permanent": true
@@ -488,32 +478,32 @@
     },
     {
       "source": "/sponsors/",
-      "destination": "/#partner",
+      "destination": "/work-with-us/#sponsor",
       "permanent": true
     },
     {
       "source": "/sponsors",
-      "destination": "/#partner",
+      "destination": "/work-with-us/#sponsor",
       "permanent": true
     },
     {
       "source": "/sponsors/firebrandbbq/",
-      "destination": "/#partner",
+      "destination": "/work-with-us/#sponsor",
       "permanent": true
     },
     {
       "source": "/sponsors/firebrandbbq",
-      "destination": "/#partner",
+      "destination": "/work-with-us/#sponsor",
       "permanent": true
     },
     {
       "source": "/sponsors/kekilli-jewellery/",
-      "destination": "/#partner",
+      "destination": "/work-with-us/#sponsor",
       "permanent": true
     },
     {
       "source": "/sponsors/kekilli-jewellery",
-      "destination": "/#partner",
+      "destination": "/work-with-us/#sponsor",
       "permanent": true
     },
     {
