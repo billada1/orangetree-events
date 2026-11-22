@@ -50,14 +50,14 @@ jobs:
           HOST: ${{ vars.WPX_SFTP_HOST }}
           PORT: ${{ vars.WPX_SFTP_PORT || '2222' }}
           USER: ${{ vars.WPX_SFTP_USER }}
-          PASS: ${{ secrets.WPX_SFTP_PASSWORD }}
+          LFTP_PASSWORD: ${{ secrets.WPX_SFTP_PASSWORD }}
           WEBROOT: ${{ vars.WPX_WEBROOT }} # e.g. /new.orangetree.events/public_html (staging) or /orangetree.events/public_html
         run: |
           test -n "$HOST" && test -n "$USER" && test -n "$WEBROOT" || { echo "WPX secrets or WPX_WEBROOT not set"; exit 1; }
           sudo apt-get -qq update && sudo apt-get -qq install -y lftp
           lftp -e "
             set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20;
-            open -u \"$USER\",\"$PASS\" -p $PORT sftp://$HOST;
+            open --env-password -u \"$USER\" -p $PORT sftp://$HOST;
             put private/ot-config.php -o \"$(dirname "$WEBROOT")/ot-config.php\";
             mirror -R --delete --parallel=4 --exclude-glob .well-known/ --exclude-glob .usermin/ --exclude-glob .tmb/ --exclude-glob .ftpquota --exclude-glob google*.html --exclude-glob _wp-archive-*/ --exclude-glob wp-*/ --exclude-glob wp-*.php dist/ \"$WEBROOT\";
             bye"
