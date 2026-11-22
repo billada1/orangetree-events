@@ -17,6 +17,7 @@ const groups = [
   { id: 'local', h: s.artistsUi.local, p: s.artistsUi.localP, list: local },
 ];
 const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(Boolean).slice(0, 2).map((w) => w[0].toLocaleUpperCase('tr')).join('');
+let shown = 0; // first row loads eagerly for a fast Largest Contentful Paint
 ---
 <Base lang={lang} title={s.nav.artists} overlayHeader={false}>
   <section class="wrap pg">
@@ -29,13 +30,14 @@ const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(
         <ul class="grid">
           {g.list.map((a) => {
             const img = artistImage(a);
+            const n = shown++;
             const y = years(a.slug);
             return (
               <li>
                 <a class="art" href={href(lang, `/artists/${a.slug}/`)}>
                   <span class:list={['pic', { has: !!img }]}>
                     {img
-                      ? <Image src={img.src} alt="" widths={[320, 480, 720]} sizes="(max-width: 520px) 50vw, (max-width: 1100px) 33vw, 260px" class={`fp-${a.slug}`} />
+                      ? <Image src={img.src} alt="" widths={[320, 480, 720]} sizes="(max-width: 520px) 50vw, (max-width: 1100px) 33vw, 260px" class={`fp-${a.slug}`} loading={n < 5 ? 'eager' : 'lazy'} fetchpriority={n < 2 ? 'high' : 'auto'} />
                       : <span class="mono" aria-hidden="true">{initials(a.name)}</span>}
                   </span>
                   <span class="meta">

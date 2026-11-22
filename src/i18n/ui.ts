@@ -59,7 +59,10 @@ export const t = (lang: Lang) => ui[lang] as unknown as UI;
 
 // Path helpers: English lives at the root, Turkish under /tr.
 export const href = (lang: Lang, path: string) => (lang === 'tr' ? '/tr' + (path === '/' ? '/' : path) : path);
-export const otherLangPath = (lang: Lang, path: string) => (lang === 'tr' ? path.replace(/^\/tr(?=\/|$)/, '') || '/' : '/tr' + path);
+export const otherLangPath = (lang: Lang, path: string) => {
+  if (/^\/(tr\/)?404(\.html|\/)?$/.test(path)) return lang === 'tr' ? '/' : '/tr/'; // error page: switch to the other home page
+  return lang === 'tr' ? path.replace(/^\/tr(?=\/|$)/, '') || '/' : '/tr' + path;
+};
 
 export function fmtDate(iso: string, lang: Lang, opts: { weekday?: boolean; year?: boolean } = {}) {
   const d = new Date(iso + 'T12:00:00+11:00');
