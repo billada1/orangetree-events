@@ -19,6 +19,9 @@ const formed: L = { en: 'Formed', tr: 'Kuruluş' };
 const also: L = { en: 'Also', tr: 'Ayrıca' };
 
 export const extra: Record<string, ArtistExtra> = {
+  'mahmut-orhan': { official: true, spotify: '3t8WiyalpvnB9AObcMufiE' },
+  'ugur-aslan': { spotify: '1N3YNAiksTC8Cal5dKsqyV' },
+  'ekin-uzunlar': { official: true, spotify: '35ngoeYRyOveM0rPvahkot' },
   'baris-komurcuoglu': { official: true },
   'muharrem-aslan': { credit: { by: 'Dreamboy3143', licence: 'CC BY-SA 4.0', file: 'Muharrem Aslan.jpge.jpg' } },
   'ilyas-yalcintas': { official: true, spotify: '2ekGsQEkeMtYFA16Jjes2M', youtube: 'UCkIBEEidtlqDC-Le3y7qW5w', wiki: { en: 'İlyas Yalçıntaş', tr: 'İlyas Yalçıntaş' } },

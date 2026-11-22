@@ -55,7 +55,7 @@ export const events: EventItem[] = [
   {
     slug: 'mahmut-orhan-zuri-2026', poster: 'mahmut-orhan-zuri-2026', kind: 'supported', date: '2026-12-19',
     title: { en: 'Mahmut Orhan at ZURI Festival Sydney', tr: 'Mahmut Orhan, ZURI Festival Sydney' },
-    venue: 'White Bay Power Station, Rozelle',
+    venue: 'White Bay Power Station, Rozelle', artists: ['mahmut-orhan'],
     note: { en: 'With Francis Mercier, Marten Lou and more.', tr: 'Francis Mercier, Marten Lou ve daha fazlası ile.' },
   },
   {
@@ -65,10 +65,10 @@ export const events: EventItem[] = [
     note: { en: 'Live Turkish music with special guests Özgür and Kübra.', tr: 'Özel konuklar Özgür ve Kübra ile canlı Türkçe müzik.' },
   },
   { slug: 'muharrem-aslan-2026', poster: 'muharrem-aslan-2026', kind: 'supported', date: '2026-09-13', title: { en: 'Sounds of Anatolia: Muharrem Aslan', tr: 'Anadolu’nun Sesleri: Muharrem Aslan' }, venue: 'The Living Room Theatre, 21 Shepherd St, Marrickville', artists: ['muharrem-aslan'] },
-  { slug: 'afara-ugur-aslan-2026', poster: 'afara-ugur-aslan-2026', kind: 'supported', date: '2026-05-29', title: { en: 'AFARA: an Arabesque musical with Uğur Aslan', tr: 'AFARA: Uğur Aslan ile bir arabesk müzikal' }, venue: 'The Concourse, Chatswood' },
+  { slug: 'afara-ugur-aslan-2026', poster: 'afara-ugur-aslan-2026', kind: 'supported', date: '2026-05-29', title: { en: 'AFARA: an Arabesque musical with Uğur Aslan', tr: 'AFARA: Uğur Aslan ile bir arabesk müzikal' }, venue: 'The Concourse, Chatswood', artists: ['ugur-aslan'] },
   { slug: 'community-iftar-2026', kind: 'supported', date: '2026-03-14', title: { en: 'Community Iftar', tr: 'Topluluk iftarı' }, venue: 'Greystanes Community Centre' },
   { slug: 'meyhane-night-2025', poster: 'meyhane-night-2025', kind: 'presented', date: '2025-11-01', title: { en: 'Meyhane Gecesi: Nida Makamında', tr: 'Meyhane Gecesi: Nida Makamında' }, venue: 'Sapphire Function Centre, Auburn', partner: 'ATAM', soldOut: true, artists: ['nida-rock'], note: { en: 'A meyhane night of meze, music and friends, with live music by Nida Rock.', tr: 'Meze, müzik ve dostlarla bir meyhane gecesi; canlı müzik Nida Rock.' } },
-  { slug: 'ekin-uzunlar-2025', poster: 'ekin-uzunlar-2025', kind: 'supported', date: '2025-11-14', title: { en: 'Ekin Uzunlar: King of the North, remembering Volkan Konak', tr: 'Ekin Uzunlar: Volkan Konak anısına' }, venue: 'Bankstown Sports Club', partner: 'Wish Events' },
+  { slug: 'ekin-uzunlar-2025', poster: 'ekin-uzunlar-2025', kind: 'supported', date: '2025-11-14', title: { en: 'Ekin Uzunlar: King of the North, remembering Volkan Konak', tr: 'Ekin Uzunlar: Volkan Konak anısına' }, venue: 'Bankstown Sports Club', artists: ['ekin-uzunlar'], partner: 'Wish Events' },
   { slug: 'buray-2025', kind: 'presented', date: '2025-03-28', title: { en: 'Buray: Live Concert in Sydney', tr: 'Buray: Sydney Konseri' }, venue: 'Mary’s Underground, Circular Quay', partner: 'Culture Crew Australia', co: true, artists: ['buray'] },
   { slug: 'nye-2025', poster: 'nye-2025', kind: 'nye', date: '2024-12-31', title: nye(2025), venue: '', partner: 'ATAM', confirm: true, image: 'nye2025floor' },
   { slug: 'buray-2023', story: 'buray-liberty-hall-2023', poster: 'buray-2023', kind: 'presented', date: '2023-11-12', doors: '18:00', title: { en: 'Buray: Live in Sydney', tr: 'Buray: Sydney Konseri' }, venue: 'Liberty Hall, Entertainment Quarter, Moore Park', partner: 'Culture Crew Australia', co: true, artists: ['buray'] },

@@ -65,6 +65,9 @@ const list: Artist[] = [
   // Sydney acts
   { slug: 'nida-rock', image: 'nida-rock', name: 'Nida Rock', local: true, instagram: 'nida_rock', role: { en: 'Sydney band: meyhane songs, Anatolian rock and Turkish classics', tr: 'Sydney grubu: meyhane şarkıları, Anadolu rock ve Türkçe klasikler' } },
   { slug: 'levent-ozkan', image: 'levent-ozkan', name: 'Levent & Özkan', local: true, instagram: 'leventartn', role: { en: 'Sydney duo', tr: 'Sydney’li ikili' } },
+  { slug: 'mahmut-orhan', image: 'mahmut-orhan', name: 'Mahmut Orhan', role: { en: 'DJ and producer', tr: 'DJ ve prodüktör' } },
+  { slug: 'ugur-aslan', image: 'ugur-aslan', name: 'Uğur Aslan', role: { en: 'Singer and actor', tr: 'Şarkıcı ve oyuncu' } },
+  { slug: 'ekin-uzunlar', image: 'ekin-uzunlar', name: 'Ekin Uzunlar', role: { en: 'Black Sea folk singer and kemençe player', tr: 'Karadeniz müziği sanatçısı, kemençe' } },
   { slug: 'muharrem-aslan', image: 'muharrem-aslan', name: 'Muharrem Aslan', local: true, instagram: 'muharremaslanofficial', role: { en: 'Musician and music therapist: Sounds of Anatolia', tr: 'Müzisyen ve müzik terapisti: Anadolu’nun Sesleri' } },
   { slug: 'dj-ilka', image: 'dj-ilka', name: 'DJ Ilka', local: true, instagram: 'dj.ilka', role: { en: 'DJ, Turkish Vibes resident', tr: 'DJ, Turkish Vibes’ın DJ’i' } },
   { slug: 'dj-ada', image: 'dj-ada', name: 'DJ Göksel Ada', local: true, instagram: 'djada_goksel', role: { en: 'DJ, Turkish Vibes resident', tr: 'DJ, Turkish Vibes’ın DJ’i' } },
