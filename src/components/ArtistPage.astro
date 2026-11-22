@@ -22,6 +22,7 @@ const ph = img && !img.poster ? img.src : null;
 const posterImg = img?.poster ? img.src : null;
 // Press photos are often under 1100px wide: show them crisp in a frame over a soft blur of the same photo instead of stretching them full-bleed.
 const framed = !!ph && ph.width < 1100;
+const wide = !!ph && ph.width / ph.height > 1.3;
 
 // Gallery: own photos first, then every poster from their shows.
 type G = { src: ImageMetadata; alt: string; poster: boolean };
@@ -65,7 +66,7 @@ const ld = {
 ---
 <Base lang={lang} title={a.name} description={desc} jsonLd={ld} overlayHeader={!!(ph || posterImg)} noindex={!a.bio && shows.length === 0}>
   <section class:list={['top', { plain: !ph && !posterImg }]}>
-    {ph && !framed && <Image src={ph} alt={a.name} widths={[640, 1024, 1600]} sizes="100vw" class="bg" loading="eager" fetchpriority="high" />}
+    {ph && !framed && <Image src={ph} alt={a.name} widths={[640, 1024, 1600]} sizes="100vw" class={`bg fp-${a.slug}`} loading="eager" fetchpriority="high" />}
     {framed && <Image src={ph!} alt="" widths={[320]} sizes="100vw" class="bg blur" loading="eager" />}
     {posterImg && <Image src={posterImg} alt="" widths={[480, 960]} sizes="100vw" class="bg blur" loading="eager" />}
     {(ph || posterImg) && <div class="shade" aria-hidden="true"></div>}
@@ -91,7 +92,7 @@ const ld = {
           </span>
         </div>
       </div>
-      {framed && <figure class="portrait"><Image src={ph!} alt={a.name} widths={[360, 640]} sizes="(max-width: 900px) 70vw, 360px" loading="eager" fetchpriority="high" /></figure>}
+      {framed && <figure class:list={['portrait', { wide }]}><Image src={ph!} alt={a.name} class={`fp-${a.slug}`} widths={[360, 640]} sizes="(max-width: 900px) 70vw, 360px" loading="eager" fetchpriority="high" /></figure>}
       {posterImg && <figure class="poster"><Image src={posterImg} alt={`${a.name}: ${lang === 'tr' ? 'afiş' : 'poster'}`} widths={[360, 540]} sizes="(max-width: 900px) 60vw, 320px" loading="eager" /></figure>}
     </div>
   </section>
@@ -220,7 +221,7 @@ const ld = {
           const im = artistImage(x);
           return (
             <li><a href={href(lang, `/artists/${x.slug}/`)} class="mc">
-              {im ? <Image src={im.src} alt="" widths={[240, 400]} sizes="200px" class:list={[{ pimg: im.poster }]} /> : <span class="mono">{initials(x.name)}</span>}
+              {im ? <Image src={im.src} alt="" widths={[240, 400]} sizes="200px" class={`fp-${x.slug}`} /> : <span class="mono">{initials(x.name)}</span>}
               <span class="mn">{x.name}</span><span class="mr muted">{x.role[lang]}</span>
             </a></li>
           );
@@ -292,6 +293,8 @@ const ld = {
   svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; } svg .f { fill: currentColor; stroke: none; }
   .portrait { flex: 0 0 auto; width: min(360px, 32vw); margin: 0; animation: nm 1.6s cubic-bezier(.22,1,.36,1) .15s both; }
   .portrait :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 20%; border-radius: 22px; box-shadow: 0 40px 100px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08); }
+  .portrait.wide { width: min(560px, 42vw); }
+  .portrait.wide :global(img) { aspect-ratio: auto; }
   @media (max-width: 760px) { .in:has(.portrait) { flex-direction: column-reverse; align-items: flex-start; } .portrait { width: min(300px, 70vw); } }
   .poster { flex: 0 0 auto; width: min(320px, 30vw); margin: 0; transform: rotate(-2deg); }
   .poster :global(img) { display: block; width: auto; max-width: 100%; max-height: min(460px, 55vh); border-radius: 14px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }

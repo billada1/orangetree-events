@@ -1,6 +1,7 @@
 @import '@fontsource-variable/manrope';
 @import '@fontsource-variable/dosis';
 @import '@fontsource-variable/newsreader';
+@import './focus.css';
 
 :root {
   --bg: #0D0B0A; --surface: #171412; --line: #2A2522; --line-2: #4A423C;

@@ -53,17 +53,17 @@ const list: Artist[] = [
   { slug: 'koray-avci', image: 'koray-avci', name: 'Koray Avcı', role: singer },
   { slug: 'kibariye', image: 'kibariye', name: 'Kibariye', role: { en: 'Singer', tr: 'Şarkıcı' } },
   { slug: 'haluk-levent', image: 'haluk-levent', instagram: 'halukleventacil', name: 'Haluk Levent', role: { en: 'Rock singer', tr: 'Rock şarkıcısı' } },
-  { slug: 'manga', name: 'maNga', role: { en: 'Rock band', tr: 'Rock grubu' } },
+  { slug: 'manga', image: 'manga', name: 'maNga', role: { en: 'Rock band', tr: 'Rock grubu' } },
   { slug: 'eypio', image: 'eypio', name: 'Eypio', role: { en: 'Rapper', tr: 'Rapçi' } },
   { slug: 'emre-aydin', image: 'emre-aydin', name: 'Emre Aydın', role: singer },
   { slug: 'oguz-aksac', image: 'oguz-aksac', name: 'Oğuz Aksaç', role: musician },
   { slug: 'sevcan-orhan', image: 'sevcan-orhan', instagram: 'sevcanorhan', name: 'Sevcan Orhan', role: { en: 'Folk singer', tr: 'Türkü sanatçısı' } },
-  { slug: 'erkan-kolcak-kostendil', instagram: 'erkankeka', name: 'Erkan Kolçak Köstendil', role: { en: 'Actor, known as Vartolu in Çukur', tr: 'Oyuncu, Çukur’un Vartolu’su' } },
+  { slug: 'erkan-kolcak-kostendil', image: 'erkan-kolcak-kostendil', instagram: 'erkankeka', name: 'Erkan Kolçak Köstendil', role: { en: 'Actor, known as Vartolu in Çukur', tr: 'Oyuncu, Çukur’un Vartolu’su' } },
   { slug: 'gulben-ergen', image: 'gulben-ergen', instagram: 'gulben123', name: 'Gülben Ergen', role: { en: 'Singer', tr: 'Şarkıcı' } },
   { slug: 'isin-karaca', image: 'isin-karaca', instagram: 'isinkaraca', name: 'Işın Karaca', role: { en: 'Singer', tr: 'Şarkıcı' } },
   { slug: 'hakan-altun', image: 'hakan-altun', instagram: 'hakanaltunmusic', name: 'Hakan Altun', role: { en: 'Singer', tr: 'Şarkıcı' } },
   // Sydney acts
-  { slug: 'nida-rock', name: 'Nida Rock', local: true, instagram: 'nida_rock', role: { en: 'Sydney band: meyhane songs, Anatolian rock and Turkish classics', tr: 'Sydney grubu: meyhane şarkıları, Anadolu rock ve Türkçe klasikler' } },
+  { slug: 'nida-rock', image: 'nida-rock', name: 'Nida Rock', local: true, instagram: 'nida_rock', role: { en: 'Sydney band: meyhane songs, Anatolian rock and Turkish classics', tr: 'Sydney grubu: meyhane şarkıları, Anadolu rock ve Türkçe klasikler' } },
   { slug: 'levent-ozkan', name: 'Levent & Özkan', local: true, instagram: 'leventartn', role: { en: 'Sydney duo', tr: 'Sydney’li ikili' } },
   { slug: 'muharrem-aslan', image: 'muharrem-aslan', name: 'Muharrem Aslan', local: true, instagram: 'muharremaslanofficial', role: { en: 'Musician and music therapist: Sounds of Anatolia', tr: 'Müzisyen ve müzik terapisti: Anadolu’nun Sesleri' } },
   { slug: 'dj-ilka', name: 'DJ Ilka', local: true, instagram: 'dj.ilka', role: { en: 'DJ, Turkish Vibes resident', tr: 'DJ, Turkish Vibes’ın DJ’i' } },
@@ -77,8 +77,8 @@ const list: Artist[] = [
   { slug: 'baris-komurcuoglu', image: 'baris-komurcuoglu', name: 'Barış Kömürcüoğlu', instagram: 'bariskomurcuogluofficial', role: { en: 'Singer', tr: 'Şarkıcı' } },
   { slug: 'mehmet-erdem', image: 'mehmet-erdem', name: 'Mehmet Erdem', instagram: 'mehmetmusic', role: singer },
   { slug: 'burak-bulut', image: 'burak-bulut', name: 'Burak Bulut', instagram: 'burakkbulut23', role: singer },
-  { slug: 'serhan-ilbeyi', name: 'Serhan İlbeyi', instagram: 'serhanilbeyi', role: { en: 'Singer', tr: 'Şarkıcı' } },
-  { slug: 'tahir-bilgic', instagram: 'tahircomedian', name: 'Tahir Bilgiç', role: comedian },
+  { slug: 'serhan-ilbeyi', image: 'serhan-ilbeyi', name: 'Serhan İlbeyi', instagram: 'serhanilbeyi', role: { en: 'Singer', tr: 'Şarkıcı' } },
+  { slug: 'tahir-bilgic', image: 'tahir-bilgic', instagram: 'tahircomedian', name: 'Tahir Bilgiç', role: comedian },
 ];
 
 // Merge bios, facts and listening links (own data wins).

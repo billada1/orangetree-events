@@ -32,15 +32,16 @@ const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(
             const y = years(a.slug);
             return (
               <li>
-                <a class="card art" href={href(lang, `/artists/${a.slug}/`)}>
-                  <span class="pic">
+                <a class="art" href={href(lang, `/artists/${a.slug}/`)}>
+                  <span class:list={['pic', { has: !!img }]}>
                     {img
-                      ? <Image src={img.src} alt="" width={420} height={420} fit="cover" position="top" />
+                      ? <Image src={img.src} alt="" widths={[320, 480, 720]} sizes="(max-width: 520px) 50vw, (max-width: 1100px) 33vw, 260px" class={`fp-${a.slug}`} />
                       : <span class="mono" aria-hidden="true">{initials(a.name)}</span>}
                   </span>
                   <span class="meta">
-                    <span class="n">{a.name}</span>
-                    <span class="muted">{a.role[lang]}{y.length ? ` · ${y[0]}${y.length > 1 && y[y.length - 1] !== y[0] ? `–${y[y.length - 1]}` : ''}` : ''}</span>
+                    <span class:list={['n', { keep: a.slug === 'manga' }]}>{a.name}</span>
+                    <span class="r">{a.role[lang]}{y.length ? ` · ${y[0]}${y.length > 1 && y[y.length - 1] !== y[0] ? `–${y[y.length - 1]}` : ''}` : ''}</span>
+                    <span class="go" aria-hidden="true">{lang === 'tr' ? 'Profili gör' : 'View profile'} <svg viewBox="0 0 16 16"><path d="M3 8h9M8.5 4.5 12 8l-3.5 3.5" /></svg></span>
                   </span>
                 </a>
               </li>
@@ -55,15 +56,32 @@ const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(
   .pg { padding-block: 64px 96px; }
   .grp { margin-top: 48px; }
   .grp h2 { font-size: 28px; margin-bottom: 6px; }
-  .grid { list-style: none; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
-  .art { display: flex; flex-direction: column; overflow: hidden; height: 100%; transition: transform .3s var(--ease), border-color .3s; }
-  .art:hover { transform: translateY(-4px); border-color: var(--accent); color: inherit; }
-  .pic { position: relative; aspect-ratio: 1; overflow: hidden; background: radial-gradient(120% 100% at 20% 0%, #4A2416, #1A1311 55%, #120F0D); display: grid; place-items: center; }
-  .pic:has(.mono)::before { content: ''; position: absolute; right: -18%; bottom: -14%; width: 70%; aspect-ratio: 490 / 566; background: url('/emblem.svg') no-repeat center / contain; opacity: .08; filter: grayscale(1) brightness(2); }
-  .pic :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; transition: transform .9s cubic-bezier(.22,1,.36,1); }
-  .art:hover .pic :global(img) { transform: scale(1.04); }
-  .mono { position: relative; font-family: var(--display); font-weight: 800; font-size: 64px; letter-spacing: .04em; color: transparent; background: linear-gradient(160deg, #FFB199, var(--accent) 60%, #C2401F); -webkit-background-clip: text; background-clip: text; }
-  .meta { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 4px; }
-  .n { font-family: var(--display); font-weight: 700; font-size: 18px; }
-  .meta .muted { font-size: 14px; }
+  .grid { list-style: none; padding: 0; margin: 20px 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
+  /* Image-led tiles: the photo fills the card, name and role sit on a soft gradient; hover lifts, zooms gently and reveals the link. */
+  .art { position: relative; display: block; aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden; isolation: isolate; color: var(--ink);
+    background: #120F0D; box-shadow: 0 0 0 1px var(--line); transition: transform .6s cubic-bezier(.22,1,.36,1), box-shadow .6s; }
+  .art:hover, .art:focus-visible { transform: translateY(-6px); box-shadow: 0 0 0 1px rgba(240,90,40,.55), 0 28px 60px -20px rgba(0,0,0,.8), 0 0 50px -18px rgba(240,90,40,.5); color: var(--ink); }
+  .art:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .pic { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(120% 100% at 20% 0%, #4A2416, #1A1311 55%, #120F0D); }
+  .pic:not(.has)::before { content: ''; position: absolute; right: -18%; bottom: -10%; width: 72%; aspect-ratio: 490 / 566; background: url('/emblem.svg') no-repeat center / contain; opacity: .08; filter: grayscale(1) brightness(2); }
+  .pic :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: 50% 22%; filter: saturate(.92) brightness(.92); transform: scale(1.001);
+    transition: transform 1.2s cubic-bezier(.22,1,.36,1), filter .8s ease; }
+  .art:hover .pic :global(img), .art:focus-visible .pic :global(img) { transform: scale(1.06); filter: saturate(1.05) brightness(1); }
+  .pic.has::after { content: ''; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(180deg, rgba(13,11,10,0) 42%, rgba(13,11,10,.55) 68%, rgba(13,11,10,.94) 100%), radial-gradient(120% 60% at 50% 120%, rgba(240,90,40,.0), rgba(240,90,40,0));
+    transition: opacity .8s ease, background .8s ease; }
+  .art:hover .pic.has::after { background: linear-gradient(180deg, rgba(13,11,10,0) 30%, rgba(13,11,10,.6) 62%, rgba(13,11,10,.96) 100%), radial-gradient(120% 60% at 50% 120%, rgba(240,90,40,.35), rgba(240,90,40,0)); }
+  .mono { position: relative; margin-bottom: 18%; font-family: var(--display); font-weight: 800; font-size: 72px; letter-spacing: .04em; color: transparent; background: linear-gradient(160deg, #FFB199, var(--accent) 60%, #C2401F); -webkit-background-clip: text; background-clip: text; }
+  .meta { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; padding: 18px 18px 16px; display: flex; flex-direction: column; gap: 3px; }
+  .meta::before { content: ''; width: 28px; height: 2px; border-radius: 2px; background: var(--accent); margin-bottom: 8px; transition: width .6s cubic-bezier(.22,1,.36,1); }
+  .art:hover .meta::before { width: 56px; }
+  .n { font-family: var(--display); font-weight: 700; font-size: 20px; line-height: 1.1; text-transform: uppercase; letter-spacing: .02em; text-shadow: 0 1px 12px rgba(0,0,0,.5); }
+  .n.keep { text-transform: none; }
+  .r { font-size: 13.5px; color: rgba(255,240,230,.78); }
+  .go { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: var(--peach); max-height: 0; opacity: 0; transform: translateY(6px); overflow: hidden;
+    transition: max-height .6s cubic-bezier(.22,1,.36,1), opacity .5s ease, transform .6s cubic-bezier(.22,1,.36,1); }
+  .go svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .art:hover .go, .art:focus-visible .go { max-height: 24px; opacity: 1; transform: none; margin-top: 6px; }
+  @media (hover: none) { .go { max-height: 24px; opacity: 1; transform: none; margin-top: 6px; } }
+  @media (prefers-reduced-motion: reduce) { .art, .pic :global(img), .go, .meta::before { transition: none; } .art:hover .pic :global(img) { transform: none; } }
 </style>

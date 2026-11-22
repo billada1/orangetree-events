@@ -1,0 +1,29 @@
+/* Focus points for artist photos (centre of the face or group), so every crop keeps the artist in frame.
+   Measured with face detection, then checked by eye. */
+.fp-baris-komurcuoglu { object-position: 48% 22% !important; }
+.fp-burak-bulut { object-position: 67% 26% !important; }
+.fp-buray { object-position: 43% 34% !important; }
+.fp-cahit-berkay { object-position: 47% 18% !important; }
+.fp-emrah-karaca { object-position: 35% 42% !important; }
+.fp-emre-aydin { object-position: 42% 20% !important; }
+.fp-erkan-kolcak-kostendil { object-position: 42% 35% !important; }
+.fp-eypio { object-position: 52% 18% !important; }
+.fp-gulben-ergen { object-position: 42% 24% !important; }
+.fp-hakan-altun { object-position: 52% 32% !important; }
+.fp-haluk-levent { object-position: 32% 42% !important; }
+.fp-ilyas-yalcintas { object-position: 47% 27% !important; }
+.fp-isin-karaca { object-position: 55% 22% !important; }
+.fp-kibariye { object-position: 60% 28% !important; }
+.fp-koray-avci { object-position: 45% 34% !important; }
+.fp-manga { object-position: 52% 38% !important; }
+.fp-mehmet-erdem { object-position: 49% 20% !important; }
+.fp-muharrem-aslan { object-position: 48% 30% !important; }
+.fp-nida-rock { object-position: 55% 45% !important; }
+.fp-oguz-aksac { object-position: 52% 40% !important; }
+.fp-selcuk-balci { object-position: 55% 38% !important; }
+.fp-serhan-ilbeyi { object-position: 45% 28% !important; }
+.fp-sevcan-orhan { object-position: 50% 25% !important; }
+.fp-tahir-bilgic { object-position: 48% 22% !important; }
+.fp-teoman { object-position: 46% 42% !important; }
+.fp-tibet-agirtan { object-position: 62% 22% !important; }
+.fp-yilmaz-erdogan { object-position: 54% 24% !important; }
