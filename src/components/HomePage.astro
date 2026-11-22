@@ -5,6 +5,9 @@ import Hero from './Hero.astro';
 import Archive from './Archive.astro';
 import Countdown from './Countdown.astro';
 import Divider from './Divider.astro';
+import PosterWall from './PosterWall.astro';
+import { posterFor } from '../data/media';
+import { roleLine } from '../data/roles';
 import { upcoming } from '../data/events';
 import { artists } from '../data/artists';
 import { photos } from '../data/photos';
@@ -64,7 +67,9 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
                 <p class="tag">{e.kind === 'supported' ? s.on.support : s.kinds[e.kind]}</p>
                 <h3><a href={href(lang, `/events/${e.slug}/`)}>{e.title[lang]}</a></h3>
                 <p class="muted small"><span class="sr-only">{fmtDate(e.date!, lang, { weekday: true })}. </span>{e.note?.[lang]} {e.venue}.</p>
+                {roleLine(e, lang) && <p class="org">{roleLine(e, lang)}</p>}
               </div>
+              {posterFor(e) && <Image src={posterFor(e)!} alt="" width={96} height={120} fit="cover" class="mp" />}
             </article>
           );
         })}
@@ -81,6 +86,8 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
   <Divider />
   <Archive lang={lang} />
   <Divider />
+
+  <PosterWall lang={lang} />
 
   <section id="giving-back" class="giving" aria-labelledby="give-h">
     <img class="spin" src="/emblem.svg" alt="" width="520" height="600" />
@@ -153,7 +160,11 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
   .cal .d { font-family: var(--display); font-weight: 800; font-size: 28px; line-height: 1.1; }
   .cal .w { font-size: 12px; color: var(--muted); }
   .tag { margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--peach); }
-  .mini h3 { font-size: 22px; }
+  .mini h3 { font-size: 19px; }
+  .mini > div:nth-child(2) { flex: 1; min-width: 0; }
+  .mini :global(.mp) { flex: 0 0 72px; width: 72px; height: 90px; object-fit: cover; border-radius: 10px; transform: rotate(3deg); box-shadow: 0 10px 24px rgba(0,0,0,.5); transition: transform .3s; }
+  .mini:hover :global(.mp) { transform: rotate(0) scale(1.06); }
+  .org { margin: 6px 0 0; font-size: 13px; color: var(--peach); font-weight: 600; }
   .small { font-size: 15px; margin: 6px 0 0; }
   .next { background: var(--accent); color: var(--accent-ink); border-radius: 24px; padding: 24px; }
   .next h3 { font-size: 24px; } .next p { margin: 8px 0 14px; }

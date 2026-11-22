@@ -12,6 +12,8 @@ export default defineConfig({
     sitemap({ i18n: { defaultLocale: 'en', locales: { en: 'en-AU', tr: 'tr-TR' } } }),
   ],
   image: { responsiveStyles: true },
+  // Never inline fonts or images as data: URIs, so the Content Security Policy can stay strict.
+  vite: { build: { assetsInlineLimit: 0 } },
   security: {
     csp: {
       directives: [

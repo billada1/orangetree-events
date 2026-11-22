@@ -1,0 +1,45 @@
+---
+import { Image } from 'astro:assets';
+import { posterWall } from '../data/media';
+import { t, href, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
+const all = posterWall();
+const rows = [all.filter((_, i) => i % 2 === 0), all.filter((_, i) => i % 2 === 1)];
+---
+<section class="wall" aria-labelledby="wall-h">
+  <div class="wrap head">
+    <h2 id="wall-h" class="h2">{s.artistsUi.posters}</h2>
+    <p class="lead">{s.artistsUi.postersP}</p>
+  </div>
+  {rows.map((row, r) => (
+    <div class:list={['lane', { rev: r === 1 }]}>
+      <ul class="track">
+        {[...row, ...row].map(({ e, src }, i) => (
+          <li aria-hidden={i >= row.length ? 'true' : undefined}>
+            <a href={href(lang, `/events/${e.slug}/`)} tabindex={i >= row.length ? -1 : undefined} title={e.title[lang]}>
+              <Image src={src} alt={i >= row.length ? '' : e.title[lang]} height={360} widths={[240, 480]} sizes="240px" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</section>
+<style>
+  .wall { padding-block: 96px 56px; overflow: hidden; }
+  .head .lead { max-width: 680px; margin: 14px 0 32px; }
+  .lane { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); padding-block: 14px; }
+  .track { display: flex; gap: 18px; width: max-content; list-style: none; margin: 0; padding: 0; animation: slide 90s linear infinite; }
+  .rev .track { animation-direction: reverse; animation-duration: 110s; }
+  .lane:hover .track, .lane:focus-within .track { animation-play-state: paused; }
+  li { flex: 0 0 auto; }
+  a { display: block; border-radius: 12px; overflow: hidden; transform: rotate(var(--r, -1.5deg)); transition: transform .35s var(--ease), box-shadow .35s; box-shadow: 0 16px 40px rgba(0,0,0,.45); }
+  li:nth-child(even) a { --r: 1.5deg; }
+  a:hover, a:focus-visible { transform: rotate(0) translateY(-8px) scale(1.04); box-shadow: 0 26px 60px rgba(238,90,58,.35); }
+  a :global(img) { height: 300px; width: auto; display: block; }
+  @keyframes slide { to { transform: translateX(-50%); } }
+  @media (max-width: 760px) { a :global(img) { height: 220px; } }
+  @media (prefers-reduced-motion: reduce) { .track { animation: none; flex-wrap: wrap; width: auto; padding-inline: var(--pad); } }
+</style>

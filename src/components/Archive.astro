@@ -1,5 +1,8 @@
 ---
+import { Image } from 'astro:assets';
 import { past, type Kind } from '../data/events';
+import { posterFor } from '../data/media';
+import { roleLine } from '../data/roles';
 import { t, href, type Lang } from '../i18n/ui';
 interface Props { lang: Lang; headingLevel?: 'h1' | 'h2' }
 const { lang, headingLevel = 'h2' } = Astro.props;
@@ -13,6 +16,7 @@ for (const e of list) {
   if (!groups.has(y)) groups.set(y, []);
   groups.get(y)!.push(e);
 }
+for (const list of groups.values()) list.sort((x, y) => (y.date ?? '').localeCompare(x.date ?? ''));
 const order = [...groups.keys()].sort((a, b) => (a === 'tbc' ? 1 : b === 'tbc' ? -1 : b.localeCompare(a)));
 const dateLabel = (e: (typeof list)[number]) => {
   if (e.date) { const d = new Date(e.date + 'T12:00:00Z'); return `${d.getUTCDate()} ${s.months[d.getUTCMonth()]}`; }
@@ -43,9 +47,10 @@ const YH = headingLevel === 'h1' ? 'h2' : 'h3';
         {groups.get(y)!.map((e) => (
           <li class="row" data-kind={e.kind}>
             <span class="date">{dateLabel(e)}</span>
+            <span class="thumb" aria-hidden="true">{posterFor(e) ? <Image src={posterFor(e)!} alt="" width={64} height={80} fit="cover" /> : <img src="/emblem.svg" alt="" width="28" height="32" />}</span>
             <span class="what">
               <a href={href(lang, `/events/${e.slug}/`)} class="title">{e.title[lang]}{e.soldOut && <span class="so"> · {s.past.soldOut}</span>}</a>
-              <span class="venue">{[e.venue, e.partner && `${lang === 'tr' ? e.partner + ' ' + s.past.with : s.past.with + ' ' + e.partner}`, e.confirm && s.past.toConfirm].filter(Boolean).join(' · ')}</span>
+              <span class="venue">{[e.venue, roleLine(e, lang), e.confirm && s.past.toConfirm].filter(Boolean).join(' · ')}</span>
             </span>
             <span class={`badge badge-${e.kind}`}>{s.kinds[e.kind]}</span>
           </li>
@@ -94,7 +99,11 @@ const YH = headingLevel === 'h1' ? 'h2' : 'h3';
   .row { display: flex; align-items: center; gap: 18px; padding: 12px 14px; border-radius: 14px; transition: background .2s; }
   .row:hover { background: #1C1815; }
   .row[hidden] { display: none; }
-  .date { flex: 0 0 90px; font-weight: 700; font-size: 15px; color: var(--ink-2); }
+  .thumb { flex: 0 0 48px; height: 60px; border-radius: 8px; overflow: hidden; background: #1C1815; display: grid; place-items: center; }
+  .thumb :global(img) { width: 48px; height: 60px; object-fit: cover; }
+  .thumb img[src$='.svg'] { width: 24px; height: auto; opacity: .35; }
+  .row:hover .thumb :global(img) { transform: scale(1.08); transition: transform .3s; }
+  .date { flex: 0 0 80px; font-weight: 700; font-size: 15px; color: var(--ink-2); }
   .what { flex: 1; min-width: 0; display: flex; flex-direction: column; }
   .title { font-weight: 600; font-size: 18px; }
   .so { color: var(--peach); font-weight: 600; }

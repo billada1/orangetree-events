@@ -4,22 +4,30 @@ import Base from '../layouts/Base.astro';
 import { events } from '../data/events';
 import { artists, type Artist } from '../data/artists';
 import { photos } from '../data/photos';
+import { artistImage, posterFor } from '../data/media';
 import { t, href, fmtDate, type Lang } from '../i18n/ui';
 interface Props { lang: Lang; a: Artist }
 const { lang, a } = Astro.props;
 const s = t(lang);
 const shows = events.filter((e) => e.artists?.includes(a.slug));
-const ph = a.image ? photos[a.image] : null;
+const img = artistImage(a);
+const ph = img && !img.poster ? { src: img.src, alt: { en: a.name, tr: a.name } } : null;
+const posterImg = img?.poster ? img.src : null;
 const more = artists.filter((x) => x.slug !== a.slug && x.bio).concat(artists.filter((x) => x.slug !== a.slug && !x.bio)).slice(0, 8);
 const ld = { '@context': 'https://schema.org', '@type': a.slug === 'manga' ? 'MusicGroup' : 'Person', name: a.name, description: a.role.en, url: new URL((lang === 'tr' ? '/tr' : '') + `/artists/${a.slug}/`, Astro.site!).href };
 ---
-<Base lang={lang} title={a.name} description={a.bio?.[lang][0] ?? `${a.name} · ${a.role[lang]} · ${s.siteName}`} jsonLd={ld} overlayHeader={!!ph} noindex={!a.bio}>
-  <section class:list={['top', { plain: !ph }]}>
+<Base lang={lang} title={a.name} description={a.bio?.[lang][0] ?? `${a.name} · ${a.role[lang]} · ${s.siteName}`} jsonLd={ld} overlayHeader={!!(ph || posterImg)} noindex={!a.bio && shows.length === 0}>
+  <section class:list={['top', { plain: !ph && !posterImg }]}>
     {ph && <Image src={ph.src} alt={ph.alt[lang]} widths={[640, 1024, 1600]} sizes="100vw" class="bg" loading="eager" fetchpriority="high" />}
-    {ph && <div class="shade" aria-hidden="true"></div>}
+    {posterImg && <Image src={posterImg} alt="" widths={[480, 960]} sizes="100vw" class="bg blur" loading="eager" />}
+    {(ph || posterImg) && <div class="shade" aria-hidden="true"></div>}
     <div class="wrap in">
-      <p class="eyebrow"><a href={href(lang, '/artists/')}>{s.nav.artists}</a> · {a.role[lang]}</p>
-      <h1 class="name">{a.name}</h1>
+      <div>
+        <p class="eyebrow"><a href={href(lang, '/artists/')}>{s.nav.artists}</a> · {a.local ? s.artistsUi.local + ' · ' : ''}{a.role[lang]}</p>
+        <h1 class="name">{a.name}</h1>
+        {a.instagram && <p class="ig"><a href={`https://www.instagram.com/${a.instagram}/`} rel="noopener" target="_blank">@{a.instagram} ↗</a></p>}
+      </div>
+      {posterImg && <figure class="poster"><Image src={posterImg} alt={`${a.name}: ${lang === 'tr' ? 'afiş' : 'poster'}`} widths={[360, 540]} sizes="(max-width: 900px) 60vw, 320px" loading="eager" /></figure>}
     </div>
   </section>
   <div class="wrap body">
@@ -35,6 +43,7 @@ const ld = { '@context': 'https://schema.org', '@type': a.slug === 'manga' ? 'Mu
         <ul class="shows">
           {shows.map((e) => (
             <li class="card">
+              {posterFor(e) && <Image src={posterFor(e)!} alt="" width={72} height={90} fit="cover" class="pt" />}
               <span class="d">{e.date ? fmtDate(e.date, lang) : (e.year ?? s.past.dateToConfirm)}</span>
               <a href={href(lang, `/events/${e.slug}/`)}>{e.title[lang]}</a>
               <span class="muted">{e.venue}</span>
@@ -66,9 +75,15 @@ const ld = { '@context': 'https://schema.org', '@type': a.slug === 'manga' ? 'Mu
   .top.plain { min-height: 0; height: auto; padding-top: 80px; }
   .top :global(.bg) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 70% 30%; }
   .shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,11,10,.9), rgba(13,11,10,.2) 60%), linear-gradient(180deg, rgba(13,11,10,.5), transparent 30%, rgba(13,11,10,.95)); }
-  .in { position: relative; width: 100%; padding-bottom: 56px; }
+  .in { position: relative; width: 100%; padding-bottom: 56px; display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; }
+  .ig { margin: 14px 0 0; font-weight: 700; } .ig a { color: var(--coral); }
+  .top :global(.blur) { filter: blur(40px) saturate(1.3) brightness(.5); transform: scale(1.2); }
+  .poster { flex: 0 0 auto; width: min(320px, 30vw); margin: 0; transform: rotate(-2deg); }
+  .poster :global(img) { display: block; width: auto; max-width: 100%; max-height: min(460px, 55vh); border-radius: 14px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
+  .shows :global(.pt) { width: 54px; height: 68px; object-fit: cover; border-radius: 8px; }
+  @media (max-width: 900px) { .in { flex-direction: column-reverse; align-items: flex-start; padding-top: 110px; } .poster { width: min(260px, 60vw); } .top { height: auto; max-height: none; } }
   .name { font-weight: 800; font-size: clamp(52px, 8vw, 128px); line-height: .92; letter-spacing: -.02em; animation: nm 1s cubic-bezier(.2,.8,.2,1) both; }
-  @keyframes nm { from { opacity: 0; transform: translateY(30px); letter-spacing: .06em; } to { opacity: 1; transform: none; } }
+  @keyframes nm { from { transform: translateY(24px); letter-spacing: .04em; } to { transform: none; } }
   .body { display: flex; flex-direction: column; gap: 64px; padding-block: 72px 96px; }
   .h3 { font-size: 40px; font-weight: 700; margin-bottom: 18px; }
   .about { display: grid; grid-template-columns: 2fr 1fr; gap: 48px; }
