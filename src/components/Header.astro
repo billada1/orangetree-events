@@ -20,7 +20,7 @@ const cur = (u: string) => (path === u ? 'page' : undefined);
   </nav>
   <div class="right">
     <a class="lang" href={otherLangPath(lang, path)} hreflang={lang === 'en' ? 'tr' : 'en'} lang={lang === 'en' ? 'tr' : 'en'}>{lang === 'en' ? 'TR' : 'EN'}<span class="sr-only"> · {s.switchTo}</span></a>
-    <a class="tix" href={href(lang, '/my-tickets/')}>{s.nav.tickets}</a>
+    <a class="tix" href={href(lang, '/contact/')} aria-current={cur(href(lang, '/contact/'))}>{s.footer.contact}</a>
     <a class="btn btn-primary btn-sm" href={href(lang, '/#whats-on')}>{s.nav.getTickets}</a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-menu">{s.nav.menu}</button>
   </div>
@@ -28,6 +28,7 @@ const cur = (u: string) => (path === u ? 'page' : undefined);
     <button class="close" type="button">{s.nav.close}</button>
     <nav aria-label={s.nav.main}>
       {links.map(([u, l]) => <a href={u}>{l}</a>)}
+      <a href={href(lang, '/contact/')}>{s.footer.contact}</a>
       <a href={href(lang, '/my-tickets/')}>{s.nav.tickets}</a>
       <a href={otherLangPath(lang, path)} lang={lang === 'en' ? 'tr' : 'en'}>{s.switchTo}</a>
     </nav>

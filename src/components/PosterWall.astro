@@ -31,8 +31,8 @@ const rows = [all.filter((_, i) => i % 2 === 0), all.filter((_, i) => i % 2 === 
   .wall { padding-block: 96px 56px; overflow: hidden; }
   .head .lead { max-width: 680px; margin: 14px 0 32px; }
   .lane { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); padding-block: 14px; }
-  .track { display: flex; gap: 18px; width: max-content; list-style: none; margin: 0; padding: 0; animation: slide 90s linear infinite; }
-  .rev .track { animation-direction: reverse; animation-duration: 110s; }
+  .track { display: flex; gap: 18px; width: max-content; list-style: none; margin: 0; padding: 0; animation: slide 200s linear infinite; }
+  .rev .track { animation-direction: reverse; animation-duration: 240s; }
   .lane:hover .track, .lane:focus-within .track { animation-play-state: paused; }
   li { flex: 0 0 auto; }
   a { display: block; border-radius: 12px; overflow: hidden; transform: rotate(var(--r, -1.5deg)); transition: transform .35s var(--ease), box-shadow .35s; box-shadow: 0 16px 40px rgba(0,0,0,.45); }

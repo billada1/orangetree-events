@@ -77,10 +77,10 @@ const { label = 'Orange Tree', class: cls = '', animate = true } = Astro.props;
 <style>
   .ot-logo { display: block; height: 44px; width: auto; overflow: visible; }
   .emblem { transform-box: fill-box; transform-origin: 50% 90%; }
-  .anim .emblem { animation: ot-grow .9s cubic-bezier(.2,1.4,.4,1) both; }
+  .anim .emblem { animation: ot-grow 1.2s cubic-bezier(.22,1,.36,1) both; }
   .anim .disc { animation: ot-fade .5s ease-out both; }
-  .anim .leaf { transform-box: fill-box; transform-origin: 50% 100%; animation: ot-leaf .5s cubic-bezier(.2,1.5,.4,1) both; }
-  .anim .word path { animation: ot-rise .6s cubic-bezier(.2,.8,.2,1) both; }
+  .anim .leaf { transform-box: fill-box; transform-origin: 50% 100%; animation: ot-leaf .9s cubic-bezier(.22,1,.36,1) both; }
+  .anim .word path { animation: ot-rise 1s cubic-bezier(.22,1,.36,1) both; }
   a:hover .emblem, a:focus-visible .emblem { animation: ot-sway 1.2s ease-in-out; }
   .anim .emblem path:nth-child(1) { animation-delay: 0.250s; }
   .anim .emblem path:nth-child(2) { animation-delay: 0.262s; }

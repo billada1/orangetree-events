@@ -18,14 +18,15 @@ export default defineConfig({
     csp: {
       directives: [
         "default-src 'self'",
-        "img-src 'self' data: blob:",
+        "img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com",
         "font-src 'self'",
-        "connect-src 'self'",
+        "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
         "form-action 'self'",
         "base-uri 'self'",
         "object-src 'none'",
         "frame-src https://open.spotify.com https://www.youtube-nocookie.com",
       ],
+      scriptDirective: { resources: ["'self'", 'https://www.googletagmanager.com'] },
     },
   },
 });

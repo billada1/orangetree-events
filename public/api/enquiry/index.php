@@ -26,9 +26,9 @@ $go = function (string $to): void { header('Location: ' . $to, true, 303); exit;
 $fail = function (string $why) use ($go, $pre): void { $go($pre . '/thanks/?sent=enquiry&error=' . $why); };
 
 // Spam checks: honeypot, too fast (under 3 s), too many links.
-if (!empty($_POST['website'])) $go($pre . '/thanks/?sent=enquiry');
+if (!empty($_POST['website'])) $go($pre . '/thanks/?sent=enquiry&topic=' . $type);
 $t = (int)($_POST['t'] ?? 0);
-if ($t > 0 && (microtime(true) * 1000 - $t) < 3000) $go($pre . '/thanks/?sent=enquiry');
+if ($t > 0 && (microtime(true) * 1000 - $t) < 3000) $go($pre . '/thanks/?sent=enquiry&topic=' . $type);
 
 $clean = function ($v, int $max = 300): string {
   $v = is_array($v) ? implode(', ', array_map('strval', $v)) : (string)$v;
@@ -37,7 +37,9 @@ $clean = function ($v, int $max = 300): string {
 };
 $oneLine = fn(string $v) => str_replace(["\r", "\n"], ' ', $v);
 
-$types = ['concert' => 'Bring a concert to Sydney', 'promotion' => 'Promote my event', 'sponsor' => 'Sponsor or partner', 'venue' => 'Venue or other'];
+$types = ['concert' => 'Bring a concert to Sydney', 'promotion' => 'Promote my event', 'sponsor' => 'Sponsor or partner', 'venue' => 'Venue or supplier',
+  'general' => 'General question', 'tickets' => 'Ticket help', 'volunteer' => 'Volunteer or crew', 'media' => 'Media and press'];
+$src = (($_POST['src'] ?? '') === 'contact') ? 'contact' : 'work-with-us';
 $type = $clean($_POST['type'] ?? '', 20);
 if (!isset($types[$type])) $fail('type');
 $name = $oneLine($clean($_POST['name'] ?? '', 120));
@@ -46,7 +48,10 @@ $message = $clean($_POST['message'] ?? '', 4000);
 if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($message) < 10 || ($_POST['consent'] ?? '') !== 'yes') $fail('fields');
 if ($type === 'concert' && $clean($_POST['artist'] ?? '') === '') $fail('fields');
 if ($type === 'promotion' && $clean($_POST['event'] ?? '') === '') $fail('fields');
-if (preg_match_all('#https?://#i', $message) > 4) $go($pre . '/thanks/?sent=enquiry');
+if ($type === 'tickets' && $clean($_POST['tEvent'] ?? '') === '') $fail('fields');
+if ($type === 'volunteer' && ($_POST['adult'] ?? '') !== 'yes') $fail('fields');
+if ($type === 'media' && $clean($_POST['outlet'] ?? '') === '') $fail('fields');
+if (preg_match_all('#https?://#i', $message) > 4) $go($pre . '/thanks/?sent=enquiry&topic=' . $type);
 
 // Simple per-IP rate limit: 5 enquiries an hour.
 $store = $_SERVER['DOCUMENT_ROOT'] . '/_private';
@@ -65,19 +70,25 @@ $more = [
   'promotion' => ['Event' => 'event', 'Event date' => 'eventDate', 'Venue' => 'venue', 'Tickets' => 'ticketUrl', 'Help wanted' => 'help'],
   'sponsor' => ['Interested in' => 'interest', 'Budget' => 'budget', 'Goals' => 'goals'],
   'venue' => [],
+  'general' => [],
+  'tickets' => ['Event' => 'tEvent', 'Order' => 'orderRef', 'Needs' => 'issue'],
+  'volunteer' => ['Available' => 'when', 'Roles' => 'jobs', 'Languages' => 'langs', 'Experience' => 'exp', '18 or older' => 'adult'],
+  'media' => ['Outlet' => 'outlet', 'Media type' => 'mediaType', 'Requests' => 'ask', 'Deadline' => 'deadline'],
 ][$type];
+// Personal topics don't carry business fields even if the browser sent them.
+if (in_array($type, ['general', 'tickets', 'volunteer'], true)) { $fields['Organisation'] = ''; $fields['Role'] = ''; $fields['Website'] = ''; }
 foreach ($more as $label => $key) $fields[$label] = $clean($_POST[$key] ?? '', 500);
 $fields['Newsletter'] = (($_POST['newsletter'] ?? '') === 'yes') ? 'Yes' : 'No';
 $fields['Language'] = strtoupper($lang);
 
 $body = '';
 foreach ($fields as $k => $v) if ($v !== '') $body .= str_pad($k . ':', 15) . $v . "\n";
-$body .= "\nMessage:\n" . $message . "\n\n-- \nSent from orangetree.events/work-with-us at " . date('Y-m-d H:i T') . "\n";
+$body .= "\nMessage:\n" . $message . "\n\n-- \nSent from orangetree.events/{$src}/ at " . date('Y-m-d H:i T') . "\n";
 
 $cfg = ot_config();
 $to = (string)($cfg['ENQUIRY_TO'] ?? 'info@orangetree.events');
 $from = (string)($cfg['ENQUIRY_FROM'] ?? 'website@orangetree.events');
-$subject = '=?UTF-8?B?' . base64_encode('Enquiry: ' . $types[$type] . ' · ' . $name . ($fields['Organisation'] ? ' (' . $fields['Organisation'] . ')' : '')) . '?=';
+$subject = '=?UTF-8?B?' . base64_encode(($src === 'contact' ? 'Contact: ' : 'Enquiry: ') . $types[$type] . ' · ' . $name . ($fields['Organisation'] ? ' (' . $fields['Organisation'] . ')' : '')) . '?=';
 $headers = implode("\r\n", [
   'From: Orange Tree Events website <' . $from . '>',
   'Reply-To: ' . $email,
@@ -108,4 +119,4 @@ if ($fields['Newsletter'] === 'Yes' && !empty($cfg['BREVO_API_KEY'])) {
     CURLOPT_POSTFIELDS => json_encode($payload)]);
   curl_exec($ch); curl_close($ch);
 }
-$go($pre . '/thanks/?sent=enquiry');
+$go($pre . '/thanks/?sent=enquiry&topic=' . $type);

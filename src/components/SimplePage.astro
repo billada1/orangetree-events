@@ -9,5 +9,12 @@ const { lang, title, noindex = false } = Astro.props;
 </Base>
 <style>
   .pg { padding-block: 64px 96px; } .txt { max-width: 720px; margin-top: 24px; color: var(--ink-2); }
-  .txt :global(a) { color: var(--coral); text-decoration: underline; } .txt :global(h2) { font-size: 24px; margin: 32px 0 8px; }
+  .txt { font-size: 17px; line-height: 1.7; }
+  .txt :global(a:not(.btn)) { color: var(--coral); text-decoration: underline; text-underline-offset: 3px; } .txt :global(h2) { font-size: 24px; margin: 40px 0 10px; color: var(--ink); }
+  .txt :global(ul) { padding-left: 1.2em; display: grid; gap: 10px; } .txt :global(li::marker) { color: var(--accent); }
+  .txt :global(strong) { color: var(--ink); }
+  .txt :global(.upd) { font-size: 14px; color: var(--muted); margin-top: -8px; }
+  .txt :global(.optout) { margin: 20px 0 8px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.03); display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; }
+  .txt :global(.optout p) { margin: 0; }
+  .txt :global(.optout [hidden]) { display: none; }
 </style>

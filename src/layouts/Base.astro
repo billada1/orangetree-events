@@ -1,4 +1,5 @@
 ---
+import Analytics from '../components/Analytics.astro';
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -26,7 +27,7 @@ const desc = description ?? s.metaDescription;
 const ogImage = new URL(image ?? '/og-default.jpg', site).href;
 const org = {
   '@context': 'https://schema.org', '@type': 'Organization', name: 'Orange Tree Events',
-  legalName: 'Orange Tree Group Pty Ltd', url: site.href, logo: new URL('/emblem.svg', site).href,
+  legalName: 'Orange Tree Group Pty Ltd', taxID: 'ABN 94 617 622 321', url: site.href, logo: new URL('/emblem.svg', site).href,
   email: 'info@orangetree.events', sameAs: ['https://www.instagram.com/orangetree.events/', 'https://www.facebook.com/orangetree.events'],
 };
 const ld = [org, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
@@ -57,6 +58,7 @@ const ld = [org, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
   <meta name="twitter:card" content="summary_large_image" />
   <script type="application/ld+json" set:html={JSON.stringify(ld)} />
   <slot name="head" />
+  <Analytics />
 </head>
 <body>
   <a class="skip" href="#main">{s.skip}</a>

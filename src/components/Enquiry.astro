@@ -1,0 +1,314 @@
+---
+import Base from '../layouts/Base.astro';
+import { enquiry } from '../i18n/enquiry';
+import { href, type Lang } from '../i18n/ui';
+import { artists } from '../data/artists';
+import { events, upcoming, sydneyToday } from '../data/events';
+interface Props { lang: Lang; mode?: 'work' | 'contact' }
+const { lang, mode = 'work' } = Astro.props;
+const E = enquiry(lang);
+const C = E.contact;
+const isContact = mode === 'contact';
+const types = (isContact
+  ? ['general', 'tickets', 'volunteer', 'media', 'concert', 'promotion', 'sponsor', 'venue']
+  : ['concert', 'promotion', 'sponsor', 'venue']) as (keyof typeof E.types)[];
+// Ticket help: upcoming events first, then the last year of past ones.
+const yearAgo = new Date(Date.parse(sydneyToday()) - 365 * 864e5).toISOString().slice(0, 10);
+const ticketEvents = [...upcoming(), ...events.filter((e) => e.date && e.date < sydneyToday() && e.date >= yearAgo).sort((a, b) => b.date!.localeCompare(a.date!))];
+const icons: Record<string, string> = {
+  concert: '<path d="M12 3v11.5a3.5 3.5 0 1 1-2-3.16V6l8-2v8.5a3.5 3.5 0 1 1-2-3.16V3.5z"/>',
+  promotion: '<path d="M4 10v4h3l6 4V6L7 10H4zM17 9a4 4 0 0 1 0 6M19.5 6.5a7.5 7.5 0 0 1 0 11"/>',
+  sponsor: '<path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/>',
+  venue: '<path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/>',
+  general: '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 9.5h8M8 12.5h5"/>',
+  tickets: '<path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4z"/><path d="M15 7v10" stroke-dasharray="2 2"/>',
+  volunteer: '<circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="8" r="3"/><path d="M2 20c0-3.3 2.7-5 6-5s6 1.7 6 5M14.5 15.3c.6-.2 1.3-.3 2-.3 3 0 5.5 1.7 5.5 5"/>',
+  media: '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+};
+const biz = 'concert promotion sponsor venue media';
+const stats = {
+  presented: events.filter((e) => e.kind === 'presented').length,
+  nye: events.filter((e) => e.kind === 'nye').length,
+  artists: artists.length,
+  since: '2015',
+};
+const statLabels = lang === 'tr'
+  ? [[stats.presented, 'sunduğumuz konser ve gösteri'], [stats.nye, 'yılbaşı gecesi'], [stats.artists, 'sanatçı ve grup'], [stats.since, 'yılından beri sahnede']]
+  : [[stats.presented, 'shows presented'], [stats.nye, 'New Year’s Eves'], [stats.artists, 'artists and acts'], [stats.since, 'on stage since']];
+const pdf = (k: string) => `/downloads/orange-tree-events-${k}-${lang}.pdf`;
+const opt = (name: string, list: string[], kind: 'radio' | 'checkbox' = 'checkbox') => ({ name, list, kind });
+const path = isContact ? '/contact/' : '/work-with-us/';
+const title = isContact ? C.title : E.title;
+const ld = { '@context': 'https://schema.org', '@type': 'ContactPage', name: title, url: new URL(href(lang, path), Astro.site!).href,
+  mainEntity: { '@type': 'Organization', name: 'Orange Tree Events', legalName: 'Orange Tree Group Pty Ltd', taxID: 'ABN 94 617 622 321', email: 'info@orangetree.events',
+    contactPoint: [{ '@type': 'ContactPoint', contactType: 'customer support', email: 'info@orangetree.events', availableLanguage: ['English', 'Turkish'], areaServed: 'AU' }] } };
+const send = isContact ? C.send : E.send;
+---
+<Base lang={lang} title={title} description={isContact ? C.meta : E.meta} overlayHeader={false} jsonLd={ld}>
+  <section class="hero">
+    <div class="wrap hi">
+      <div>
+        <p class="eyebrow">{isContact ? C.eyebrow : E.eyebrow}</p>
+        <h1>{isContact ? C.h : E.h}</h1>
+        <p class="lead">{isContact ? C.lead : E.lead}</p>
+        <p class="dl"><span class="muted">{E.brochures}:</span>
+          <a class="btn btn-ghost btn-sm" href={pdf('artists')} download>↓ {E.brochureArtists}</a>
+          <a class="btn btn-ghost btn-sm" href={pdf('sponsors')} download>↓ {E.brochureSponsors}</a>
+        </p>
+      </div>
+      {isContact
+        ? <ul class="quick" role="list">
+            <li><span class="k">{lang === 'tr' ? 'E-posta' : 'Email'}</span><a href="mailto:info@orangetree.events">info@orangetree.events</a></li>
+            <li><span class="k">Instagram</span><a href="https://www.instagram.com/orangetree.events/">@orangetree.events</a></li>
+            <li><span class="k">{lang === 'tr' ? 'Yanıt süresi' : 'Replies'}</span><span>{lang === 'tr' ? 'Genellikle 2 iş günü içinde' : 'Usually within 2 working days'}</span></li>
+            <li><span class="k">{lang === 'tr' ? 'Şirket' : 'Company'}</span><span>Orange Tree Group Pty Ltd · ABN 94 617 622 321</span></li>
+          </ul>
+        : <ul class="stats" role="list">{statLabels.map(([n, l]) => <li><strong>{n}</strong><span>{l}</span></li>)}</ul>}
+    </div>
+  </section>
+
+  <div class="wrap">
+    <form class="eoi" action="/api/enquiry/" method="post" novalidate>
+      <input type="hidden" name="lang" value={lang} />
+      <input type="hidden" name="t" value="" />
+      <input type="hidden" name="src" value={mode} />
+      <div class="hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off" /></label></div>
+
+      <fieldset class="types">
+        <legend class="lg">{E.typeLegend}</legend>
+        <div class={`tgrid n${types.length}`}>
+          {types.map((k, i) => (
+            <label class="tcard">
+              <input type="radio" name="type" value={k} checked={i === 0} />
+              <svg viewBox="0 0 24 24" aria-hidden="true" set:html={icons[k]} />
+              <span class="tt">{E.types[k].t}</span>
+              <span class="td">{E.types[k].d}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <div class="layout">
+      <div class="cols">
+        <fieldset class="grp">
+          <legend class="lg">{E.you}</legend>
+          <div class="row2">
+            <label class="fl"><span>{E.name} <abbr title={E.required}>*</abbr></span><input class="field" name="name" autocomplete="name" required maxlength="120" /></label>
+            <label class="fl"><span>{E.email} <abbr title={E.required}>*</abbr></span><input class="field" type="email" name="email" autocomplete="email" required maxlength="254" /></label>
+            <label class="fl"><span>{E.phone}</span><input class="field" type="tel" name="phone" autocomplete="tel" maxlength="40" /></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="grp x" data-for={biz}>
+          <legend class="lg">{E.bizH}</legend>
+          <div class="row2">
+            <label class="fl" data-for-label="media"><span>{E.org}</span><input class="field" name="org" autocomplete="organization" maxlength="160" /></label>
+            <label class="fl"><span>{E.site}</span><input class="field" type="url" name="site" inputmode="url" maxlength="300" placeholder="https://" /></label>
+            <label class="fl"><span>{E.role}</span><select class="field" name="role">{E.roles.map((r) => <option>{r}</option>)}</select></label>
+          </div>
+        </fieldset>
+
+        {isContact && <>
+        <fieldset class="grp x" data-for="tickets">
+          <legend class="lg">{E.ticketsH}</legend>
+          <div class="row2">
+            <label class="fl"><span>{E.tEvent} <abbr title={E.required}>*</abbr></span><select class="field" name="tEvent" data-req>
+              <option value="">{lang === 'tr' ? 'Seçin' : 'Choose'}</option>
+              {ticketEvents.map((e) => <option value={e.slug}>{e.title[lang]} · {new Date(e.date + 'T12:00:00').toLocaleDateString(lang === 'tr' ? 'tr-TR' : 'en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}</option>)}
+              <option value="other">{E.tEventOther}</option>
+            </select></label>
+            <label class="fl"><span>{E.orderRef}</span><input class="field" name="orderRef" maxlength="120" /></label>
+          </div>
+          <fieldset class="pills"><legend>{E.issue}</legend>{E.issueOpts.map((o) => <label><input type="radio" name="issue" value={o} /><span>{o}</span></label>)}</fieldset>
+        </fieldset>
+
+        <fieldset class="grp x" data-for="volunteer">
+          <legend class="lg">{E.volH}</legend>
+          <fieldset class="pills"><legend>{E.when}</legend>{E.whenOpts.map((o) => <label><input type="checkbox" name="when[]" value={o} /><span>{o}</span></label>)}</fieldset>
+          <fieldset class="pills"><legend>{E.jobs}</legend>{E.jobsOpts.map((o) => <label><input type="checkbox" name="jobs[]" value={o} /><span>{o}</span></label>)}</fieldset>
+          <fieldset class="pills"><legend>{E.langs}</legend>{E.langsOpts.map((o) => <label><input type="checkbox" name="langs[]" value={o} /><span>{o}</span></label>)}</fieldset>
+          <label class="fl"><span>{E.exp}</span><input class="field" name="exp" maxlength="300" placeholder={E.expPh} /></label>
+          <label class="ck"><input type="checkbox" name="adult" value="yes" data-req /><span>{E.adult} <abbr title={E.required}>*</abbr></span></label>
+        </fieldset>
+
+        <fieldset class="grp x" data-for="media">
+          <legend class="lg">{E.mediaH}</legend>
+          <div class="row2">
+            <label class="fl"><span>{E.outlet} <abbr title={E.required}>*</abbr></span><input class="field" name="outlet" maxlength="160" data-req /></label>
+            <label class="fl"><span>{E.deadline}</span><input class="field" type="date" name="deadline" /></label>
+          </div>
+          <fieldset class="pills"><legend>{E.mediaType}</legend>{E.mediaTypeOpts.map((o) => <label><input type="radio" name="mediaType" value={o} /><span>{o}</span></label>)}</fieldset>
+          <fieldset class="pills"><legend>{E.ask}</legend>{E.askOpts.map((o) => <label><input type="checkbox" name="ask[]" value={o} /><span>{o}</span></label>)}</fieldset>
+        </fieldset>
+        </>}
+
+        <fieldset class="grp x" data-for="concert">
+          <legend class="lg">{E.concertH}</legend>
+          <div class="row2">
+            <label class="fl"><span>{E.artist} <abbr title={E.required}>*</abbr></span><input class="field" name="artist" maxlength="160" data-req /></label>
+            <label class="fl"><span>{E.genre}</span><input class="field" name="genre" maxlength="120" /></label>
+            <label class="fl wide"><span>{E.dates}</span><input class="field" name="dates" maxlength="200" /></label>
+          </div>
+          {[opt('cities', E.citiesOpts), opt('audience', E.audienceOpts, 'radio'), opt('deal', E.dealOpts, 'radio')].map((g) => (
+            <fieldset class="pills"><legend>{(E as any)[g.name]}</legend>
+              {g.list.map((o) => <label><input type={g.kind} name={g.kind === 'checkbox' ? `${g.name}[]` : g.name} value={o} /><span>{o}</span></label>)}
+            </fieldset>
+          ))}
+          <label class="fl"><span>{E.epk}</span><input class="field" name="links" maxlength="500" placeholder="https://" /></label>
+        </fieldset>
+
+        <fieldset class="grp x" data-for="promotion">
+          <legend class="lg">{E.promoH}</legend>
+          <div class="row2">
+            <label class="fl"><span>{E.event} <abbr title={E.required}>*</abbr></span><input class="field" name="event" maxlength="160" data-req /></label>
+            <label class="fl"><span>{E.eventDate}</span><input class="field" type="date" name="eventDate" /></label>
+            <label class="fl"><span>{E.venueName}</span><input class="field" name="venue" maxlength="160" /></label>
+            <label class="fl"><span>{E.tickets}</span><input class="field" type="url" name="ticketUrl" maxlength="300" placeholder="https://" /></label>
+          </div>
+          <fieldset class="pills"><legend>{E.help}</legend>{E.helpOpts.map((o) => <label><input type="checkbox" name="help[]" value={o} /><span>{o}</span></label>)}</fieldset>
+        </fieldset>
+
+        <fieldset class="grp x" data-for="sponsor">
+          <legend class="lg">{E.sponsorH}</legend>
+          <fieldset class="pills"><legend>{E.interest}</legend>{E.interestOpts.map((o) => <label><input type="checkbox" name="interest[]" value={o} /><span>{o}</span></label>)}</fieldset>
+          <fieldset class="pills"><legend>{E.budget}</legend>{E.budgetOpts.map((o) => <label><input type="radio" name="budget" value={o} /><span>{o}</span></label>)}</fieldset>
+          <label class="fl"><span>{E.goals}</span><input class="field" name="goals" maxlength="300" placeholder={E.goalsPh} /></label>
+        </fieldset>
+
+        <fieldset class="grp">
+          <label class="fl"><span>{E.message} <abbr title={E.required}>*</abbr></span><textarea class="field" name="message" rows="6" required minlength="10" maxlength="4000" placeholder={E.messagePh}></textarea></label>
+          <label class="ck"><input type="checkbox" name="consent" value="yes" required /><span>{E.consent} <abbr title={E.required}>*</abbr></span></label>
+          <label class="ck"><input type="checkbox" name="newsletter" value="yes" /><span>{E.newsletter}</span></label>
+          <p class="muted small">{E.privacy} <a class="u" href={href(lang, '/privacy/')}>{E.privacyLink}</a>.</p>
+          <p class="err" role="alert" hidden></p>
+          <button class="btn btn-primary send" type="submit">{send} →</button>
+        </fieldset>
+      </div>
+      <aside class="side" aria-label={lang === 'tr' ? 'Sonra ne olur' : 'What happens next'}>
+        <h2 class="lg">{lang === 'tr' ? 'Sonra ne olur?' : 'What happens next?'}</h2>
+        <ol class="steps">
+          {(isContact ? C.next : lang === 'tr'
+            ? ['Başvurunuz doğrudan ekibimize gider.', 'Okuyup e-postayla yanıt veririz; gerekirse bir görüşme ayarlarız.', 'Uygunsa tarih, mekân ve bütçeyi birlikte netleştiririz.']
+            : ['Your enquiry goes straight to our team.', 'We read it and reply by email, and set up a call if useful.', 'If it fits, we shape dates, venue and budget together.']).map((x) => <li>{x}</li>)}
+        </ol>
+        <p class="muted small">{lang === 'tr' ? 'Doğrudan yazmak isterseniz:' : 'Prefer email?'} <a class="u" href="mailto:info@orangetree.events">info@orangetree.events</a></p>
+        {isContact && <p class="muted small">{C.partnerNote}</p>}
+        <div class="bro">
+          <a href={pdf('artists')} download><strong>PDF</strong><span>{E.brochureArtists.replace(' (PDF)', '')}</span></a>
+          <a href={pdf('sponsors')} download><strong>PDF</strong><span>{E.brochureSponsors.replace(' (PDF)', '')}</span></a>
+        </div>
+      </aside>
+      </div>
+    </form>
+  </div>
+</Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('form.eoi')!;
+  form.querySelector<HTMLInputElement>('[name=t]')!.value = String(Date.now());
+  // Preselect from the address, e.g. /work-with-us/#sponsor
+  const pre = new URLSearchParams(location.search).get('topic') || location.hash.slice(1);
+  const preR = form.querySelector<HTMLInputElement>(`input[name=type][value="${pre}"]`);
+  if (preR) preR.checked = true;
+  const sync = () => {
+    const t = form.querySelector<HTMLInputElement>('input[name=type]:checked')?.value;
+    form.querySelectorAll<HTMLFieldSetElement>('fieldset.x').forEach((fs) => {
+      const on = (fs.dataset.for || '').split(' ').includes(t || '');
+      fs.disabled = !on;
+      fs.querySelectorAll<HTMLInputElement>('[data-req]').forEach((i) => (i.required = on));
+    });
+    // Media people are asked for their outlet instead, so the organisation field is not repeated.
+    form.querySelectorAll<HTMLElement>('[data-for-label]').forEach((l) => (l.hidden = l.dataset.forLabel === t));
+    form.querySelector<HTMLElement>('select[name=role]')!.closest('label')!.hidden = t === 'media';
+  };
+  form.addEventListener('change', (e) => { if ((e.target as HTMLInputElement).name === 'type') sync(); });
+  sync();
+  form.addEventListener('submit', (e) => {
+    const bad = [...form.querySelectorAll<HTMLInputElement>('input, textarea, select')].find((i) => !i.disabled && !i.closest('fieldset[disabled]') && !i.checkValidity());
+    const err = form.querySelector<HTMLElement>('.err')!;
+    if (bad) {
+      e.preventDefault();
+      const lab = bad.closest('label')?.querySelector('span')?.textContent?.replace('*', '').trim() ?? '';
+      err.textContent = (document.documentElement.lang === 'tr' ? 'Lütfen kontrol edin: ' : 'Please check: ') + lab;
+      err.hidden = false;
+      bad.focus();
+      return;
+    }
+    form.querySelector<HTMLButtonElement>('.send')!.disabled = true;
+  });
+</script>
+
+<style>
+  .hero { padding-block: 72px 40px; background: radial-gradient(90% 120% at 100% 0%, rgba(240,90,40,.22), transparent 60%); border-bottom: 1px solid var(--line); }
+  .hi { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr); gap: 48px; align-items: end; }
+  h1 { font-size: clamp(40px, 6vw, 84px); font-weight: 800; line-height: .94; max-width: 14ch; }
+  .lead { margin: 20px 0 0; font-size: 19px; color: var(--ink-2); max-width: 56ch; }
+  .dl { margin: 24px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-size: 14px; }
+  .stats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stats li { border: 1px solid var(--line); border-radius: 18px; padding: 18px; background: rgba(255,255,255,.03); }
+  .stats strong { display: block; font-family: var(--display); font-size: 44px; line-height: 1; color: var(--accent); }
+  .stats span { font-size: 14px; color: var(--ink-2); }
+
+  .eoi { padding-block: 48px 96px; }
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .lg { font-family: var(--display); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; font-size: 26px; margin-bottom: 16px; padding: 0; }
+  .tgrid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+  .tcard { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 18px; border: 1.5px solid var(--line-2); background: rgba(255,255,255,.03); cursor: pointer; transition: border-color .4s, background .4s, transform .4s cubic-bezier(.22,1,.36,1); }
+  .tcard:hover { transform: translateY(-2px); }
+  .tcard input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+  .tcard svg { width: 30px; height: 30px; fill: none; stroke: var(--accent); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .tgrid.n8 .tt { font-size: 16px; } .tt { font-weight: 800; font-size: 18px; } .td { font-size: 14px; color: var(--muted); }
+  .tcard:has(input:checked) { border-color: var(--accent); background: rgba(240,90,40,.12); }
+  .tcard:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .tcard:has(input:checked)::after { content: '✓'; position: absolute; top: 14px; right: 16px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); font-size: 14px; font-weight: 800; }
+
+  .layout { margin-top: 40px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; align-items: start; }
+  .cols { display: grid; gap: 36px; }
+  .side { position: sticky; top: 24px; border: 1px solid var(--line); border-radius: 22px; padding: 24px; background: linear-gradient(160deg, rgba(240,90,40,.14), rgba(255,255,255,.02) 60%); }
+  .side .lg { font-size: 22px; }
+  .steps { margin: 0 0 18px; padding: 0; list-style: none; counter-reset: s; display: flex; flex-direction: column; gap: 14px; }
+  .steps li { counter-increment: s; position: relative; padding-left: 40px; font-size: 15px; line-height: 1.5; }
+  .steps li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+  .bro { display: flex; flex-direction: column; gap: 10px; margin-top: 18px; }
+  .bro a { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--line-2); font-weight: 700; font-size: 14px; transition: border-color .2s; }
+  .bro a:hover { border-color: var(--accent); } .bro strong { font-size: 11px; background: var(--accent); color: var(--accent-ink); border-radius: 6px; padding: 4px 6px; }
+  .grp { border: 1px solid var(--line); border-radius: 22px; padding: 26px; background: rgba(255,255,255,.02); display: flex; flex-direction: column; gap: 16px; }
+  .grp > .lg { float: left; width: 100%; }
+  .x { display: none; }
+  .eoi:has(input[name=type][value=concert]:checked) [data-for~=concert],
+  .eoi:has(input[name=type][value=promotion]:checked) [data-for~=promotion],
+  .eoi:has(input[name=type][value=sponsor]:checked) [data-for~=sponsor],
+  .eoi:has(input[name=type][value=venue]:checked) [data-for~=venue],
+  .eoi:has(input[name=type][value=tickets]:checked) [data-for~=tickets],
+  .eoi:has(input[name=type][value=volunteer]:checked) [data-for~=volunteer],
+  .eoi:has(input[name=type][value=media]:checked) [data-for~=media] { display: flex; animation: fin .6s cubic-bezier(.22,1,.36,1) both; }
+  @keyframes fin { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  [hidden] { display: none !important; }
+  .quick { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .quick li { display: grid; grid-template-columns: 110px 1fr; gap: 12px; align-items: baseline; padding: 14px 18px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255,255,255,.03); font-size: 15px; }
+  .quick .k { font-size: 12px; text-transform: uppercase; letter-spacing: .1em; color: var(--peach); font-weight: 700; }
+  .quick a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 16px; }
+  .fl { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 600; color: var(--ink-2); } .fl.wide { grid-column: 1 / -1; }
+  .fl .field, .fl select, .fl textarea { width: 100%; font: inherit; font-weight: 500; }
+  textarea.field { resize: vertical; min-height: 140px; border-radius: 16px; }
+  abbr { text-decoration: none; color: var(--coral); }
+  .pills legend { font-size: 14px; font-weight: 600; color: var(--ink-2); margin-bottom: 8px; padding: 0; }
+  .pills { display: flex; flex-wrap: wrap; gap: 8px; }
+  .pills legend { width: 100%; }
+  .pills label { position: relative; }
+  .pills input { position: absolute; opacity: 0; }
+  .pills span { display: inline-block; padding: 9px 15px; border-radius: 999px; border: 1.5px solid var(--line-2); font-size: 14px; font-weight: 600; cursor: pointer; transition: all .15s; }
+  .pills input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .pills input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .ck { display: flex; gap: 12px; align-items: flex-start; font-size: 15px; cursor: pointer; }
+  .ck input { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--accent); flex: 0 0 auto; }
+  .err { margin: 0; padding: 12px 16px; border-radius: 12px; background: rgba(240,90,40,.15); color: var(--coral); font-weight: 600; }
+  .send { align-self: flex-start; font-size: 17px; padding-inline: 28px; }
+  .send:disabled { opacity: .6; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .small { font-size: 14px; } .u { color: var(--coral); text-decoration: underline; }
+  @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } .side { position: static; } }
+  @media (max-width: 900px) { .hi { grid-template-columns: 1fr; } .tgrid { grid-template-columns: 1fr 1fr; } .row2 { grid-template-columns: 1fr; } .grp { padding: 20px; } }
+  @media (max-width: 480px) { .tgrid { grid-template-columns: 1fr; } }
+</style>

@@ -1,6 +1,57 @@
 ---
 import SimplePage from '../components/SimplePage.astro';
 ---
-<SimplePage lang="en" title="Privacy" noindex={true}>
-<p>[Draft: privacy policy to be finalised before ticket sales open. We collect only what we need to sell and deliver tickets and, if you opt in, to email you about events.]</p>
+<SimplePage lang="en" title="Privacy policy">
+<p class="upd">Updated 22 November 2026</p>
+<p>Orange Tree Events is the events brand of Orange Tree Group Pty Ltd (ABN 94 617 622 321), Sydney, Australia. This policy explains what personal information we collect through orangetree.events and our events, and how we look after it. We handle personal information in line with the Australian Privacy Principles.</p>
+<h2>What we collect</h2>
+<ul>
+<li><strong>Messages and enquiries.</strong> When you use our contact or work-with-us forms: your name, email, optional phone number, and the details you choose to give us (for example your organisation, the event you are asking about, or your availability to volunteer).</li>
+<li><strong>Newsletter.</strong> Your email address and preferred language, if you sign up. We use double opt-in, so nothing is sent until you confirm.</li>
+<li><strong>Tickets.</strong> Tickets are sold by the box office named on each event page. That seller collects your payment and booking details under its own privacy policy. We may receive attendee names and contact details from the seller to run the event and contact you about it.</li>
+<li><strong>Website use.</strong> Google Analytics 4 tells us which pages are visited, roughly where from (city level), on what kind of device, and how people found us. Advertising features and Google signals are switched off. You can turn analytics off below.</li>
+<li><strong>Photos at events.</strong> Our nights are photographed and filmed. If you would rather not appear in published photos, tell our crew on the night or email us and we will remove a photo on request.</li>
+</ul>
+<h2>How we use it</h2>
+<p>To reply to you, run our events, send the newsletter you asked for, understand what is useful on our website, and meet our legal obligations. We do not sell personal information.</p>
+<h2>Who we share it with</h2>
+<p>Only with services that help us do the above: our web host (WPX), our email service (Brevo), Google (analytics), ticket sellers and, for an event you attend, the venue where needed for safety or access. Some of these providers store data outside Australia, for example in the European Union or the United States.</p>
+<h2>Cookies and embeds</h2>
+<p>The site sets no advertising cookies. Google Analytics uses first-party cookies to count visits. Spotify and YouTube players on artist pages only load when you press play, and those services may then set their own cookies.</p>
+<div class="optout" data-optout data-l='{"on":"Analytics is on in this browser.","off":"Analytics is off in this browser.","signal":"Your browser asks sites not to track you, so analytics is off.","turnOff":"Turn analytics off","turnOn":"Turn analytics back on"}'>
+  <p><strong>Analytics in this browser</strong><br /><span data-state>Checking…</span></p>
+  <button type="button" class="btn btn-ghost btn-sm" hidden>…</button>
+</div>
+<h2>Keeping it safe</h2>
+<p>Form messages are emailed to our team and a copy is kept in a private, access-restricted area of our hosting. We keep information only as long as we need it for the purpose it was collected and for our records.</p>
+<h2>Your choices</h2>
+<p>You can unsubscribe from our emails at any time with the link in each email. You can ask to see, correct or delete the information we hold about you by contacting us.</p>
+<h2>Contact and complaints</h2>
+<p>Email <a href="mailto:info@orangetree.events">info@orangetree.events</a> or use our <a href="/contact/">contact form</a>. If you are not satisfied with our response, you can contact the Office of the Australian Information Commissioner at <a href="https://www.oaic.gov.au/">oaic.gov.au</a>.</p>
 </SimplePage>
+<script>
+  import { OPT_KEY } from '../scripts/analytics';
+  const box = document.querySelector<HTMLElement>('[data-optout]');
+  if (box) {
+    const btn = box.querySelector<HTMLButtonElement>('button')!, st = box.querySelector<HTMLElement>('[data-state]')!;
+    const n = navigator as Navigator & { globalPrivacyControl?: boolean };
+    const sig = n.globalPrivacyControl === true || n.doNotTrack === '1';
+    const L = JSON.parse(box.dataset.l || '{}');
+    const paint = () => {
+      let off = false; try { off = localStorage.getItem(OPT_KEY) === 'off'; } catch {}
+      st.textContent = sig ? L.signal : off ? L.off : L.on;
+      btn.textContent = off ? L.turnOn : L.turnOff;
+      btn.hidden = sig; btn.setAttribute('aria-pressed', String(!off));
+    };
+    btn.addEventListener('click', () => {
+      try { localStorage.getItem(OPT_KEY) === 'off' ? localStorage.removeItem(OPT_KEY) : localStorage.setItem(OPT_KEY, 'off'); } catch {}
+      // Clear Google Analytics cookies on opt-out.
+      document.cookie.split(';').map((c) => c.trim().split('=')[0]).filter((k) => k.startsWith('_ga')).forEach((k) => {
+        document.cookie = `${k}=; Max-Age=0; path=/; domain=.${location.hostname.replace(/^www\./, '')}`;
+        document.cookie = `${k}=; Max-Age=0; path=/`;
+      });
+      paint();
+    });
+    paint();
+  }
+</script>

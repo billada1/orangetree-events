@@ -1,0 +1,10 @@
+---
+// Google Analytics 4. On by default with an easy opt-out: no ad features, no Google signals,
+// respects Global Privacy Control / Do Not Track, and the Privacy page has a switch (stored in this browser only).
+import { GA_ID } from '../data/site';
+---
+{GA_ID && <meta name="ot-ga" content={GA_ID} />}
+{GA_ID && <script>
+  import { initAnalytics } from '../scripts/analytics';
+  initAnalytics();
+</script>}

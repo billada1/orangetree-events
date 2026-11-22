@@ -55,9 +55,9 @@ h1, h2, h3 { font-family: var(--display); font-weight: 700; line-height: 1.02; l
 .field { font: inherit; padding: 14px 16px; border-radius: 12px; border: 1.5px solid var(--accent-ink); background: #FFF4EF; color: var(--accent-ink); min-width: 0; }
 
 @supports (animation-timeline: view()) {
-  .reveal { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% cover 22%; }
+  .reveal { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% cover 30%; }
 }
-@keyframes rise { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+@keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }

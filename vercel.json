@@ -12,6 +12,21 @@
       "permanent": true
     },
     {
+      "source": "/tr/iletisim/",
+      "destination": "/tr/contact/",
+      "permanent": true
+    },
+    {
+      "source": "/contact-us/",
+      "destination": "/contact/",
+      "permanent": true
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/sitemap-index.xml",
+      "permanent": true
+    },
+    {
       "source": "/about/",
       "destination": "/#giving-back",
       "permanent": true

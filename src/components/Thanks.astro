@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import { href, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const tr = lang === 'tr';
+const T = tr ? {
+  title: 'Teşekkürler',
+  sub: { h: 'Neredeyse tamam', p: 'Gelen kutunuzdaki onay bağlantısına tıklayın; yeni konserlerden ilk siz haberdar olun.' },
+  conf: { h: 'Listemizdesiniz', p: 'E-postanız onaylandı. Yeni konserler ve özel ön satışlar önce size gelecek.' },
+  sent: { h: 'Mesajınız bize ulaştı', p: 'Ekibimiz okuyup genellikle iki iş günü içinde e-postayla yanıt verecek. Bir kopyasını saklamanıza gerek yok; ayrıntılar bizde.' },
+  topics: { tickets: 'Etkinlik gecesiyle ilgili acil bir durumsa kapıdaki Orange Tree ekibine başvurun.', volunteer: 'Bir sonraki gece için ekip planlarken sizinle iletişime geçeceğiz.', media: 'Teslim tarihiniz yakınsa konu satırına yazarak info@orangetree.events adresine de bildirebilirsiniz.' } as Record<string, string>,
+  err: { h: 'Bir şeyler ters gitti', p: 'E-posta adresi hatalı görünüyor ya da bizim tarafımızda bir sorun oldu. Geri dönüp tekrar deneyin veya info@orangetree.events adresine yazın.' },
+  busy: 'Kısa sürede çok fazla mesaj geldi. Lütfen bir saat sonra tekrar deneyin ya da bize e-posta gönderin.',
+  back: 'Geri dön', home: 'Ana sayfa', on: 'Yaklaşan etkinlikler', ig: 'Instagram’da takip edin',
+} : {
+  title: 'Thank you',
+  sub: { h: 'Almost there', p: 'Tap the confirmation link in your inbox and you’ll hear about new shows first.' },
+  conf: { h: 'You’re on the list', p: 'Your email is confirmed. New shows and early-bird presales will reach you first.' },
+  sent: { h: 'Your message is with us', p: 'Our team will read it and reply by email, usually within two working days.' },
+  topics: { tickets: 'If it’s urgent on an event night, find the Orange Tree crew at the door.', volunteer: 'We’ll be in touch as we put the crew together for the next night.', media: 'Tight deadline? Email info@orangetree.events with it in the subject line.' } as Record<string, string>,
+  err: { h: 'Something went wrong', p: 'That email address didn’t look right, or something went wrong on our side. Please go back and try again, or email info@orangetree.events.' },
+  busy: 'We received a lot of messages from your connection in a short time. Please try again in an hour, or email us.',
+  back: 'Go back', home: 'Home page', on: 'What’s on', ig: 'Follow on Instagram',
+};
+---
+<Base lang={lang} title={T.title} overlayHeader={false} noindex={true}>
+  <section class="wrap ty" data-ty data-topics={JSON.stringify(T.topics)} data-busy={T.busy}>
+    <div class="card">
+      <div class="mark" aria-hidden="true">
+        <svg class="ok" viewBox="0 0 52 52"><circle cx="26" cy="26" r="24" /><path d="M15 27l7 7 15-16" /></svg>
+        <svg class="no" viewBox="0 0 52 52" hidden><circle cx="26" cy="26" r="24" /><path d="M26 15v14M26 36v1" /></svg>
+      </div>
+      <div data-v="sub"><h1>{T.sub.h}</h1><p>{T.sub.p}</p></div>
+      <div data-v="conf" hidden><h1>{T.conf.h}</h1><p>{T.conf.p}</p></div>
+      <div data-v="sent" hidden><h1>{T.sent.h}</h1><p>{T.sent.p}</p><p class="extra" data-extra hidden></p></div>
+      <div data-v="err" hidden><h1>{T.err.h}</h1><p data-errp>{T.err.p}</p></div>
+      <div class="acts">
+        <button type="button" class="btn btn-ghost" data-back hidden>← {T.back}</button>
+        <a class="btn btn-primary" href={href(lang, '/#whats-on')}>{T.on}</a>
+        <a class="btn btn-ghost" href="https://www.instagram.com/orangetree.events/">{T.ig}</a>
+      </div>
+    </div>
+  </section>
+</Base>
+<script>
+  const root = document.querySelector<HTMLElement>('[data-ty]')!;
+  const q = new URLSearchParams(location.search);
+  const show = (v: string) => root.querySelectorAll<HTMLElement>('[data-v]').forEach((el) => (el.hidden = el.dataset.v !== v));
+  if (q.has('error')) {
+    show('err');
+    root.querySelector<SVGElement>('.ok')!.setAttribute('hidden', '');
+    root.querySelector<SVGElement>('.no')!.removeAttribute('hidden');
+    const back = root.querySelector<HTMLButtonElement>('[data-back]')!;
+    back.hidden = false; back.addEventListener('click', () => history.back());
+    root.classList.add('bad');
+    if (q.get('error') === 'busy') root.querySelector<HTMLElement>('[data-errp]')!.textContent = root.dataset.busy || '';
+  } else if (q.get('sent') === 'enquiry') {
+    show('sent');
+    const extra = (JSON.parse(root.dataset.topics || '{}') as Record<string, string>)[q.get('topic') || ''];
+    const el = root.querySelector<HTMLElement>('[data-extra]')!;
+    if (extra) { el.textContent = extra; el.hidden = false; }
+  } else if (q.has('confirmed')) show('conf');
+</script>
+<style>
+  .ty { padding-block: 96px 120px; display: grid; place-items: center; }
+  .card { width: min(640px, 100%); text-align: center; padding: 48px 40px; border: 1px solid var(--line); border-radius: 28px;
+    background: radial-gradient(120% 90% at 50% 0%, rgba(240,90,40,.16), rgba(255,255,255,.02) 60%); }
+  .mark svg { width: 76px; height: 76px; fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .mark circle { stroke: var(--accent); opacity: .35; }
+  .mark path { stroke: var(--accent); stroke-dasharray: 40; stroke-dashoffset: 40; animation: tick .9s cubic-bezier(.22,1,.36,1) .25s forwards; }
+  .bad .mark circle, .bad .mark path { stroke: var(--coral); }
+  @keyframes tick { to { stroke-dashoffset: 0; } }
+  h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 800; margin: 18px 0 10px; }
+  p { color: var(--ink-2); font-size: 18px; max-width: 46ch; margin: 0 auto 10px; }
+  .extra { font-size: 16px; color: var(--muted); }
+  .acts { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 28px; }
+  [hidden] { display: none !important; }
+  @media (prefers-reduced-motion: reduce) { .mark path { animation: none; stroke-dashoffset: 0; } }
+</style>

@@ -1,6 +1,57 @@
 ---
 import SimplePage from '../../components/SimplePage.astro';
 ---
-<SimplePage lang="tr" title="Gizlilik" noindex={true}>
-<p>[Taslak: gizlilik politikası bilet satışı açılmadan önce tamamlanacak. Yalnızca bilet satışı ve teslimi için ve izin verirseniz etkinlik duyuruları için gereken bilgileri topluyoruz.]</p>
+<SimplePage lang="tr" title="Gizlilik politikası">
+<p class="upd">Güncelleme: 22 Kasım 2026</p>
+<p>Orange Tree Events, Orange Tree Group Pty Ltd’nin (ABN 94 617 622 321, Sydney, Avustralya) etkinlik markasıdır. Bu politika, orangetree.events ve etkinliklerimiz aracılığıyla hangi kişisel bilgileri topladığımızı ve bunları nasıl koruduğumuzu açıklar. Kişisel bilgileri Avustralya Gizlilik İlkelerine (Australian Privacy Principles) uygun olarak işleriz.</p>
+<h2>Topladığımız bilgiler</h2>
+<ul>
+<li><strong>Mesajlar ve başvurular.</strong> İletişim ya da “Bizimle çalışın” formlarını kullandığınızda: adınız, e-postanız, isteğe bağlı telefonunuz ve paylaşmayı seçtiğiniz ayrıntılar (örneğin kurumunuz, sorduğunuz etkinlik ya da gönüllülük için uygun olduğunuz zamanlar).</li>
+<li><strong>E-posta bülteni.</strong> Kaydolursanız e-posta adresiniz ve tercih ettiğiniz dil. Çift onay kullanırız; siz onaylamadan hiçbir şey gönderilmez.</li>
+<li><strong>Biletler.</strong> Biletler her etkinlik sayfasında adı geçen gişe tarafından satılır. Ödeme ve rezervasyon bilgilerinizi o satıcı kendi gizlilik politikasına göre toplar. Etkinliği düzenlemek ve sizinle etkinlik hakkında iletişim kurmak için satıcıdan katılımcı adlarını ve iletişim bilgilerini alabiliriz.</li>
+<li><strong>Web sitesi kullanımı.</strong> Google Analytics 4 hangi sayfaların ziyaret edildiğini, yaklaşık olarak nereden (şehir düzeyinde), hangi tür cihazla ve bizi nasıl bulduğunuzu gösterir. Reklam özellikleri ve Google sinyalleri kapalıdır. Analizi aşağıdan kapatabilirsiniz.</li>
+<li><strong>Etkinlik fotoğrafları.</strong> Gecelerimizde fotoğraf ve video çekilir. Yayımlanan fotoğraflarda yer almak istemiyorsanız o gece ekibimize söyleyin ya da bize yazın; istek üzerine fotoğrafı kaldırırız.</li>
+</ul>
+<h2>Bilgileri nasıl kullanırız</h2>
+<p>Size yanıt vermek, etkinliklerimizi düzenlemek, istediğiniz bülteni göndermek, web sitemizde neyin işe yaradığını anlamak ve yasal yükümlülüklerimizi yerine getirmek için. Kişisel bilgileri satmayız.</p>
+<h2>Kimlerle paylaşırız</h2>
+<p>Yalnızca bu işlerde bize yardımcı olan hizmetlerle: web barındırma (WPX), e-posta hizmeti (Brevo), Google (analiz), bilet satıcıları ve katıldığınız etkinlik için güvenlik ya da erişim gerektiğinde mekân. Bu sağlayıcılardan bazıları verileri Avustralya dışında, örneğin Avrupa Birliği’nde ya da ABD’de saklar.</p>
+<h2>Çerezler ve gömülü içerik</h2>
+<p>Sitemiz reklam çerezi kullanmaz. Google Analytics ziyaretleri saymak için birinci taraf çerezleri kullanır. Sanatçı sayfalarındaki Spotify ve YouTube oynatıcıları yalnızca oynat düğmesine bastığınızda yüklenir; bu hizmetler o zaman kendi çerezlerini kullanabilir.</p>
+<div class="optout" data-optout data-l='{"on":"Bu tarayıcıda analiz açık.","off":"Bu tarayıcıda analiz kapalı.","signal":"Tarayıcınız izlenmemeyi istiyor, bu yüzden analiz kapalı.","turnOff":"Analizi kapat","turnOn":"Analizi yeniden aç"}'>
+  <p><strong>Bu tarayıcıda analiz</strong><br /><span data-state>Kontrol ediliyor…</span></p>
+  <button type="button" class="btn btn-ghost btn-sm" hidden>…</button>
+</div>
+<h2>Bilgilerin korunması</h2>
+<p>Form mesajları ekibimize e-postayla gönderilir ve bir kopyası barındırma hizmetimizin erişimi kısıtlı, özel bir bölümünde saklanır. Bilgileri yalnızca toplanma amacı ve kayıtlarımız için gerektiği sürece tutarız.</p>
+<h2>Seçenekleriniz</h2>
+<p>Her e-postadaki bağlantıyla istediğiniz zaman abonelikten çıkabilirsiniz. Hakkınızda tuttuğumuz bilgileri görmek, düzeltmek ya da silmek için bizimle iletişime geçebilirsiniz.</p>
+<h2>İletişim ve şikâyetler</h2>
+<p><a href="mailto:info@orangetree.events">info@orangetree.events</a> adresine yazın ya da <a href="/tr/contact/">iletişim formunu</a> kullanın. Yanıtımızdan memnun kalmazsanız Avustralya Bilgi Komiserliği’ne (OAIC) <a href="https://www.oaic.gov.au/">oaic.gov.au</a> üzerinden başvurabilirsiniz.</p>
 </SimplePage>
+<script>
+  import { OPT_KEY } from '../../scripts/analytics';
+  const box = document.querySelector<HTMLElement>('[data-optout]');
+  if (box) {
+    const btn = box.querySelector<HTMLButtonElement>('button')!, st = box.querySelector<HTMLElement>('[data-state]')!;
+    const n = navigator as Navigator & { globalPrivacyControl?: boolean };
+    const sig = n.globalPrivacyControl === true || n.doNotTrack === '1';
+    const L = JSON.parse(box.dataset.l || '{}');
+    const paint = () => {
+      let off = false; try { off = localStorage.getItem(OPT_KEY) === 'off'; } catch {}
+      st.textContent = sig ? L.signal : off ? L.off : L.on;
+      btn.textContent = off ? L.turnOn : L.turnOff;
+      btn.hidden = sig; btn.setAttribute('aria-pressed', String(!off));
+    };
+    btn.addEventListener('click', () => {
+      try { localStorage.getItem(OPT_KEY) === 'off' ? localStorage.removeItem(OPT_KEY) : localStorage.setItem(OPT_KEY, 'off'); } catch {}
+      // Clear Google Analytics cookies on opt-out.
+      document.cookie.split(';').map((c) => c.trim().split('=')[0]).filter((k) => k.startsWith('_ga')).forEach((k) => {
+        document.cookie = `${k}=; Max-Age=0; path=/; domain=.${location.hostname.replace(/^www\./, '')}`;
+        document.cookie = `${k}=; Max-Age=0; path=/`;
+      });
+      paint();
+    });
+    paint();
+  }
+</script>
