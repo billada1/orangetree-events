@@ -59,13 +59,13 @@ jobs:
             set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20;
             open -u \"$USER\",\"$PASS\" -p $PORT sftp://$HOST;
             put private/ot-config.php -o \"$(dirname "$WEBROOT")/ot-config.php\";
-            mirror -R --delete --parallel=4 --exclude-glob .well-known/ --exclude-glob wp-*/ --exclude-glob wp-*.php dist/ \"$WEBROOT\";
+            mirror -R --delete --parallel=4 --exclude-glob .well-known/ --exclude-glob .usermin/ --exclude-glob .tmb/ --exclude-glob .ftpquota --exclude-glob google*.html --exclude-glob _wp-archive-*/ --exclude-glob wp-*/ --exclude-glob wp-*.php dist/ \"$WEBROOT\";
             bye"
 
       - name: Smoke test
         if: vars.SITE_URL != ''
         run: |
-          for p in / /tr/ /events/ /event/2023-nye/; do
+          for p in / /tr/ /events/ /artists/ /work-with-us/ /event/2023-nye/; do
             code=$(curl -s -o /dev/null -w '%{http_code}' "${{ vars.SITE_URL }}$p"); echo "$p $code"
             case "$code" in 200|301|308) ;; *) exit 1;; esac
           done
