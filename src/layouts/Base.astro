@@ -27,7 +27,7 @@ const desc = description ?? s.metaDescription;
 const ogImage = new URL(image ?? '/og-default.jpg', site).href;
 const org = {
   '@context': 'https://schema.org', '@type': 'Organization', name: 'Orange Tree Events',
-  legalName: 'Orange Tree Group Pty Ltd', taxID: 'ABN 94 617 622 321', url: site.href, logo: new URL('/emblem.svg', site).href,
+  legalName: 'Orange Tree Group Pty Ltd', taxID: 'ABN 94 617 622 321', foundingDate: '2014', url: site.href, logo: new URL('/emblem.svg', site).href,
   email: 'info@orangetree.events', sameAs: ['https://www.instagram.com/orangetree.events/', 'https://www.facebook.com/orangetree.events'],
 };
 const ld = [org, ...(Array.isArray(jsonLd) ? jsonLd : jsonLd ? [jsonLd] : [])];
