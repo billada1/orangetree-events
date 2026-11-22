@@ -89,23 +89,43 @@ $body .= "\nMessage:\n" . $message . "\n\n-- \nSent from orangetree.events/{$src
 
 $cfg = ot_config();
 $to = (string)($cfg['ENQUIRY_TO'] ?? 'info@orangetree.events');
-$from = (string)($cfg['ENQUIRY_FROM'] ?? 'website@orangetree.events');
-$subject = '=?UTF-8?B?' . base64_encode(($src === 'contact' ? 'Contact: ' : 'Enquiry: ') . $types[$type] . ' · ' . $name . ($fields['Organisation'] ? ' (' . $fields['Organisation'] . ')' : '')) . '?=';
-$headers = implode("\r\n", [
-  'From: Orange Tree Events website <' . $from . '>',
-  'Reply-To: ' . $email,
-  'MIME-Version: 1.0',
-  'Content-Type: text/plain; charset=UTF-8',
-  'Content-Transfer-Encoding: 8bit',
-  'X-Mailer: orangetree.events',
-]);
+// Sender must be a real, verified mailbox on our domain (Brevo-verified and DKIM-signed).
+$from = (string)($cfg['ENQUIRY_FROM'] ?? 'info@orangetree.events');
+$subjectText = ($src === 'contact' ? 'Contact: ' : 'Enquiry: ') . $types[$type] . ' · ' . $name . ($fields['Organisation'] ? ' (' . $fields['Organisation'] . ')' : '');
 
-// Keep a private copy (outside the web root) so nothing is lost if mail fails.
-@file_put_contents($store . '/enquiries-' . date('Y-m') . '.jsonl', json_encode(['at' => date('c'), 'fields' => $fields, 'message' => $message], JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND | LOCK_EX);
+// 1) Brevo transactional API (authenticated domain, best inbox placement). 2) Fallback: PHP mail().
+$via = 'none'; $code = 0;
+if (!empty($cfg['BREVO_API_KEY'])) {
+  $ch = curl_init('https://api.brevo.com/v3/smtp/email');
+  curl_setopt_array($ch, [CURLOPT_POST => true, CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 8,
+    CURLOPT_HTTPHEADER => ['api-key: ' . $cfg['BREVO_API_KEY'], 'content-type: application/json', 'accept: application/json'],
+    CURLOPT_POSTFIELDS => json_encode([
+      'sender' => ['name' => 'Orange Tree Events website', 'email' => $from],
+      'to' => [['email' => $to, 'name' => 'Orange Tree Events']],
+      'replyTo' => ['email' => $email, 'name' => $name],
+      'subject' => $subjectText,
+      'textContent' => $body,
+      'tags' => ['website-enquiry', $type],
+    ], JSON_UNESCAPED_UNICODE)]);
+  curl_exec($ch); $code = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE); curl_close($ch);
+  if ($code >= 200 && $code < 300) $via = 'brevo';
+}
+if ($via === 'none') {
+  $headers = implode("\r\n", [
+    'From: Orange Tree Events website <' . $from . '>',
+    'Reply-To: ' . $email,
+    'MIME-Version: 1.0',
+    'Content-Type: text/plain; charset=UTF-8',
+    'Content-Transfer-Encoding: 8bit',
+    'X-Mailer: orangetree.events',
+  ]);
+  $subject = '=?UTF-8?B?' . base64_encode($subjectText) . '?=';
+  if (mail($to, $subject, $body, $headers, '-f' . $from)) $via = 'mail'; else error_log('enquiry: mail() failed');
+}
+
+// Keep a private copy (deny-all folder) so nothing is lost if delivery fails; note how it was sent.
+@file_put_contents($store . '/enquiries-' . date('Y-m') . '.jsonl', json_encode(['at' => date('c'), 'type' => $type, 'via' => $via, 'brevo' => $code, 'fields' => $fields, 'message' => $message], JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND | LOCK_EX);
 @chmod($store . '/enquiries-' . date('Y-m') . '.jsonl', 0600);
-
-$sent = mail($to, $subject, $body, $headers, '-f' . $from);
-if (!$sent) { error_log('enquiry: mail() failed'); }
 
 // Optional: add to the mailing list (double opt-in if configured).
 if ($fields['Newsletter'] === 'Yes' && !empty($cfg['BREVO_API_KEY'])) {

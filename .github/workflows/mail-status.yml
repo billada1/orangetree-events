@@ -1,0 +1,34 @@
+name: Enquiry delivery status (read-only)
+
+# Prints only the time, topic and delivery result of recent website enquiries (no names, emails or messages).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read delivery log
+        env:
+          HOST: ${{ vars.WPX_SFTP_HOST }}
+          PORT: ${{ vars.WPX_SFTP_PORT || '2222' }}
+          USER: ${{ vars.WPX_SFTP_USER }}
+          LFTP_PASSWORD: ${{ secrets.WPX_SFTP_PASSWORD }}
+        run: |
+          sudo apt-get -qq update && sudo apt-get -qq install -y lftp
+          U=$(printf %s "$USER" | tr -d '[:space:]'); H=$(printf %s "$HOST" | tr -d '[:space:]')
+          mkdir -p tmp && cd tmp
+          lftp --env-password -u "$U" -p "$PORT" "sftp://$H" -e "set sftp:auto-confirm yes; set net:max-retries 2; mget -c /_private/enquiries-*.jsonl; bye" || true
+          python3 - <<'PY'
+          import json, glob
+          for f in sorted(glob.glob('enquiries-*.jsonl')):
+              for line in open(f):
+                  try: d = json.loads(line)
+                  except Exception: continue
+                  print(d.get('at'), d.get('type', '?'), 'via=' + str(d.get('via', 'mail (old log, result not recorded)')), 'brevo=' + str(d.get('brevo', '-')))
+          PY
+          cd .. && rm -rf tmp
