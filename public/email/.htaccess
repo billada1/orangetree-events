@@ -1,0 +1,5 @@
+# Email assets: lets the Brevo editor load the invite HTML; keeps these files out of search.
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "https://app.brevo.com"
+  Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>
