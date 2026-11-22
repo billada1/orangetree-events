@@ -74,7 +74,7 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
             </article>
           );
         })}
-        <form class="next reveal" action="/api/subscribe/" method="post">
+        <form id="stay-in-touch" class="next reveal" action="/api/subscribe/" method="post">
           <h3>{s.on.nextH}</h3>
           <p>{s.on.nextP}</p>
           <label for="on-email">{s.on.email}</label>

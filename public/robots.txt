@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /my-tickets/
 Disallow: /tr/my-tickets/
+Disallow: /email/
 
 Sitemap: https://orangetree.events/sitemap-index.xml

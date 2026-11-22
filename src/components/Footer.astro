@@ -17,7 +17,7 @@ const year = new Date().getFullYear();
     </div>
     <nav aria-label={s.footer.events}><h2>{s.footer.events}</h2><a href={href(lang, '/#whats-on')}>{s.nav.on}</a><a href={href(lang, '/events/')}>{s.nav.past}</a><a href={href(lang, '/artists/')}>{s.nav.artists}</a><a href={href(lang, '/stories/')}>{s.nav.stories}</a></nav>
     <nav aria-label={s.footer.help}><h2>{s.footer.help}</h2><a href={href(lang, '/my-tickets/')}>{s.nav.tickets}</a><a href={href(lang, '/help/tickets/')}>{s.footer.refunds}</a><a href={href(lang, '/help/accessibility/')}>{s.footer.access}</a><a href={href(lang, "/contact/")}>{s.footer.contact}</a><a href={href(lang, "/contact/?topic=volunteer")}>{lang === "tr" ? "Gönüllü olun" : "Volunteer"}</a><a href={href(lang, "/contact/?topic=media")}>{lang === "tr" ? "Basın" : "Media"}</a></nav>
-    <nav aria-label={s.footer.family}><h2>{s.footer.family}</h2><a href="https://orangetree.org.au/">orangetree.org.au</a><a href="https://atam.asn.au/">atam.asn.au</a><a href="https://www.instagram.com/orangetree.events/">Instagram @orangetree.events</a><a href="https://www.facebook.com/orangetree.events">Facebook</a></nav>
+    <nav aria-label={s.footer.family}><h2>{s.footer.family}</h2><a href="https://orangetree.org.au/">orangetree.org.au</a><a href="https://atam.asn.au/">atam.asn.au</a><a href="https://www.instagram.com/orangetree.events/">Instagram @orangetree.events</a></nav>
   </div>
   <div class="wrap legal">
     <p>© {year} Orange Tree Group Pty Ltd · ABN 94 617 622 321 · <a href={href(lang, '/terms/')}>{s.footer.terms}</a> · <a href={href(lang, '/privacy/')}>{s.footer.privacy}</a></p>
