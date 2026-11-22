@@ -8,6 +8,7 @@ export interface ArtistExtra {
   youtube?: string; // YouTube channel ID (UC…)
   wiki?: { en?: string; tr?: string }; // Wikipedia page titles
   credit?: { by: string; licence: string; file: string }; // Wikimedia Commons photo
+  own?: boolean; // photo taken at one of our events
   official?: boolean; // the artist's own press photo (as published on their official profiles)
 }
 
@@ -88,7 +89,7 @@ export const extra: Record<string, ArtistExtra> = {
     },
     facts: [{ label: born, value: '10 August 1960' }],
   },
-  'haluk-levent': { official: true,
+  'haluk-levent': { own: true,
     spotify: '1UV3ii5FWWXF3jkZVeA2bb', youtube: 'UCpIX4bNRuoEfbAiirr5udhA', wiki: { en: 'Haluk Levent', tr: 'Haluk Levent' },
     bio: {
       en: ['Haluk Levent is a Turkish rock singer who helped revive Anatolian rock in the 1990s. Beyond music, he is known for his humanitarian work: he founded the aid organisation AHBAP, and in 2023 Time named him one of the 100 most influential people in the world.'],

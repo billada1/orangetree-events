@@ -6,6 +6,7 @@ export interface Artist {
   facts?: { label: { en: string; tr: string }; value: string }[];
   links?: { label: string; url: string }[];
   official?: boolean;
+  own?: boolean;
   image?: string; // key in photos map, or a file in src/assets/artists (without .jpg)
   local?: boolean; // Sydney-based act
   instagram?: string; // handle without @

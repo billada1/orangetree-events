@@ -108,11 +108,12 @@ const ld = {
         <div>
           <h2 id="ab-h" class="h3">{s.artist.about}</h2>
           {a.bio[lang].map((p, i) => <p class:list={['lead', { first: i === 0 }]}>{p}</p>)}
-          {(wikiUrl || a.credit || a.official) && (
+          {(wikiUrl || a.credit || a.official || a.own) && (
             <p class="src">
               {wikiUrl && <>{P.source}: <a href={wikiUrl} rel="noopener" target="_blank">Wikipedia</a></>}
               {wikiUrl && a.credit && ' · '}
               {a.credit && <>{P.photoBy}: <a href={creditUrl!} rel="noopener" target="_blank">{a.credit.by}</a>, {a.credit.licence}</>}
+              {a.own && !a.credit && <>{wikiUrl && ' · '}{lang === 'tr' ? 'Fotoğraf: Orange Tree Events' : 'Photo: Orange Tree Events'}</>}
               {a.official && !a.credit && <>{wikiUrl && ' · '}{lang === 'tr' ? 'Fotoğraf: sanatçının resmî basın fotoğrafı' : 'Photo: official artist press photo'}</>}
             </p>
           )}
