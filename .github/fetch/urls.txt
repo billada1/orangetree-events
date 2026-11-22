@@ -1,5 +1,4 @@
-hakan-altun|https://i.scdn.co/image/ab6761610000e5eb4e421b9f77f06c7fa9a09244
-baris-komurcuoglu|https://i.scdn.co/image/ab6761610000e5ebc0d844becb54dfab7540e875
-burak-bulut|https://i.scdn.co/image/ab6761610000e5eb5bc52f41c1674d507cf06f07
-manga|https://i.scdn.co/image/ab6761610000e5eb8cceee3942367e3490b1eb2f
-sevcan-orhan|https://i.scdn.co/image/ab6761610000e5eb95b171146579331ef2697535
+ugur1|https://i.scdn.co/image/ab6761610000e5ebbca8683e2a8ad1d2c7242401
+ugur2|https://i.scdn.co/image/ab6761610000e5eb45e130af37dc6f7c4058a53b
+mahmut-orhan|https://i.scdn.co/image/ab6761610000e5eb9981d0fb9b0cfa3ac351be78
+ekin-uzunlar|https://i.scdn.co/image/ab6761610000e5eb945d61fcfde9f0dce7853ae6
