@@ -1,0 +1,30 @@
+name: Brevo key keep-alive
+
+# Brevo switches off API keys that go unused for 90 days, which would quietly stop the sign-up form.
+# Once a week this makes one read-only call (it reads the two mailing lists) so the key stays active.
+# If the call fails, the run fails and GitHub emails the repository owner.
+
+on:
+  schedule:
+    - cron: '17 22 * * 0' # Mondays about 09:17 Sydney time
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Read the EN and TR lists
+        env:
+          KEY: ${{ secrets.BREVO_API_KEY }}
+          LISTS: ${{ vars.BREVO_LIST_EN }} ${{ vars.BREVO_LIST_TR }}
+        run: |
+          test -n "$KEY" || { echo "BREVO_API_KEY is not set"; exit 1; }
+          for id in $LISTS; do
+            code=$(curl -s -o /tmp/list.json -w '%{http_code}' -H "api-key: $KEY" -H 'accept: application/json' "https://api.brevo.com/v3/contacts/lists/$id")
+            echo "List $id: HTTP $code, $(jq -r '.name // .message' /tmp/list.json), $(jq -r '.uniqueSubscribers // 0' /tmp/list.json) subscribers"
+            test "$code" = 200
+          done
