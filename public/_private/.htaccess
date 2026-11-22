@@ -1,0 +1,2 @@
+# Server-only files (config, enquiry copies, rate limits). Never served.
+Require all denied

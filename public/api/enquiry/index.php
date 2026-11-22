@@ -1,8 +1,16 @@
 <?php
 // Expression-of-interest form (work-with-us) on WPX hosting. Emails the enquiry to the team and keeps a private copy.
-// Config OUTSIDE the web root in ../ot-config.php: 'ENQUIRY_TO' => 'info@orangetree.events', 'ENQUIRY_FROM' => 'website@orangetree.events'
+// Optional config keys in ot-config.php: 'ENQUIRY_TO' => 'info@orangetree.events', 'ENQUIRY_FROM' => 'website@orangetree.events'
 // Optional: Brevo keys (as for /api/subscribe/) add the person to the mailing list when they tick "send me news".
 declare(strict_types=1);
+// Server config: prefer one level above the web root; WPX's SFTP user can only write inside it,
+// so the deploy puts it in /_private/, which _private/.htaccess denies to the web.
+function ot_config(): array {
+  foreach ([dirname($_SERVER['DOCUMENT_ROOT']) . '/ot-config.php', $_SERVER['DOCUMENT_ROOT'] . '/_private/ot-config.php'] as $f) {
+    if (is_file($f)) return (array)(require $f);
+  }
+  return [];
+}
 date_default_timezone_set('Australia/Sydney');
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
@@ -41,7 +49,7 @@ if ($type === 'promotion' && $clean($_POST['event'] ?? '') === '') $fail('fields
 if (preg_match_all('#https?://#i', $message) > 4) $go($pre . '/thanks/?sent=enquiry');
 
 // Simple per-IP rate limit: 5 enquiries an hour.
-$store = dirname($_SERVER['DOCUMENT_ROOT']) . '/ot-private';
+$store = $_SERVER['DOCUMENT_ROOT'] . '/_private';
 if (!is_dir($store)) @mkdir($store, 0700, true);
 $ipKey = $store . '/rl-' . hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '') . date('YmdH'));
 $hits = (int)@file_get_contents($ipKey);
@@ -66,8 +74,7 @@ $body = '';
 foreach ($fields as $k => $v) if ($v !== '') $body .= str_pad($k . ':', 15) . $v . "\n";
 $body .= "\nMessage:\n" . $message . "\n\n-- \nSent from orangetree.events/work-with-us at " . date('Y-m-d H:i T') . "\n";
 
-$cfgFile = dirname($_SERVER['DOCUMENT_ROOT']) . '/ot-config.php';
-$cfg = is_file($cfgFile) ? (require $cfgFile) : [];
+$cfg = ot_config();
 $to = (string)($cfg['ENQUIRY_TO'] ?? 'info@orangetree.events');
 $from = (string)($cfg['ENQUIRY_FROM'] ?? 'website@orangetree.events');
 $subject = '=?UTF-8?B?' . base64_encode('Enquiry: ' . $types[$type] . ' · ' . $name . ($fields['Organisation'] ? ' (' . $fields['Organisation'] . ')' : '')) . '?=';

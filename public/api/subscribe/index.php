@@ -1,8 +1,16 @@
 <?php
 // Mailing-list sign-up for WPX hosting → Brevo (double opt-in). Mirrors api/subscribe.js (used on the Vercel preview).
-// Secrets live OUTSIDE the web root in ../../../ot-config.php (written by the deploy workflow):
+// Secrets come from ot-config.php, written by the deploy workflow (see ot_config()):
 //   <?php return ['BREVO_API_KEY' => '...', 'BREVO_LIST_EN' => 3, 'BREVO_LIST_TR' => 4, 'BREVO_DOI_TEMPLATE_ID' => 0];
 declare(strict_types=1);
+// Server config: prefer one level above the web root; WPX's SFTP user can only write inside it,
+// so the deploy puts it in /_private/, which _private/.htaccess denies to the web.
+function ot_config(): array {
+  foreach ([dirname($_SERVER['DOCUMENT_ROOT']) . '/ot-config.php', $_SERVER['DOCUMENT_ROOT'] . '/_private/ot-config.php'] as $f) {
+    if (is_file($f)) return (array)(require $f);
+  }
+  return [];
+}
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
 
@@ -20,8 +28,7 @@ if (!empty($_POST['website'])) $go($back); // honeypot
 $email = strtolower(trim((string)($_POST['email'] ?? '')));
 if (strlen($email) > 254 || !filter_var($email, FILTER_VALIDATE_EMAIL)) $go($back . '?error=email');
 
-$cfgFile = dirname($_SERVER['DOCUMENT_ROOT']) . '/ot-config.php';
-$cfg = is_file($cfgFile) ? (require $cfgFile) : [];
+$cfg = ot_config();
 $key = (string)($cfg['BREVO_API_KEY'] ?? '');
 if ($key === '') { error_log('subscribe: missing Brevo config'); $go($back . '?error=server'); }
 

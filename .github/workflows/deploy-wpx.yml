@@ -51,16 +51,18 @@ jobs:
           PORT: ${{ vars.WPX_SFTP_PORT || '2222' }}
           USER: ${{ vars.WPX_SFTP_USER }}
           LFTP_PASSWORD: ${{ secrets.WPX_SFTP_PASSWORD }}
-          WEBROOT: ${{ vars.WPX_WEBROOT }} # e.g. /new.orangetree.events/public_html (staging) or /orangetree.events/public_html
+          WEBROOT: ${{ vars.WPX_WEBROOT }} # the SFTP user is chrooted to the web root, so this is /
         run: |
           test -n "$HOST" && test -n "$USER" && test -n "$WEBROOT" || { echo "WPX secrets or WPX_WEBROOT not set"; exit 1; }
           sudo apt-get -qq update && sudo apt-get -qq install -y lftp
           U=$(printf %s "$USER" | tr -d '[:space:]'); H=$(printf %s "$HOST" | tr -d '[:space:]')
-          WEBROOT=$(printf %s "$WEBROOT" | tr -d '[:space:]"'); CONF=$(dirname "$WEBROOT" | sed 's#/*$##')/ot-config.php
+          WEBROOT=$(printf %s "$WEBROOT" | tr -d '[:space:]"')
+          # The WPX SFTP user is chrooted to the site's public_html, so its web root is "/".
+          case "$WEBROOT" in /public_html|/public_html/) WEBROOT=/ ;; esac; ROOT=${WEBROOT%/}
           lftp --env-password -u "$U" -p "$PORT" "sftp://$H" -e "
             set sftp:auto-confirm yes; set net:max-retries 2; set net:timeout 20;
-            put private/ot-config.php -o $CONF;
-            mirror -R --delete --parallel=4 --exclude-glob .well-known/ --exclude-glob .usermin/ --exclude-glob .tmb/ --exclude-glob .ftpquota --exclude-glob google*.html --exclude-glob _wp-archive-*/ --exclude-glob wp-*/ --exclude-glob wp-*.php dist/ $WEBROOT;
+            mirror -R --delete --parallel=4 --exclude-glob .well-known/ --exclude-glob .usermin/ --exclude-glob .tmb/ --exclude-glob .ftpquota --exclude-glob google*.html --exclude-glob _wp-archive-*/ --exclude-glob _private/ot-config.php --exclude-glob _private/enquiries-*.jsonl --exclude-glob _private/rl-* dist/ $WEBROOT;
+            put private/ot-config.php -o $ROOT/_private/ot-config.php;
             bye"
 
       - name: Smoke test

@@ -49,7 +49,7 @@ GitHub → Settings → Secrets and variables → Actions:
 | Variable | `SITE_URL` | e.g. `https://new.orangetree.events` (enables the smoke test) |
 | Variable | `BREVO_LIST_EN`, `BREVO_LIST_TR`, `BREVO_DOI_TEMPLATE_ID` | `3`, `4` (ATAM's Brevo), and a double opt-in template number when one exists |
 
-The workflow stays off until `WPX_WEBROOT` is set. It never uploads secrets into the web folder: the Brevo settings go to `ot-config.php` one level above it.
+The workflow stays off until `WPX_WEBROOT` is set. The WPX SFTP user is locked to the web root, so the Brevo settings go to `_private/ot-config.php`, which `_private/.htaccess` denies to the web (PHP also checks one level above the web root first).
 
 ## Before launch
 
