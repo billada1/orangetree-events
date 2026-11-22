@@ -1,0 +1,278 @@
+---
+// A4 brochures, printed to PDF by scripts/brochures.mjs. Two kinds: artists (artists, managers, promoters) and sponsors.
+import '@fontsource-variable/dosis';
+import '@fontsource-variable/manrope';
+import { Image } from 'astro:assets';
+import QRCode from 'qrcode';
+import Logo from './Logo.astro';
+import { events } from '../data/events';
+import { artists } from '../data/artists';
+import { photos } from '../data/photos';
+import { posterWall } from '../data/media';
+import type { Lang } from '../i18n/ui';
+interface Props { lang: Lang; kind: 'artists' | 'sponsors' }
+const { lang, kind } = Astro.props;
+const tr = lang === 'tr';
+const url = `https://orangetree.events${tr ? '/tr' : ''}/work-with-us/${kind === 'sponsors' ? '#sponsor' : ''}`;
+const qr = await QRCode.toString(url, { type: 'svg', margin: 0, color: { dark: '#14110F', light: '#0000' } });
+
+const n = (k: string) => events.filter((e) => e.kind === k).length;
+const stats = [
+  [String(n('presented')), tr ? 'sunduğumuz konser ve gösteri' : 'shows presented'],
+  [String(n('nye')), tr ? 'yılbaşı gecesi' : 'New Year’s Eves'],
+  [String(n('supported') + n('promotion') + n('fundraiser')), tr ? 'desteklediğimiz ve tanıttığımız gece' : 'nights supported and promoted'],
+  ['10,000+', tr ? 'kişiye ulaşan topluluk ağları' : 'people across our community networks'],
+];
+const visiting = artists.filter((a) => !a.local).map((a) => a.name);
+const local = artists.filter((a) => a.local).map((a) => a.name);
+const wall = posterWall().filter(({ e }) => e.kind === 'presented' || e.kind === 'nye' || e.kind === 'promotion').slice(0, 12);
+const venues = ['Max Watt’s', 'Liberty Hall', 'Metro Theatre', 'Enmore Theatre', 'The Star, Marquee', 'Seymour Centre', 'Bankstown Sports Club', 'The Renaissance, Lidcombe', 'Club Burwood RSL', 'Mary’s Underground'];
+const partners = ['ATAM', 'Culture Crew Australia', 'Turkuaz Nights', 'ITSA', 'Wish Events', 'Waves Sydney', 'Austolian Youth Association', 'Turkish Association NSW'];
+
+const T = {
+  artists: {
+    kicker: tr ? 'Sanatçılar, menajerler ve organizatörler için' : 'For artists, managers and promoters',
+    title: tr ? 'Gösterinizi Sydney’ye getirin' : 'Bring your show to Sydney',
+    sub: tr ? '2015’ten bu yana Sydney’de Türk ve çok kültürlü konserler, stand-up ve kutlamalar.' : 'Turkish and multicultural concerts, comedy and celebrations in Sydney since 2015.',
+  },
+  sponsors: {
+    kicker: tr ? 'Sponsorlar ve iş ortakları için' : 'For sponsors and partners',
+    title: tr ? 'Sydney’nin en sevilen gecelerinde yer alın' : 'Be part of Sydney’s favourite nights',
+    sub: tr ? 'Markanızı konserlerde, kültür gecelerinde ve yılbaşı kutlamalarında Türk ve çok kültürlü toplulukla buluşturun.' : 'Put your business in front of the Turkish and multicultural community at concerts, cultural nights and New Year’s Eve.',
+  },
+}[kind];
+
+const about = tr
+  ? ['Orange Tree Events, Orange Tree Group Pty Ltd’nin etkinlik markası. 2015’ten bu yana Türkiye’den gelen sanatçıların Sydney konserlerini sunuyor, ATAM ile yılbaşı gecelerini düzenliyor ve topluluk gecelerini destekliyoruz.', 'Gelirimiz ATAM, Orange Tree, ITSA ve deprem yardım kampanyaları gibi toplum ve öğrenci kuruluşlarına destek oldu. Her gece bir konserden fazlası: topluluğun buluştuğu bir yer.']
+  : ['Orange Tree Events is the events brand of Orange Tree Group Pty Ltd. Since 2015 we have presented Sydney concerts by artists from Türkiye, run New Year’s Eve with ATAM and supported the community’s cultural nights.', 'Proceeds from our events have supported community and student organisations, including ATAM, Orange Tree, ITSA and earthquake appeals. Every night is more than a concert: it is where the community comes together.'];
+
+const services = tr
+  ? [
+      ['Sunum ve prodüksiyon', 'Mekân seçimi ve rezervasyonu, sahne düzeni, oturma planı ve gece akışı.'],
+      ['Biletleme ve VIP', 'Genel giriş, masa ve VIP paketleri; tanışma ve fotoğraf (meet and greet) seçenekleri.'],
+      ['İki dilde tanıtım', 'İngilizce ve Türkçe web sitesi, sosyal medya, e-posta listeleri ve afiş çalışmaları.'],
+      ['Topluluk ağları', 'ATAM, Australian Turks, Turkish Vibes ve Orange Tree üzerinden 10.000’i aşkın kişiye ulaşım.'],
+      ['Yerel destek grupları', 'Açılış için Sydney’li gruplar ve DJ’ler; Funkatolia, Nida Rock, DJ Ilka ve daha fazlası.'],
+      ['Güvenilir ortaklık', 'Organizatörlerle birlikte sunum; her etkinlikte diğer organizatörlerin adını açıkça anıyoruz.'],
+    ]
+  : [
+      ['Presenting and production', 'Venue choice and booking, stage set-up, seating plans and the run of the night.'],
+      ['Ticketing and VIP', 'General admission, tables and VIP packages, including meet-and-greet options.'],
+      ['Bilingual promotion', 'Website, social media, email lists and posters in English and Turkish.'],
+      ['Community reach', 'Networks across ATAM, Australian Turks, Turkish Vibes and Orange Tree: over 10,000 people.'],
+      ['Local support acts', 'Sydney bands and DJs to open the night: Funkatolia, Nida Rock, DJ Ilka and more.'],
+      ['Honest partnership', 'We co-present with other promoters and always name every organiser on the night.'],
+    ];
+
+const models = tr
+  ? [['Sunduk', 'Konseri biz düzenleriz: mekân, bilet, tanıtım ve gece.'], ['Birlikte sunduk', 'Bir organizatörle iş ve emeği paylaşırız.'], ['Tanıttık', 'Etkinliğinizi kitlemize ve kanallarımıza taşırız.'], ['Destekledik', 'Topluluk ve kültür gecelerine destek veririz.']]
+  : [['Presented', 'We run the concert: venue, tickets, promotion and the night itself.'], ['Co-presented', 'We share the work and the risk with another promoter.'], ['Promoted', 'We take your event to our audience and channels.'], ['Supported', 'We back community and cultural nights.']];
+
+const tiers = [
+  ['Bronze', '$1,000', tr ? '2 VIP bilet ve bir şişe ya da 3 genel bilet' : '2 VIP tickets and a bottle, or 3 General tickets'],
+  ['Silver', '$2,500', tr ? '5 VIP ya da 6 genel bilet, bir şişe rakı ya da viski' : '5 VIP or 6 General tickets, a bottle of rakı or whisky'],
+  ['Gold', '$5,000', tr ? '10 VIP ya da 12 genel bilet, bir şişe rakı ya da viski' : '10 VIP or 12 General tickets, a bottle of rakı or whisky'],
+  ['Platinum', '$7,500', tr ? '10 VIP bilet, iki şişe, VIP oturmada ilk seçim' : '10 VIP tickets, two bottles, first choice of VIP seating'],
+  ['Major', '$10,000', tr ? '10 VIP bilet, iki şişe, VIP oturmada ilk seçim, sunucudan özel teşekkür' : '10 VIP tickets, two bottles, first choice of VIP seating, lead thanks from our MC'],
+];
+const benefits = tr
+  ? ['LED ekranda ve slayt gösterisinde logonuz', 'Afişte ve 15. yıl videosunda yer alma', 'ATAM, Australian Turks, Turkish Vibes ve Orange Tree hesaplarında paylaşım', 'Üst paketlerde daha uzun ekran süresi ve daha büyük afiş']
+  : ['Your logo on the LED screen and slideshow', 'On the poster and in the 15th-year video', 'Shared across ATAM, Australian Turks, Turkish Vibes and Orange Tree', 'Higher tiers get longer screen time and bigger banners'];
+const audience = tr
+  ? [['Aileler', 'Yılbaşı ve kültür gecelerinde üç kuşak bir arada.'], ['Genç profesyoneller', 'Konserler, kulüp geceleri ve stand-up.'], ['Öğrenciler', 'ITSA gibi öğrenci kuruluşlarıyla birlikte.'], ['Çok kültürlü Sydney', 'Türk müziğini ve kültürünü seven herkes.']]
+  : [['Families', 'Three generations together at New Year’s Eve and cultural nights.'], ['Young professionals', 'Concerts, club nights and stand-up.'], ['Students', 'With student groups such as ITSA.'], ['Multicultural Sydney', 'Everyone who loves Turkish music and culture.']];
+const supporters = ['Firebrand', 'Kekilli Jewellery', 'Toptune Auto', '24/7 Tax 2 You'];
+const L = {
+  about: tr ? 'Biz kimiz' : 'Who we are',
+  track: tr ? 'Sahnedekiler' : 'On our stages',
+  visiting: tr ? 'Konuk sanatçılar' : 'Visiting artists',
+  local: tr ? 'Sydney’li gruplar ve DJ’ler' : 'Sydney acts',
+  venues: tr ? 'Çalıştığımız mekânlar' : 'Venues we have worked with',
+  partners: tr ? 'Birlikte çalıştığımız kuruluşlar' : 'Organisations we have worked with',
+  what: tr ? 'Sizin için neler yapıyoruz' : 'What we do for you',
+  how: tr ? 'Birlikte çalışma biçimleri' : 'Ways to work together',
+  audience: tr ? 'Kitlemiz' : 'Our audience',
+  nye: tr ? 'Yılbaşı 2027 · ATAM’ın 15. yılı' : 'NYE 2027 · ATAM’s 15th year',
+  nyeP: tr ? '31 Aralık 2026, The Renaissance Piano Room, Lidcombe. ATAM ve Orange Tree Events sunar; gelir Ortak Evimiz projesine gider.' : '31 December 2026, The Renaissance Piano Room, Lidcombe. Presented by ATAM and Orange Tree Events; proceeds go to Our Shared Home.',
+  packages: tr ? 'Sponsorluk paketleri' : 'Sponsorship packages',
+  get: tr ? 'Sponsorlarımızın kazandıkları' : 'What sponsors get',
+  season: tr ? 'Sezon ortaklığı' : 'Season partnership',
+  seasonP: tr ? 'Konserler, kültür geceleri ve yılbaşını kapsayan, size özel hazırlanan bir yıllık ortaklık. Bütçenize ve hedeflerinize göre birlikte tasarlarız.' : 'A tailored year-long partnership across concerts, cultural nights and New Year’s Eve, shaped around your budget and goals.',
+  thanks: tr ? 'Destekçilerimize teşekkürler' : 'Thank you to supporters including',
+  inkind: tr ? 'Ayni destek de memnuniyetle karşılanır: çekiliş ödülleri, hizmetler ve ürünler.' : 'In-kind support is welcome too: raffle prizes, services and products.',
+  cta: tr ? 'Hadi konuşalım' : 'Let’s talk',
+  ctaP: tr ? 'Kısa ön başvuru formunu doldurun ya da bize yazın. Ekibimizden biri okuyup yanıtlıyor.' : 'Fill in the short expression of interest form, or email us. A real person reads every enquiry.',
+  scan: tr ? 'Formu açmak için okutun' : 'Scan to open the form',
+  prices: tr ? 'Fiyatlar AUD, Yılbaşı 2027 içindir.' : 'Prices in AUD, for NYE 2027.',
+};
+const cover = kind === 'artists' ? photos.heroStage : photos.nye2025stage;
+const mid = kind === 'artists' ? photos.crowd : photos.nye2023floor;
+---
+<!doctype html>
+<html lang={tr ? 'tr' : 'en-AU'}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="robots" content="noindex" />
+  <title>{T.title} · Orange Tree Events</title>
+</head>
+<body>
+  <!-- 1. Cover -->
+  <section class="page cover">
+    <Image src={cover.src} alt="" widths={[1800]} sizes="210mm" format="jpg" quality={78} class="full" />
+    <div class="cshade"></div>
+    <div class="cin">
+      <div class="lg"><Logo animate={false} /></div>
+      <div>
+        <p class="kick">{T.kicker}</p>
+        <h1>{T.title}</h1>
+        <p class="sub">{T.sub}</p>
+      </div>
+      <p class="foot">orangetree.events</p>
+    </div>
+  </section>
+
+  <!-- 2. About + stats -->
+  <section class="page light">
+    <p class="kick dk">{L.about}</p>
+    <h2>{tr ? 'Topluluktan doğan, sahnede büyüyen' : 'Born in the community, grown on stage'}</h2>
+    <div class="two">
+      <div>{about.map((p) => <p class="body">{p}</p>)}</div>
+      <ul class="stats">{stats.map(([v, l]) => <li><strong>{v}</strong><span>{l}</span></li>)}</ul>
+    </div>
+    <figure class="band"><Image src={mid.src} alt="" widths={[1400]} sizes="180mm" format="jpg" quality={76} /></figure>
+    {kind === 'artists'
+      ? <div class="cols2"><div><h3>{L.venues}</h3><p class="tags">{venues.map((v) => <span>{v}</span>)}</p></div><div><h3>{L.partners}</h3><p class="tags">{partners.map((v) => <span>{v}</span>)}</p></div></div>
+      : <div><h3>{L.audience}</h3><ul class="aud">{audience.map(([h, p]) => <li><strong>{h}</strong><span>{p}</span></li>)}</ul></div>}
+  </section>
+
+  <!-- 3. Track record -->
+  <section class="page dark">
+    <p class="kick">{L.track}</p>
+    <h2>{tr ? 'Afişlerimizden bir seçki' : 'A few of our posters'}</h2>
+    <ul class="wall">{wall.map(({ src }) => <li><Image src={src} alt="" widths={[420]} sizes="45mm" format="jpg" quality={76} /></li>)}</ul>
+    <div class="cols2 names">
+      <div><h3>{L.visiting}</h3><p>{visiting.join(' · ')}</p></div>
+      <div><h3>{L.local}</h3><p>{local.join(' · ')}</p></div>
+    </div>
+  </section>
+
+  {kind === 'artists' ? (
+    <section class="page light">
+      <p class="kick dk">{L.what}</p>
+      <h2>{tr ? 'Sydney’de güvenilir ortağınız' : 'Your partner on the ground in Sydney'}</h2>
+      <ol class="svc">{services.map(([h, p], i) => <li><span class="no">{String(i + 1).padStart(2, '0')}</span><h3>{h}</h3><p>{p}</p></li>)}</ol>
+      <h3 class="mt">{L.how}</h3>
+      <ul class="models">{models.map(([h, p]) => <li><strong>{h}</strong><span>{p}</span></li>)}</ul>
+    </section>
+  ) : (
+    <section class="page light">
+      <p class="kick dk">{L.packages}</p>
+      <h2>{L.nye}</h2>
+      <p class="body">{L.nyeP}</p>
+      <ul class="tiers">{tiers.map(([n2, p, d]) => <li class={`t-${n2.toLowerCase()}`}><span class="tn">{n2}</span><strong>{p}</strong><span class="td">{d}</span></li>)}</ul>
+      <p class="fine">{L.prices}</p>
+      <div class="cols2 mt">
+        <div><h3>{L.get}</h3><ul class="ticks">{benefits.map((b) => <li>{b}</li>)}</ul></div>
+        <div class="season"><h3>{L.season}</h3><p>{L.seasonP}</p><p class="fine">{L.inkind}</p></div>
+      </div>
+      <p class="thx"><strong>{L.thanks}:</strong> {supporters.join(' · ')}</p>
+    </section>
+  )}
+
+  <!-- Back cover -->
+  <section class="page back">
+    <div class="bin">
+      <div class="lg dk"><Logo animate={false} /></div>
+      <h2>{L.cta}</h2>
+      <p class="body">{L.ctaP}</p>
+      <div class="qrrow">
+        <div class="qr" set:html={qr} />
+        <div>
+          <p class="scan">{L.scan}</p>
+          <p class="link">{url.replace('https://', '')}</p>
+          <p class="link">info@orangetree.events</p>
+          <p class="link">@orangetree.events</p>
+        </div>
+      </div>
+      <p class="legal">Orange Tree Events · Orange Tree Group Pty Ltd · Sydney, Australia</p>
+    </div>
+  </section>
+</body>
+</html>
+<style is:global>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-family: 'Manrope Variable', system-ui, sans-serif; color: #14110F; background: #555; }
+  .page { position: relative; width: 210mm; height: 297mm; overflow: hidden; page-break-after: always; break-after: page; padding: 20mm 18mm; margin: 0 auto; }
+  @media screen { .page { margin: 10mm auto; box-shadow: 0 10px 40px rgba(0,0,0,.4); } }
+  h1, h2, h3 { font-family: 'Dosis Variable', sans-serif; text-transform: uppercase; letter-spacing: .02em; margin: 0; line-height: .95; }
+  h2 { font-size: 34pt; font-weight: 800; max-width: 150mm; margin-bottom: 9mm; }
+  h3 { font-size: 13pt; font-weight: 800; letter-spacing: .06em; margin-bottom: 3mm; }
+  .kick { font-family: 'Dosis Variable', sans-serif; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; font-size: 10pt; color: #FF8466; margin: 0 0 4mm; }
+  .kick.dk { color: #D8452A; }
+  .body { font-size: 11pt; line-height: 1.6; margin: 0 0 4mm; }
+  .fine { font-size: 8.5pt; color: #6B615A; margin: 2mm 0 0; }
+  .mt { margin-top: 9mm; }
+
+  .cover { padding: 0; color: #F5EFE8; background: #0D0B0A; }
+  .full { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .cshade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(13,11,10,.75), rgba(13,11,10,.15) 35%, rgba(13,11,10,.95) 78%); }
+  .cin { position: absolute; inset: 0; padding: 18mm; display: flex; flex-direction: column; justify-content: space-between; }
+  .lg { width: 70mm; } .lg svg { width: 100%; height: auto; display: block; }
+  .cover h1 { font-size: 52pt; font-weight: 800; max-width: 165mm; }
+  .sub { font-size: 13pt; line-height: 1.5; max-width: 140mm; margin: 6mm 0 0; color: #E2D8CE; }
+  .foot { margin: 0; font-family: 'Dosis Variable', sans-serif; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; font-size: 10pt; color: #FF8466; }
+
+  .light { background: #F7F1EA; }
+  .dark { background: #14110F; color: #F5EFE8; }
+  .two { display: grid; grid-template-columns: 1.3fr 1fr; gap: 10mm; }
+  .stats { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .stats li { background: #fff; border-radius: 5mm; padding: 5mm; border: 1px solid #E8DDD2; }
+  .stats strong { display: block; font-family: 'Dosis Variable', sans-serif; font-size: 28pt; font-weight: 800; color: #E04E30; line-height: 1; }
+  .stats span { font-size: 9pt; line-height: 1.3; display: block; margin-top: 1.5mm; }
+  .band { margin: 6mm 0 8mm; height: 62mm; border-radius: 6mm; overflow: hidden; }
+  .band img { width: 100%; height: 100%; object-fit: cover; }
+  .cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10mm; }
+  .tags { display: flex; flex-wrap: wrap; gap: 2mm; margin: 0; }
+  .tags span { font-size: 9pt; font-weight: 700; border: 1px solid #D9CCBF; border-radius: 99px; padding: 1.5mm 3.5mm; background: #fff; }
+  .aud { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .aud li { background: #fff; border-radius: 5mm; padding: 5mm; border-left: 3px solid #E04E30; }
+  .aud strong { display: block; font-family: 'Dosis Variable', sans-serif; text-transform: uppercase; font-size: 12pt; letter-spacing: .04em; } .aud span { font-size: 9.5pt; line-height: 1.4; }
+
+  .wall { list-style: none; margin: 0 0 9mm; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 3.5mm; }
+  .wall li { aspect-ratio: 4 / 5; border-radius: 3mm; overflow: hidden; background: #222; }
+  .wall img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .names h3 { color: #FF8466; } .names p { font-size: 9.5pt; line-height: 1.6; margin: 0; color: #E2D8CE; }
+
+  .svc { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; }
+  .svc li { background: #fff; border-radius: 5mm; padding: 6mm; border: 1px solid #E8DDD2; }
+  .svc .no { font-family: 'Dosis Variable', sans-serif; font-weight: 800; color: #E04E30; font-size: 12pt; }
+  .svc h3 { margin: 2mm 0; } .svc p { margin: 0; font-size: 9.5pt; line-height: 1.5; }
+  .models { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+  .models li { background: #14110F; color: #F5EFE8; border-radius: 4mm; padding: 5mm 4mm; }
+  .models strong { display: block; font-family: 'Dosis Variable', sans-serif; text-transform: uppercase; font-size: 12pt; color: #FF8466; margin-bottom: 1.5mm; } .models span { font-size: 8.5pt; line-height: 1.45; display: block; }
+
+  .tiers { list-style: none; margin: 6mm 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 3mm; }
+  .tiers li { border-radius: 4mm; padding: 5mm 4mm; background: #fff; border: 1px solid #E8DDD2; display: flex; flex-direction: column; gap: 2mm; min-height: 52mm; }
+  .tiers .tn { font-family: 'Dosis Variable', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; font-size: 10pt; }
+  .tiers strong { font-family: 'Dosis Variable', sans-serif; font-size: 20pt; font-weight: 800; }
+  .tiers .td { font-size: 8.5pt; line-height: 1.4; }
+  .t-bronze { border-top: 4px solid #B07445 !important; } .t-silver { border-top: 4px solid #A7A9AC !important; } .t-gold { border-top: 4px solid #D9A93A !important; }
+  .t-platinum { border-top: 4px solid #7FA8B5 !important; } .t-major { background: #14110F !important; color: #F5EFE8; border-top: 4px solid #E04E30 !important; }
+  .ticks { margin: 0; padding: 0; list-style: none; } .ticks li { font-size: 10pt; line-height: 1.45; padding: 1.5mm 0 1.5mm 7mm; position: relative; }
+  .ticks li::before { content: '✓'; position: absolute; left: 0; color: #E04E30; font-weight: 800; }
+  .season { background: #14110F; color: #F5EFE8; border-radius: 5mm; padding: 6mm; } .season p { font-size: 10pt; line-height: 1.5; margin: 0 0 2mm; } .season .fine { color: #B5ABA1; }
+  .thx { position: absolute; left: 18mm; right: 18mm; bottom: 16mm; font-size: 9.5pt; margin: 0; padding-top: 4mm; border-top: 1px solid #D9CCBF; }
+
+  .back { background: #EE5A3A; color: #14110F; }
+  .bin { height: 100%; display: flex; flex-direction: column; justify-content: center; gap: 4mm; }
+  .back h2 { font-size: 60pt; margin: 6mm 0 2mm; }
+  .back .body { font-size: 14pt; max-width: 140mm; }
+  .qrrow { display: flex; gap: 10mm; align-items: center; margin-top: 8mm; background: #F7F1EA; border-radius: 6mm; padding: 8mm; }
+  .qr { width: 42mm; height: 42mm; flex: 0 0 auto; } .qr svg { width: 100%; height: 100%; display: block; }
+  .scan { margin: 0 0 3mm; font-family: 'Dosis Variable', sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; font-size: 12pt; }
+  .link { margin: 0 0 1.5mm; font-size: 11pt; font-weight: 700; }
+  .legal { position: absolute; left: 18mm; bottom: 14mm; font-size: 8.5pt; margin: 0; }
+  .lg.dk { width: 92mm; background: #F7F1EA; border-radius: 6mm; padding: 5mm 7mm; }
+</style>

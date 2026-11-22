@@ -9,7 +9,7 @@ export default defineConfig({
   prefetch: { prefetchAll: false, defaultStrategy: 'hover' },
   i18n: { locales: ['en', 'tr'], defaultLocale: 'en', routing: { prefixDefaultLocale: false } },
   integrations: [
-    sitemap({ i18n: { defaultLocale: 'en', locales: { en: 'en-AU', tr: 'tr-TR' } } }),
+    sitemap({ filter: (p) => !p.includes('/print/'), i18n: { defaultLocale: 'en', locales: { en: 'en-AU', tr: 'tr-TR' } } }),
   ],
   image: { responsiveStyles: true },
   // Never inline fonts or images as data: URIs, so the Content Security Policy can stay strict.
@@ -24,6 +24,7 @@ export default defineConfig({
         "form-action 'self'",
         "base-uri 'self'",
         "object-src 'none'",
+        "frame-src https://open.spotify.com https://www.youtube-nocookie.com",
       ],
     },
   },

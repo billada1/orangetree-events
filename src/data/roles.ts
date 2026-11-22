@@ -1,7 +1,7 @@
 import type { EventItem } from './events';
 import { t, type Lang } from '../i18n/ui';
 
-// "Co-presented with Culture Crew Australia", "With ATAM", "Organised by Wish Events"
+// "Presented with Culture Crew Australia", "With ATAM", "Organised by Wish Events"
 export function roleLine(e: EventItem, lang: Lang): string {
   if (!e.partner) return '';
   const r = t(lang).role;

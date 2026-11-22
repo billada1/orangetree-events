@@ -16,7 +16,7 @@ export interface EventItem {
   artists?: string[]; // artist slugs
   note?: { en: string; tr: string };
   partner?: string; // co-presenter (with co: true) or the organiser we worked with
-  co?: boolean; // co-presented: shown as "Co-presented with <partner>"
+  co?: boolean; // co-presented: shown as "Presented with <partner>"
   poster?: string; // file name in src/assets/posters (without .jpg)
   story?: string; // story slug
   image?: string; // key in photos map
@@ -102,10 +102,10 @@ export const events: EventItem[] = [
   { slug: 'call-for-peace-2024', kind: 'supported', date: '2024-04-29', doors: '19:30', title: { en: 'A Call for Peace: Turkish-Japanese friendship concert', tr: 'Barış Çağrısı: Türk-Japon dostluk konseri' }, venue: 'Concert Hall, Sydney Opera House', partner: 'The Metropolitan Orchestra', confirm: true, note: { en: 'A free symphonic concert by The Metropolitan Orchestra, conducted by Seiji Mukaiyama, telling the story of the Ertuğrul frigate and the 1985 Tehran rescue.', tr: 'The Metropolitan Orchestra’nın Seiji Mukaiyama yönetiminde, Ertuğrul Fırkateyni ve 1985 Tahran tahliyesini anlatan ücretsiz senfonik konseri.' } },
   { slug: 'nye-2017', kind: 'nye', year: '2016', title: nye(2017), venue: '', partner: 'ATAM', confirm: true },
   { slug: 'nye-2016', kind: 'nye', year: '2015', title: nye(2016), venue: '', partner: 'ATAM', confirm: true },
-  { slug: 'haluk-levent-2015', kind: 'supported', date: '2015-11-07', title: { en: 'Haluk Levent live in Sydney', tr: 'Haluk Levent Sydney konseri' }, venue: 'Sydney · venue to confirm', artists: ['haluk-levent'] },
+  { slug: 'haluk-levent-2015', kind: 'supported', date: '2015-11-07', title: { en: 'Haluk Levent live in Sydney', tr: 'Haluk Levent Sydney konseri' }, venue: 'La Luna Lounge', artists: ['haluk-levent'] },
   { slug: 'manga-2019', kind: 'presented', co: true, date: '2019-02-09', doors: '21:00', title: { en: 'ITSA Special: maNga and Eypio live in Sydney', tr: 'ITSA Özel: maNga ve Eypio Sydney konseri' }, venue: 'Metro Theatre, 624 George St, Sydney', partner: 'Turkuaz Nights and ITSA', artists: ['manga', 'eypio'], note: { en: 'Turkish rock and rap for one night only, with Turkuaz resident DJs Tansu and Ilker Aydın opening.', tr: 'Tek gecelik Türkçe rock ve rap; açılışta Turkuaz DJ’leri Tansu ve Ilker Aydın.' } },
   { slug: 'emre-aydin-2017', kind: 'supported', date: '2017-05-12', title: { en: 'Emre Aydın live in Sydney', tr: 'Emre Aydın Sydney konseri' }, venue: 'Sydney · venue to confirm', artists: ['emre-aydin'] },
-  { slug: 'oguz-aksac', kind: 'supported', title: { en: 'Oğuz Aksaç live in Sydney', tr: 'Oğuz Aksaç Sydney konseri' }, venue: '', artists: ['oguz-aksac'], confirm: true },
+  { slug: 'oguz-aksac', kind: 'supported', title: { en: 'Oğuz Aksaç live in Sydney', tr: 'Oğuz Aksaç Sydney konseri' }, venue: 'Bankstown Sports Club', artists: ['oguz-aksac'], confirm: true },
   { slug: 'sevcan-orhan-2022', poster: 'sevcan-orhan-2022', kind: 'promotion', date: '2022-05-20', title: { en: 'Sevcan Orhan live in Sydney', tr: 'Sevcan Orhan Sydney konseri' }, venue: 'Club Burwood', partner: 'Waves Sydney', artists: ['sevcan-orhan'], note: { en: 'Folk singer Sevcan Orhan with her band from Türkiye. Organised by Waves Sydney.', tr: 'Türk halk müziğinin güçlü sesi Sevcan Orhan, Türkiye’den müzisyen kadrosuyla. Organizasyon: Waves Sydney.' } },
   { slug: 'erkan-kolcak-kostendil-2019', poster: 'erkan-kolcak-kostendil-2019', kind: 'supported', date: '2019-05-03', title: { en: 'Erkan Kolçak Köstendil: 12 Numaralı Adam', tr: 'Erkan Kolçak Köstendil: 12 Numaralı Adam' }, venue: 'C3 Church, Silverwater', artists: ['erkan-kolcak-kostendil'], note: { en: 'One-man theatre show by the actor known as Vartolu in Çukur.', tr: 'Çukur dizisinin Vartolu’su Erkan Kolçak Köstendil’in tek kişilik tiyatro gösterisi.' } },
   { slug: 'gulben-ergen-2024', poster: 'gulben-ergen-2024', kind: 'promotion', date: '2024-11-29', title: { en: 'Gülben Ergen: first Australian concert', tr: 'Gülben Ergen: Avustralya’daki ilk konseri' }, venue: 'Grand Royale, Sydney', partner: 'Diamond Stage Events and Turkuaz Nights', artists: ['gulben-ergen'], note: { en: 'Also Laila Reception, Melbourne, 30 November.', tr: 'Ayrıca 30 Kasım’da Laila Reception, Melbourne.' } },

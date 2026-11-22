@@ -9,13 +9,19 @@ export interface Artist {
   local?: boolean; // Sydney-based act
   instagram?: string; // handle without @
   gallery?: string[];
+  spotify?: string;
+  youtube?: string;
+  wiki?: { en?: string; tr?: string };
+  credit?: { by: string; licence: string; file: string };
 }
 
 const singer = { en: 'Singer and songwriter', tr: 'Şarkıcı, söz yazarı' };
 const musician = { en: 'Musician', tr: 'Müzisyen' };
 const comedian = { en: 'Comedian', tr: 'Komedyen' };
 
-export const artists: Artist[] = [
+import { extra } from './artist-extra';
+
+const list: Artist[] = [
   {
     slug: 'ilyas-yalcintas', instagram: 'ilyasyalcintas', name: 'İlyas Yalçıntaş', role: singer, image: 'artistCrowd',
     gallery: ['band', 'guitar', 'bwStage', 'crowd', 'stageWide'],
@@ -36,7 +42,7 @@ export const artists: Artist[] = [
       { label: { en: 'Award', tr: 'Ödül' }, value: 'Altın Kelebek, Best Debut by a Soloist (2015)' },
     ],
   },
-  { slug: 'buray', instagram: 'buraymusic', name: 'Buray', role: singer },
+  { slug: 'buray', image: 'buray', instagram: 'buraymusic', name: 'Buray', role: singer },
   { slug: 'teoman', image: 'teoman', instagram: 'teomanofficial', name: 'Teoman', role: { en: 'Rock singer and songwriter', tr: 'Rock şarkıcısı, söz yazarı' } },
   { slug: 'cahit-berkay', image: 'cahit-berkay', name: 'Cahit Berkay', role: { en: 'Musician, Moğollar', tr: 'Müzisyen, Moğollar' } },
   { slug: 'emrah-karaca', image: 'emrah-karaca', name: 'Emrah Karaca', role: { en: 'Lead singer, Moğollar', tr: 'Solist, Moğollar' } },
@@ -44,15 +50,15 @@ export const artists: Artist[] = [
   { slug: 'yilmaz-erdogan', image: 'yilmaz-erdogan', name: 'Yılmaz Erdoğan', role: { en: 'Actor, poet and comedian', tr: 'Oyuncu, şair, komedyen' } },
   { slug: 'koray-avci', image: 'koray-avci-2', name: 'Koray Avcı', role: singer },
   { slug: 'kibariye', image: 'kibariye', name: 'Kibariye', role: { en: 'Singer', tr: 'Şarkıcı' } },
-  { slug: 'haluk-levent', instagram: 'halukleventacil', name: 'Haluk Levent', role: { en: 'Rock singer', tr: 'Rock şarkıcısı' } },
+  { slug: 'haluk-levent', image: 'haluk-levent', instagram: 'halukleventacil', name: 'Haluk Levent', role: { en: 'Rock singer', tr: 'Rock şarkıcısı' } },
   { slug: 'manga', name: 'maNga', role: { en: 'Rock band', tr: 'Rock grubu' } },
-  { slug: 'eypio', name: 'Eypio', role: { en: 'Rapper', tr: 'Rapçi' } },
+  { slug: 'eypio', image: 'eypio', name: 'Eypio', role: { en: 'Rapper', tr: 'Rapçi' } },
   { slug: 'emre-aydin', name: 'Emre Aydın', role: singer },
   { slug: 'oguz-aksac', name: 'Oğuz Aksaç', role: musician },
   { slug: 'sevcan-orhan', instagram: 'sevcanorhan', name: 'Sevcan Orhan', role: { en: 'Folk singer', tr: 'Türkü sanatçısı' } },
   { slug: 'erkan-kolcak-kostendil', instagram: 'erkankeka', name: 'Erkan Kolçak Köstendil', role: { en: 'Actor, known as Vartolu in Çukur', tr: 'Oyuncu, Çukur’un Vartolu’su' } },
   { slug: 'gulben-ergen', instagram: 'gulben123', name: 'Gülben Ergen', role: { en: 'Singer', tr: 'Şarkıcı' } },
-  { slug: 'isin-karaca', instagram: 'isinkaraca', name: 'Işın Karaca', role: { en: 'Singer', tr: 'Şarkıcı' } },
+  { slug: 'isin-karaca', image: 'isin-karaca', instagram: 'isinkaraca', name: 'Işın Karaca', role: { en: 'Singer', tr: 'Şarkıcı' } },
   { slug: 'hakan-altun', instagram: 'hakanaltunmusic', name: 'Hakan Altun', role: { en: 'Singer', tr: 'Şarkıcı' } },
   // Sydney acts
   { slug: 'nida-rock', name: 'Nida Rock', local: true, instagram: 'nida_rock', role: { en: 'Sydney band: meyhane songs, Anatolian rock and Turkish classics', tr: 'Sydney grubu: meyhane şarkıları, Anadolu rock ve Türkçe klasikler' } },
@@ -72,5 +78,8 @@ export const artists: Artist[] = [
   { slug: 'serhan-ilbeyi', name: 'Serhan İlbeyi', instagram: 'serhanilbeyi', role: { en: 'Singer', tr: 'Şarkıcı' } },
   { slug: 'tahir-bilgic', instagram: 'tahircomedian', name: 'Tahir Bilgiç', role: comedian },
 ];
+
+// Merge bios, facts and listening links (own data wins).
+export const artists: Artist[] = list.map((a) => ({ ...extra[a.slug], ...a, bio: a.bio ?? extra[a.slug]?.bio, facts: a.facts ?? extra[a.slug]?.facts }));
 
 export const artistBySlug = (s: string) => artists.find((a) => a.slug === s);

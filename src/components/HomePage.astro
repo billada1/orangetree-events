@@ -127,7 +127,7 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
   <section id="partner" class="wrap partner" aria-labelledby="pa-h">
     <div class="card pbox">
       <div><h2 id="pa-h" class="h2">{s.partner.h}</h2><p class="lead">{s.partner.p}</p></div>
-      <a class="btn btn-primary" href="mailto:info@orangetree.events?subject=Sponsorship">{s.partner.cta}</a>
+      <a class="btn btn-primary" href={href(lang, "/work-with-us/#sponsor")}>{s.partner.cta}</a>
     </div>
     <p class="replay"><button type="button" data-replay-intro>{s.intro.replay}</button></p>
   </section>

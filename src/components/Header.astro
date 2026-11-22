@@ -7,7 +7,7 @@ const s = t(lang);
 const path = Astro.url.pathname;
 const links = [
   [href(lang, '/#whats-on'), s.nav.on], [href(lang, '/events/'), s.nav.past], [href(lang, '/artists/'), s.nav.artists],
-  [href(lang, '/stories/'), s.nav.stories], [href(lang, '/#giving-back'), s.nav.giving], [href(lang, '/#partner'), s.nav.partner],
+  [href(lang, '/stories/'), s.nav.stories], [href(lang, '/#giving-back'), s.nav.giving], [href(lang, '/work-with-us/'), s.nav.partner],
 ];
 const cur = (u: string) => (path === u ? 'page' : undefined);
 ---

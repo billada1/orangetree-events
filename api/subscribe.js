@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).end(); }
   // Same-origin form posts only.
   const origin = req.headers.origin || '';
-  if (origin && !/^https:\/\/(www\.)?orangetree\.events$/.test(origin) && !/^http:\/\/localhost:\d+$/.test(origin)) return res.status(403).end();
+  if (origin && !/^https:\/\/(www\.)?orangetree\.events$/.test(origin) && !/^https:\/\/orangetree-events[a-z0-9-]*\.vercel\.app$/.test(origin) && !/^http:\/\/localhost:\d+$/.test(origin)) return res.status(403).end();
 
   let f;
   try { f = await readForm(req); } catch { return res.status(413).end(); }

@@ -1,106 +1,370 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import Base from '../layouts/Base.astro';
-import { events } from '../data/events';
+import { events, isUpcoming } from '../data/events';
 import { artists, type Artist } from '../data/artists';
 import { photos } from '../data/photos';
 import { artistImage, posterFor } from '../data/media';
+import { roleLine } from '../data/roles';
 import { t, href, fmtDate, type Lang } from '../i18n/ui';
 interface Props { lang: Lang; a: Artist }
 const { lang, a } = Astro.props;
 const s = t(lang);
-const shows = events.filter((e) => e.artists?.includes(a.slug));
+const P = s.artistPage;
+
+const key = (e: { date?: string; year?: string }) => e.date ?? e.year ?? '';
+const shows = events.filter((e) => e.artists?.includes(a.slug)).sort((x, y) => key(y).localeCompare(key(x)));
+const upcoming = shows.filter((e) => isUpcoming(e)).sort((x, y) => key(x).localeCompare(key(y)));
+const firstYear = shows.map((e) => key(e).slice(0, 4)).filter(Boolean).sort()[0];
 const img = artistImage(a);
-const ph = img && !img.poster ? { src: img.src, alt: { en: a.name, tr: a.name } } : null;
+const ph = img && !img.poster ? img.src : null;
 const posterImg = img?.poster ? img.src : null;
-const more = artists.filter((x) => x.slug !== a.slug && x.bio).concat(artists.filter((x) => x.slug !== a.slug && !x.bio)).slice(0, 8);
-const ld = { '@context': 'https://schema.org', '@type': a.slug === 'manga' ? 'MusicGroup' : 'Person', name: a.name, description: a.role.en, url: new URL((lang === 'tr' ? '/tr' : '') + `/artists/${a.slug}/`, Astro.site!).href };
+
+// Gallery: own photos first, then every poster from their shows.
+type G = { src: ImageMetadata; alt: string; poster: boolean };
+const gal: G[] = [
+  ...(a.gallery ?? []).filter((k) => photos[k]).map((k) => ({ src: photos[k].src, alt: photos[k].alt[lang], poster: false })),
+  ...shows.filter((e) => posterFor(e)).map((e) => ({ src: posterFor(e)!, alt: `${lang === 'tr' ? 'Afiş' : 'Poster'}: ${e.title[lang]}`, poster: true })),
+];
+const galFull = await Promise.all(gal.map((g) => getImage({ src: g.src, width: Math.min(1600, g.src.width), format: 'webp' })));
+
+const yt = a.youtube ? `https://www.youtube-nocookie.com/embed/videoseries?list=UU${a.youtube.slice(2)}` : null;
+const sp = a.spotify ? `https://open.spotify.com/embed/artist/${a.spotify}?theme=0` : null;
+const q = encodeURIComponent(a.name);
+const wikiLang = a.wiki?.[lang] ? lang : a.wiki?.en ? 'en' : a.wiki?.tr ? 'tr' : null;
+const wikiUrl = wikiLang ? `https://${wikiLang}.wikipedia.org/wiki/${encodeURIComponent(a.wiki![wikiLang]!.replace(/ /g, '_'))}` : null;
+const creditUrl = a.credit ? `https://commons.wikimedia.org/wiki/File:${encodeURIComponent(a.credit.file.replace(/ /g, '_'))}` : null;
+
+const kindLabel = (k: string) => (s.kinds as Record<string, string>)[k] ?? '';
+const others = artists.filter((x) => x.slug !== a.slug && x.local === a.local);
+const more = [...others.filter((x) => artistImage(x)), ...others.filter((x) => !artistImage(x))].slice(0, 10);
+const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('');
+
+const sections = [
+  a.bio && { id: 'about', label: s.artist.about },
+  (sp || yt || !a.local) && { id: 'listen', label: P.listen },
+  shows.length > 0 && { id: 'shows', label: s.artist.withUs },
+  gal.length > 0 && { id: 'photos', label: P.gallery },
+].filter(Boolean) as { id: string; label: string }[];
+
+const desc = a.bio?.[lang][0] ?? `${a.name} · ${a.role[lang]} · ${s.siteName}`;
+const sameAs = [
+  a.instagram && `https://www.instagram.com/${a.instagram}/`,
+  a.spotify && `https://open.spotify.com/artist/${a.spotify}`,
+  a.youtube && `https://www.youtube.com/channel/${a.youtube}`,
+  wikiUrl,
+].filter(Boolean);
+const ld = {
+  '@context': 'https://schema.org', '@type': a.slug === 'manga' || /band|grup|duo|ikili/i.test(a.role.en) ? 'MusicGroup' : 'Person',
+  name: a.name, description: desc, url: new URL((lang === 'tr' ? '/tr' : '') + `/artists/${a.slug}/`, Astro.site!).href,
+  ...(sameAs.length ? { sameAs } : {}),
+};
 ---
-<Base lang={lang} title={a.name} description={a.bio?.[lang][0] ?? `${a.name} · ${a.role[lang]} · ${s.siteName}`} jsonLd={ld} overlayHeader={!!(ph || posterImg)} noindex={!a.bio && shows.length === 0}>
+<Base lang={lang} title={a.name} description={desc} jsonLd={ld} overlayHeader={!!(ph || posterImg)} noindex={!a.bio && shows.length === 0}>
   <section class:list={['top', { plain: !ph && !posterImg }]}>
-    {ph && <Image src={ph.src} alt={ph.alt[lang]} widths={[640, 1024, 1600]} sizes="100vw" class="bg" loading="eager" fetchpriority="high" />}
+    {ph && <Image src={ph} alt={a.name} widths={[640, 1024, 1600]} sizes="100vw" class="bg" loading="eager" fetchpriority="high" />}
     {posterImg && <Image src={posterImg} alt="" widths={[480, 960]} sizes="100vw" class="bg blur" loading="eager" />}
     {(ph || posterImg) && <div class="shade" aria-hidden="true"></div>}
     <div class="wrap in">
-      <div>
-        <p class="eyebrow"><a href={href(lang, '/artists/')}>{s.nav.artists}</a> · {a.local ? s.artistsUi.local + ' · ' : ''}{a.role[lang]}</p>
-        <h1 class="name">{a.name}</h1>
-        {a.instagram && <p class="ig"><a href={`https://www.instagram.com/${a.instagram}/`} rel="noopener" target="_blank">@{a.instagram} ↗</a></p>}
+      <div class="hd">
+        <p class="eyebrow"><a href={href(lang, '/artists/')}>{s.nav.artists}</a> · {a.local ? s.artistsUi.local : s.artistsUi.visiting}</p>
+        <h1 class:list={['name', { keep: /[a-z][A-Z]/.test(a.name) }]}>{a.name}</h1>
+        <p class="role">{a.role[lang]}</p>
+        {shows.length > 0 && (
+          <ul class="chips" role="list">
+            <li>{P.nights(shows.length)}</li>
+            {firstYear && <li>{P.since(firstYear)}</li>}
+          </ul>
+        )}
+        <div class="acts">
+          {upcoming[0] && <a class="btn btn-primary" href={href(lang, `/events/${upcoming[0].slug}/`)}>{P.next}: {fmtDate(upcoming[0].date!, lang)} →</a>}
+          <a class:list={['btn', upcoming[0] ? 'btn-ghost' : 'btn-primary']} href="#notify">{s.artist.notify}</a>
+          <span class="soc">
+            {a.instagram && <a href={`https://www.instagram.com/${a.instagram}/`} rel="noopener" target="_blank" aria-label={`Instagram @${a.instagram}`}><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" class="f"/></svg></a>}
+            {a.spotify && <a href={`https://open.spotify.com/artist/${a.spotify}`} rel="noopener" target="_blank" aria-label="Spotify"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8M8 12.6c2.5-.7 5.2-.4 7.3.8M8.6 15.4c2-.5 4-.3 5.6.6"/></svg></a>}
+            {a.youtube && <a href={`https://www.youtube.com/channel/${a.youtube}`} rel="noopener" target="_blank" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10 9.2v5.6l4.8-2.8z" class="f"/></svg></a>}
+            {wikiUrl && <a href={wikiUrl} rel="noopener" target="_blank" aria-label="Wikipedia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h4M9 6h4M15 6h6M4.5 6l4 12 3.5-9 3.5 9 4-12"/></svg></a>}
+          </span>
+        </div>
       </div>
       {posterImg && <figure class="poster"><Image src={posterImg} alt={`${a.name}: ${lang === 'tr' ? 'afiş' : 'poster'}`} widths={[360, 540]} sizes="(max-width: 900px) 60vw, 320px" loading="eager" /></figure>}
     </div>
   </section>
+
+  {sections.length > 1 && (
+    <nav class="sub" aria-label={P.jump}>
+      <div class="wrap"><ul>{sections.map((x) => <li><a href={`#${x.id}`}>{x.label}</a></li>)}</ul></div>
+    </nav>
+  )}
+
   <div class="wrap body">
     {a.bio && (
-      <section class="about" aria-labelledby="ab-h">
-        <div><h2 id="ab-h" class="h3">{s.artist.about}</h2>{a.bio[lang].map((p) => <p class="lead">{p}</p>)}</div>
-        {a.facts && <dl>{a.facts.map((f) => <div><dt>{f.label[lang]}</dt><dd>{f.value}</dd></div>)}</dl>}
+      <section id="about" class="about reveal" aria-labelledby="ab-h">
+        <div>
+          <h2 id="ab-h" class="h3">{s.artist.about}</h2>
+          {a.bio[lang].map((p, i) => <p class:list={['lead', { first: i === 0 }]}>{p}</p>)}
+          {(wikiUrl || a.credit) && (
+            <p class="src">
+              {wikiUrl && <>{P.source}: <a href={wikiUrl} rel="noopener" target="_blank">Wikipedia</a></>}
+              {wikiUrl && a.credit && ' · '}
+              {a.credit && <>{P.photoBy}: <a href={creditUrl!} rel="noopener" target="_blank">{a.credit.by}</a>, {a.credit.licence}</>}
+            </p>
+          )}
+        </div>
+        {a.facts && <dl class="facts">{a.facts.map((f) => <div><dt>{f.label[lang]}</dt><dd>{f.value}</dd></div>)}</dl>}
       </section>
     )}
+
+    {(sp || yt || !a.local) && (
+      <section id="listen" class="reveal" aria-labelledby="li-h">
+        <h2 id="li-h" class="h3">{P.listen}</h2>
+        <div class="players">
+          {sp ? (
+            <div class="player sp" data-src={sp} data-title={`${a.name} on Spotify`} data-h="352">
+              <div class="ph">
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="logo"><circle cx="12" cy="12" r="9"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8M8 12.6c2.5-.7 5.2-.4 7.3.8M8.6 15.4c2-.5 4-.3 5.6.6"/></svg>
+                <p class="pt">{P.spotify}</p>
+                <button type="button" class="btn btn-light load">▶ {P.load}</button>
+                <p class="note">{P.loadsFrom('Spotify')} <a href={`https://open.spotify.com/artist/${a.spotify}`} rel="noopener" target="_blank">{P.openIn('Spotify')} ↗</a></p>
+              </div>
+            </div>
+          ) : (
+            <a class="player sp link" href={`https://open.spotify.com/search/${q}`} rel="noopener" target="_blank"><div class="ph"><p class="pt">{P.search('Spotify')} ↗</p></div></a>
+          )}
+          {yt ? (
+            <div class="player yt" data-src={yt} data-title={`${a.name} on YouTube`} data-h="352">
+              <div class="ph">
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="logo"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10 9.2v5.6l4.8-2.8z" class="f"/></svg>
+                <p class="pt">{P.youtube}</p>
+                <button type="button" class="btn btn-light load">▶ {P.load}</button>
+                <p class="note">{P.loadsFrom('YouTube')} <a href={`https://www.youtube.com/channel/${a.youtube}`} rel="noopener" target="_blank">{P.openIn('YouTube')} ↗</a></p>
+              </div>
+            </div>
+          ) : (
+            <a class="player yt link" href={`https://www.youtube.com/results?search_query=${q}`} rel="noopener" target="_blank"><div class="ph"><p class="pt">{P.search('YouTube')} ↗</p></div></a>
+          )}
+        </div>
+      </section>
+    )}
+
     {shows.length > 0 && (
-      <section aria-labelledby="sh-h">
+      <section id="shows" class="reveal" aria-labelledby="sh-h">
         <h2 id="sh-h" class="h3">{s.artist.withUs}</h2>
-        <ul class="shows">
-          {shows.map((e) => (
-            <li class="card">
-              {posterFor(e) && <Image src={posterFor(e)!} alt="" width={72} height={90} fit="cover" class="pt" />}
-              <span class="d">{e.date ? fmtDate(e.date, lang) : (e.year ?? s.past.dateToConfirm)}</span>
-              <a href={href(lang, `/events/${e.slug}/`)}>{e.title[lang]}</a>
-              <span class="muted">{e.venue}</span>
-              {e.story && <a class="btn btn-ghost btn-sm" href={href(lang, `/stories/${e.story}/`)}>{s.stories.read}</a>}
+        <ol class="tl">
+          {shows.map((e) => {
+            const pf = posterFor(e);
+            const rl = roleLine(e, lang);
+            return (
+              <li class="card">
+                <a class="pf" href={href(lang, `/events/${e.slug}/`)} tabindex="-1" aria-hidden="true">
+                  {pf ? <Image src={pf} alt="" widths={[200, 400]} sizes="160px" /> : <span class="mono">{initials(a.name)}</span>}
+                </a>
+                <div class="tx">
+                  <p class="d">{e.date ? fmtDate(e.date, lang, { weekday: true }) : (e.year ?? s.past.dateToConfirm)}{isUpcoming(e) && <span class="up">{s.on.onSale}</span>}</p>
+                  <h3><a href={href(lang, `/events/${e.slug}/`)}>{e.title[lang]}</a></h3>
+                  {e.venue && <p class="muted">{e.venue}</p>}
+                  <p class="tags"><span class="tag">{kindLabel(e.kind)}</span>{rl && <span class="muted">{rl}</span>}{e.soldOut && <span class="tag so">{s.past.soldOut}</span>}</p>
+                  <p class="btns">
+                    <a class="btn btn-ghost btn-sm" href={href(lang, `/events/${e.slug}/`)}>{P.details}</a>
+                    {e.story && <a class="btn btn-ghost btn-sm" href={href(lang, `/stories/${e.story}/`)}>{s.stories.read}</a>}
+                  </p>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+    )}
+
+    {gal.length > 0 && (
+      <section id="photos" class="reveal" aria-labelledby="ga-h">
+        <h2 id="ga-h" class="h3">{P.gallery}</h2>
+        <ul class="strip" role="list">
+          {gal.map((g, i) => (
+            <li>
+              <button type="button" class:list={['thumb', { poster: g.poster }]} data-i={i} aria-label={g.alt}>
+                <Image src={g.src} alt="" widths={[320, 560]} sizes="(max-width: 760px) 70vw, 300px" />
+              </button>
             </li>
           ))}
         </ul>
-      </section>
-    )}
-    {a.gallery && (
-      <section aria-labelledby="ga-h">
-        <h2 id="ga-h" class="h3">{s.stories.photos}</h2>
-        <div class="gal">{a.gallery.map((k) => <Image src={photos[k].src} alt={photos[k].alt[lang]} widths={[480, 800]} sizes="(max-width: 760px) 100vw, 33vw" />)}</div>
         <p class="muted small">{s.moments.removeQ} <a class="u" href="mailto:info@orangetree.events?subject=Photo%20removal">{s.moments.remove}</a></p>
+        <dialog class="lb" aria-label={P.gallery}>
+          <div class="lb-in">
+            <button type="button" class="lb-x" aria-label={P.close}>✕</button>
+            <button type="button" class="lb-p" aria-label={P.prev}>‹</button>
+            <figure><img alt="" decoding="async" /><figcaption></figcaption></figure>
+            <button type="button" class="lb-n" aria-label={P.next2}>›</button>
+          </div>
+          <script type="application/json" class="lb-data" set:html={JSON.stringify(galFull.map((f, i) => ({ src: f.src, alt: gal[i].alt })))} />
+        </dialog>
       </section>
     )}
-    <form class="notify" action="/api/subscribe/" method="post">
+
+    <form id="notify" class="notify reveal" action="/api/subscribe/" method="post">
       <div><h2 class="h3">{s.artist.notifyH(a.name)}</h2><p>{s.artist.notifyP}</p></div>
       <div class="f"><label class="sr-only" for="ar-email">{s.on.email}</label><input id="ar-email" class="field" type="email" name="email" autocomplete="email" required placeholder={s.on.emailPh} /><input type="hidden" name="lang" value={lang} /><input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" /><input type="hidden" name="artist" value={a.slug} /><button class="btn btn-dark" type="submit">{s.artist.notify}</button></div>
     </form>
+
     <nav aria-labelledby="more-h" class="more">
-      <h2 id="more-h" class="eyebrow">{s.artist.more}</h2>
-      <ul>{more.map((x) => <li><a href={href(lang, `/artists/${x.slug}/`)}>{x.name}</a></li>)}</ul>
+      <div class="mh"><h2 id="more-h" class="h3">{s.artist.more}</h2><a href={href(lang, '/artists/')}>{s.nav.artists} →</a></div>
+      <ul class="mrow" role="list">
+        {more.map((x) => {
+          const im = artistImage(x);
+          return (
+            <li><a href={href(lang, `/artists/${x.slug}/`)} class="mc">
+              {im ? <Image src={im.src} alt="" widths={[240, 400]} sizes="200px" class:list={[{ pimg: im.poster }]} /> : <span class="mono">{initials(x.name)}</span>}
+              <span class="mn">{x.name}</span><span class="mr muted">{x.role[lang]}</span>
+            </a></li>
+          );
+        })}
+      </ul>
     </nav>
   </div>
 </Base>
+
+<script>
+  // Click-to-load players: nothing from Spotify or YouTube loads until asked.
+  document.querySelectorAll<HTMLElement>('.player[data-src]').forEach((box) => {
+    box.querySelector('.load')?.addEventListener('click', () => {
+      const f = document.createElement('iframe');
+      f.src = box.dataset.src!;
+      f.title = box.dataset.title ?? '';
+      f.height = box.dataset.h ?? '352';
+      f.loading = 'lazy';
+      f.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+      f.referrerPolicy = 'strict-origin-when-cross-origin';
+      box.replaceChildren(f);
+      box.classList.add('on');
+    });
+  });
+
+  // Lightbox for the photo and poster strip.
+  const dlg = document.querySelector<HTMLDialogElement>('dialog.lb');
+  if (dlg) {
+    const data: { src: string; alt: string }[] = JSON.parse(dlg.querySelector('.lb-data')!.textContent || '[]');
+    const im = dlg.querySelector('img')!;
+    const cap = dlg.querySelector('figcaption')!;
+    let i = 0;
+    let opener: HTMLElement | null = null;
+    const show = (n: number) => { i = (n + data.length) % data.length; im.src = data[i].src; im.alt = data[i].alt; cap.textContent = `${data[i].alt} · ${i + 1} / ${data.length}`; };
+    document.querySelectorAll<HTMLButtonElement>('.thumb').forEach((b) => b.addEventListener('click', () => { opener = b; show(Number(b.dataset.i)); dlg.showModal(); }));
+    dlg.querySelector('.lb-x')!.addEventListener('click', () => dlg.close());
+    dlg.querySelector('.lb-p')!.addEventListener('click', () => show(i - 1));
+    dlg.querySelector('.lb-n')!.addEventListener('click', () => show(i + 1));
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(i - 1); if (e.key === 'ArrowRight') show(i + 1); });
+    dlg.addEventListener('close', () => opener?.focus());
+    let x0 = 0;
+    dlg.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+    dlg.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) show(i + (dx < 0 ? 1 : -1)); });
+  }
+</script>
+
 <style>
-  .top { position: relative; min-height: 600px; height: 84vh; max-height: 860px; display: flex; align-items: flex-end; overflow: hidden; }
-  .top.plain { min-height: 0; height: auto; padding-top: 80px; }
-  .top :global(.bg) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 70% 30%; }
-  .shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,11,10,.9), rgba(13,11,10,.2) 60%), linear-gradient(180deg, rgba(13,11,10,.5), transparent 30%, rgba(13,11,10,.95)); }
+  .top { position: relative; min-height: 640px; height: 88vh; max-height: 900px; display: flex; align-items: flex-end; overflow: hidden; }
+  .top.plain { min-height: 0; height: auto; padding-top: 96px; background: radial-gradient(120% 90% at 80% 0%, rgba(240,90,40,.28), transparent 60%); }
+  .top :global(.bg) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 60% 25%; animation: kb 18s ease-out both; }
+  @keyframes kb { from { transform: scale(1.08); } to { transform: scale(1); } }
+  .top :global(.blur) { filter: blur(40px) saturate(1.3) brightness(.5); animation: none; transform: scale(1.2); }
+  .shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,11,10,.92), rgba(13,11,10,.25) 62%), linear-gradient(180deg, rgba(13,11,10,.55), transparent 30%, rgba(13,11,10,.97)); }
   .in { position: relative; width: 100%; padding-bottom: 56px; display: flex; align-items: flex-end; justify-content: space-between; gap: 32px; }
-  .ig { margin: 14px 0 0; font-weight: 700; } .ig a { color: var(--coral); }
-  .top :global(.blur) { filter: blur(40px) saturate(1.3) brightness(.5); transform: scale(1.2); }
+  .hd { max-width: 760px; }
+  .name { font-weight: 800; font-size: clamp(54px, 9vw, 140px); line-height: .88; letter-spacing: .02em; animation: nm 1s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes nm { from { transform: translateY(28px); opacity: .001; } to { transform: none; opacity: 1; } }
+  .name.keep { text-transform: none; }
+  .load { background: #fff; color: #111; border: 0; font-weight: 700; }
+  .load:hover, .load:focus-visible { background: var(--accent); color: var(--accent-ink); }
+  .role { margin: 14px 0 0; font-size: clamp(17px, 1.6vw, 21px); color: var(--ink-2); }
+  .chips { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips li { border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.06); backdrop-filter: blur(6px); border-radius: 999px; padding: 7px 14px; font-size: 14px; font-weight: 600; }
+  .acts { margin-top: 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .soc { display: inline-flex; gap: 6px; margin-left: 4px; }
+  .soc a { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); transition: background .2s, transform .2s; }
+  .soc a:hover, .soc a:focus-visible { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+  svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; } svg .f { fill: currentColor; stroke: none; }
   .poster { flex: 0 0 auto; width: min(320px, 30vw); margin: 0; transform: rotate(-2deg); }
   .poster :global(img) { display: block; width: auto; max-width: 100%; max-height: min(460px, 55vh); border-radius: 14px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
-  .shows :global(.pt) { width: 54px; height: 68px; object-fit: cover; border-radius: 8px; }
-  @media (max-width: 900px) { .in { flex-direction: column-reverse; align-items: flex-start; padding-top: 110px; } .poster { width: min(260px, 60vw); } .top { height: auto; max-height: none; } }
-  .name { font-weight: 800; font-size: clamp(52px, 8vw, 128px); line-height: .92; letter-spacing: -.02em; animation: nm 1s cubic-bezier(.2,.8,.2,1) both; }
-  @keyframes nm { from { transform: translateY(24px); letter-spacing: .04em; } to { transform: none; } }
-  .body { display: flex; flex-direction: column; gap: 64px; padding-block: 72px 96px; }
-  .h3 { font-size: 40px; font-weight: 700; margin-bottom: 18px; }
-  .about { display: grid; grid-template-columns: 2fr 1fr; gap: 48px; }
-  .about .lead { margin: 0 0 16px; }
-  dl { margin: 0; border-top: 1px solid var(--line); } dl div { padding: 14px 0; border-bottom: 1px solid var(--line); }
-  dt { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; } dd { margin: 4px 0 0; font-weight: 600; }
-  .shows { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px; }
-  .shows li { padding: 20px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px; }
-  .shows .d { font-weight: 700; color: var(--accent); } .shows a:not(.btn) { font-weight: 700; font-size: 20px; }
-  .gal { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-  .gal :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; }
+
+  .sub { position: sticky; top: 0; z-index: 20; background: rgba(13,11,10,.86); backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  .sub ul { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .sub a { display: block; padding: 16px 14px; font-family: var(--display); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; font-size: 14px; color: var(--ink-2); white-space: nowrap; border-bottom: 2px solid transparent; }
+  .sub a:hover, .sub a:focus-visible { color: var(--ink); border-color: var(--accent); }
+  section[id] { scroll-margin-top: 72px; }
+
+  .body { display: flex; flex-direction: column; gap: 88px; padding-block: 72px 96px; }
+  .h3 { font-size: clamp(30px, 3.4vw, 44px); font-weight: 700; margin-bottom: 22px; }
+  .about { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(260px, 1fr); gap: 56px; align-items: start; }
+  .about .lead { margin: 0 0 18px; font: 400 19px/1.7 var(--serif); color: #E9E1D8; max-width: 68ch; }
+  .about .lead.first { font-size: 23px; line-height: 1.55; color: var(--ink); }
+  .src { font-size: 14px; color: var(--muted); } .src a { color: var(--coral); text-decoration: underline; }
+  .facts { margin: 0; border-radius: 20px; background: var(--card, rgba(255,255,255,.04)); border: 1px solid var(--line); padding: 8px 22px; position: sticky; top: 84px; }
+  .facts div { padding: 14px 0; border-bottom: 1px solid var(--line); } .facts div:last-child { border-bottom: 0; }
+  dt { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .12em; } dd { margin: 4px 0 0; font-weight: 600; }
+
+  .players { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .player { position: relative; min-height: 352px; border-radius: 20px; overflow: hidden; border: 1px solid var(--line); display: flex; }
+  .player.sp { background: radial-gradient(120% 120% at 0% 0%, rgba(30,215,96,.35), transparent 55%), #101412; }
+  .player.yt { background: radial-gradient(120% 120% at 100% 0%, rgba(255,0,51,.32), transparent 55%), #141010; }
+  .player .ph { margin: auto; padding: 32px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .player .logo { width: 48px; height: 48px; opacity: .9; }
+  .player .pt { margin: 0; font-family: var(--display); font-weight: 700; font-size: 24px; text-transform: uppercase; letter-spacing: .04em; }
+  .player .note { margin: 4px 0 0; font-size: 13px; color: var(--muted); max-width: 34ch; } .player .note a { color: var(--ink-2); text-decoration: underline; }
+  .player.on { border: 0; } .player :global(iframe) { width: 100%; height: 352px; border: 0; border-radius: 20px; display: block; }
+  .player.link:hover { border-color: var(--accent); }
+
+  .tl { list-style: none; margin: 0; padding: 0 0 0 26px; border-left: 2px solid var(--accent); display: flex; flex-direction: column; gap: 18px; }
+  .tl li { position: relative; display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 24px; padding: 18px; align-items: start; }
+  .tl li::before { content: ''; position: absolute; left: -35px; top: 34px; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px rgba(240,90,40,.2); }
+  .pf { display: block; border-radius: 12px; overflow: hidden; aspect-ratio: 4 / 5; background: rgba(255,255,255,.05); }
+  .pf :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; } .tl li:hover .pf :global(img) { transform: scale(1.05); }
+  .mono { display: grid; place-items: center; width: 100%; height: 100%; font-family: var(--display); font-weight: 800; font-size: 44px; color: var(--accent); }
+  .tx h3 { font-size: 26px; margin: 4px 0 6px; } .tx h3 a:hover { color: var(--coral); }
+  .d { margin: 0; font-weight: 700; color: var(--accent); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .up { background: var(--accent); color: var(--accent-ink); border-radius: 999px; padding: 2px 10px; font-size: 12px; }
+  .tags { margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: 14px; }
+  .tag { border: 1px solid var(--line-2); border-radius: 999px; padding: 3px 11px; font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; } .tag.so { border-color: var(--accent); color: var(--coral); }
+  .btns { margin: 14px 0 0; display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .strip { list-style: none; margin: 0 calc(var(--pad) * -1); padding: 4px var(--pad) 16px; display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: var(--pad); }
+  .strip li { flex: 0 0 auto; scroll-snap-align: start; }
+  .thumb { display: block; padding: 0; border: 0; background: none; cursor: zoom-in; border-radius: 16px; overflow: hidden; height: 340px; }
+  .thumb :global(img) { height: 100%; width: auto; max-width: 520px; object-fit: cover; display: block; transition: transform .5s, filter .3s; }
+  .thumb:hover :global(img), .thumb:focus-visible :global(img) { transform: scale(1.04); }
+  .thumb:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .lb { padding: 0; border: 0; background: transparent; max-width: 100vw; max-height: 100vh; width: 100vw; height: 100vh; }
+  .lb::backdrop { background: rgba(8,7,6,.94); backdrop-filter: blur(6px); }
+  .lb-in { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+  .lb figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .lb img { max-width: min(92vw, 1400px); max-height: 82vh; border-radius: 12px; box-shadow: 0 40px 100px rgba(0,0,0,.6); }
+  .lb figcaption { color: var(--ink-2); font-size: 14px; text-align: center; padding: 0 16px; }
+  .lb button { position: absolute; width: 52px; height: 52px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); background: rgba(13,11,10,.6); color: #fff; font-size: 28px; line-height: 1; cursor: pointer; }
+  .lb button:hover, .lb button:focus-visible { background: var(--accent); border-color: var(--accent); }
+  .lb-x { top: 18px; right: 18px; font-size: 20px !important; } .lb-p { left: 18px; } .lb-n { right: 18px; }
+
   .small { font-size: 14px; } .u { color: var(--coral); text-decoration: underline; }
-  .notify { background: var(--accent); color: var(--accent-ink); border-radius: 24px; padding: 30px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; }
+  .notify { background: var(--accent); color: var(--accent-ink); border-radius: 24px; padding: 34px; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; }
   .notify .h3 { font-size: 30px; margin: 0; } .notify p { margin: 6px 0 0; }
   .f { display: flex; flex-wrap: wrap; gap: 8px; flex: 1 1 340px; max-width: 520px; } .f .field { flex: 1 1 200px; }
-  .more ul { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 10px; }
-  .more a { display: inline-block; border: 1.5px solid var(--line-2); border-radius: 999px; padding: 10px 18px; font-weight: 600; }
-  @media (max-width: 900px) { .about { grid-template-columns: 1fr; } .gal { grid-template-columns: 1fr 1fr; } }
-  @media (prefers-reduced-motion: reduce) { .name { animation: none; } }
+
+  .mh { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; } .mh a { color: var(--coral); font-weight: 700; }
+  .mrow { list-style: none; margin: 0 calc(var(--pad) * -1); padding: 4px var(--pad) 12px; display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x proximity; }
+  .mrow li { flex: 0 0 190px; scroll-snap-align: start; }
+  .mc { display: flex; flex-direction: column; gap: 6px; }
+  .mc :global(img), .mc .mono { width: 190px; height: 230px; object-fit: cover; border-radius: 16px; background: rgba(255,255,255,.05); transition: transform .4s; }
+  .mc :global(img.pimg) { filter: saturate(.9); }
+  .mc:hover :global(img) { transform: translateY(-4px); }
+  .mn { font-family: var(--display); font-weight: 700; font-size: 18px; text-transform: uppercase; letter-spacing: .03em; margin-top: 4px; } .mr { font-size: 13px; }
+
+  @media (max-width: 900px) {
+    .in { flex-direction: column-reverse; align-items: flex-start; padding-top: 110px; } .poster { width: min(240px, 58vw); }
+    .top { height: auto; max-height: none; min-height: 560px; }
+    .about { grid-template-columns: 1fr; gap: 28px; } .facts { position: static; }
+    .players { grid-template-columns: 1fr; }
+    .tl { padding-left: 18px; } .tl li { grid-template-columns: 92px minmax(0, 1fr); gap: 14px; padding: 14px; } .tl li::before { left: -27px; }
+    .tx h3 { font-size: 21px; } .thumb { height: 260px; }
+    .lb-p, .lb-n { top: auto; bottom: 22px; } .lb-p { left: calc(50% - 64px); } .lb-n { right: calc(50% - 64px); }
+  }
+  @media (prefers-reduced-motion: reduce) { .name, .top :global(.bg) { animation: none; } }
 </style>
