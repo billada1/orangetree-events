@@ -48,7 +48,8 @@ lines.push(
   '<IfModule mod_headers.c>',
 );
 const all = cfg.headers.find((h) => h.source === '/(.*)' && !h.missing);
-for (const h of all.headers) lines.push(`Header always set ${h.key} "${h.value.replace(/"/g, '\\"')}"`);
+// LiteSpeed keeps backslash escapes literally, so values containing double quotes are single-quoted instead.
+for (const h of all.headers) lines.push(h.value.includes('"') ? `Header always set ${h.key} '${h.value}'` : `Header always set ${h.key} "${h.value}"`);
 if (staging) lines.push('Header always set X-Robots-Tag "noindex, nofollow"');
 lines.push(
   '<FilesMatch "\\.html$">',

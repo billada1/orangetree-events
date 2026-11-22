@@ -161,7 +161,9 @@ export function mountHero() {
       if (p >= 1) { cur = next; mode = 'hold'; t0 = ts; sync(); }
     }
   };
-  requestAnimationFrame((ts) => { t0 = last = ts; loop(ts); });
+  // Start drawing only once the page is idle: the first photo is already on screen as a real <picture>,
+  // so nothing competes with first paint or input (keeps Total Blocking Time low).
+  setTimeout(() => idle(() => requestAnimationFrame((ts) => { t0 = last = ts; loop(ts); })), 1200);
 
   const setPaused = (v: boolean) => { paused = v; pauseBtn.textContent = v ? L.play : L.pause; pauseBtn.setAttribute('aria-pressed', String(v)); };
   setPaused(paused);
