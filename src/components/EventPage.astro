@@ -1,11 +1,11 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import { isUpcoming, type EventItem } from '../data/events';
+import { events, isUpcoming, type EventItem } from '../data/events';
 import { artistBySlug } from '../data/artists';
 import { photos } from '../data/photos';
 import { eventJsonLd } from '../data/schema';
-import { posterFor } from '../data/media';
+import { posterFor, artistImage } from '../data/media';
 import { roleLine } from '../data/roles';
 import { googleCalUrl } from '../lib/calendar';
 import { t, href, fmtDate, type Lang } from '../i18n/ui';
@@ -17,13 +17,25 @@ const poster = posterFor(e);
 const ph = photos[e.image ?? (e.kind === 'nye' ? 'nye2023screen' : 'stageWide')];
 const role = roleLine(e, lang);
 const performers = (e.artists ?? []).map(artistBySlug).filter(Boolean);
-const ld = eventJsonLd(e, lang, Astro.site!);
+const evLd = eventJsonLd(e, lang, Astro.site!);
+const crumbs = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+  { '@type': 'ListItem', position: 1, name: s.siteName, item: new URL(href(lang, '/'), Astro.site!).href },
+  { '@type': 'ListItem', position: 2, name: up ? s.nav.on : s.nav.past, item: new URL(href(lang, up ? '/#whats-on' : '/events/'), Astro.site!).href },
+  { '@type': 'ListItem', position: 3, name: e.title[lang], item: new URL(href(lang, `/events/${e.slug}/`), Astro.site!).href },
+] };
+const ld = evLd ? [evLd, crumbs] : [crumbs];
+// Related nights: shared artists first, then the same kind, nearest in time. Internal links for visitors and search.
+const k = (x: EventItem) => x.date ?? x.year ?? '';
+const shared = (x: EventItem) => (x.artists ?? []).filter((a) => e.artists?.includes(a)).length;
+const related = events.filter((x) => x.slug !== e.slug && !(x.confirm && !x.date))
+  .map((x) => ({ x, score: shared(x) * 10 + (x.kind === e.kind ? 3 : 0) + (x.partner && x.partner === e.partner ? 2 : 0) - Math.abs(Number(k(x).slice(0, 4) || 0) - Number(k(e).slice(0, 4) || 0)) * 0.1 }))
+  .filter((r) => r.score > 0).sort((a, b) => b.score - a.score).slice(0, 4).map((r) => r.x);
 const when = e.date ? fmtDate(e.date, lang, { weekday: true }) + (e.doors ? ` · ${s.on.doors} ${e.doors.replace(':', lang === 'tr' ? '.' : ':')}` : '') : (e.year ?? s.past.dateToConfirm);
 const gcal = up && e.date ? googleCalUrl(e, lang) : null;
 const icsHref = href(lang, `/events/${e.slug}.ics`);
 const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join('. ');
 ---
-<Base lang={lang} title={e.title[lang]} description={desc} jsonLd={ld ?? undefined} noindex={!!e.confirm && !e.date}>
+<Base lang={lang} title={e.title[lang]} description={desc} jsonLd={ld} noindex={!!e.confirm && !e.date}>
   <section class:list={['top', { withPoster: !!poster }]}>
     {poster
       ? <Image src={poster} alt="" widths={[240, 480]} sizes="100vw" quality={50} class="bg blur" loading="eager" />
@@ -51,7 +63,7 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
       {performers.length > 0 && (
         <>
           <h2 class="sub">{s.nav.artists}</h2>
-          <ul class="perf">{performers.map((a) => <li><a href={href(lang, `/artists/${a!.slug}/`)}>{a!.name}</a> <span class="muted">{a!.role[lang]}</span></li>)}</ul>
+          <ul class="perf">{performers.map((a) => { const im = artistImage(a!); return <li>{im ? <Image src={im.src} alt="" widths={[96, 192]} sizes="48px" class={`pav fp-${a!.slug}`} /> : <span class="pav pav0" aria-hidden="true">{a!.name.replace(/^DJ\s+/i, '').split(/\s+/).map((w) => w[0]).slice(0, 2).join('')}</span>}<span><a href={href(lang, `/artists/${a!.slug}/`)}>{a!.name}</a> <span class="muted">{a!.role[lang]}</span></span></li>; })}</ul>
         </>
       )}
       {e.story && <p><a class="btn btn-ghost" href={href(lang, `/stories/${e.story}/`)}>{s.stories.read}</a></p>}
@@ -87,6 +99,19 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
       )}
     </aside>
   </div>
+  {related.length > 0 && (
+    <section class="wrap rel" aria-labelledby="rel-h">
+      <h2 id="rel-h" class="sub">{lang === 'tr' ? 'Benzer geceler' : 'More nights like this'}</h2>
+      <ul class="rl">
+        {related.map((x) => { const p = posterFor(x); return (
+          <li><a href={href(lang, `/events/${x.slug}/`)}>
+            {p ? <Image src={p} alt="" widths={[160, 320]} sizes="80px" class="rp" /> : <span class="rp rp0" aria-hidden="true"><img src="/emblem.svg" alt="" width="28" height="32" /></span>}
+            <span class="rt"><span class="rn">{x.title[lang]}</span><span class="muted">{x.date ? fmtDate(x.date, lang, { year: true }) : x.year}</span></span>
+          </a></li>
+        ); })}
+      </ul>
+    </section>
+  )}
 </Base>
 <style>
   .cal { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 4px 0 18px; padding: 14px 0 0; border-top: 1px solid var(--line); }
@@ -113,7 +138,16 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
   .lead { margin-top: 14px; }
   .grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 40px; padding-block: 56px 96px; align-items: start; }
   .sub { font-size: 28px; margin: 32px 0 12px; }
-  .perf { list-style: none; padding: 0; margin: 0; } .perf li { padding: 10px 0; border-bottom: 1px solid var(--line); } .perf a { font-weight: 700; }
+  .perf { list-style: none; padding: 0; margin: 0; } .perf li { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line); } .perf a { font-weight: 700; }
+  .perf :global(.pav) { flex: 0 0 48px; width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+  .pav0 { display: grid; place-items: center; background: #2A2522; color: var(--peach); font-size: 15px; font-weight: 700; }
+  .rel { padding-block: 8px 96px; }
+  .rl { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .rl a { display: flex; gap: 14px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 16px; text-decoration: none; transition: border-color .2s, background .2s; height: 100%; }
+  .rl a:hover { border-color: var(--peach); background: #1C1815; }
+  .rl :global(.rp) { flex: 0 0 64px; width: 64px; height: 80px; object-fit: cover; border-radius: 8px; }
+  .rp0 { display: grid; place-items: center; background: #1C1815; } .rp0 img { opacity: .4; }
+  .rt { display: flex; flex-direction: column; gap: 2px; min-width: 0; } .rn { font-weight: 600; line-height: 1.3; }
   .box { padding: 24px; }
   dl { margin: 0; } dt { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-top: 14px; } dt:first-child { margin-top: 0; } dd { margin: 4px 0 0; font-weight: 600; }
   .tix { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
