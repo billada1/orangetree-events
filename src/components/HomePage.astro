@@ -118,7 +118,7 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
 
   <section class="moments" aria-labelledby="mo-h">
     <div class="wrap"><h2 id="mo-h" class="h2">{s.moments.h}</h2></div>
-    <div class="strip">
+    <div class="strip" tabindex="0" role="region" aria-label={lang === 'tr' ? 'Fotoğraf şeridi, kaydırılabilir' : 'Photo strip, scrollable'}>
       {moments.map((k) => <Image src={photos[k].src} alt={photos[k].alt[lang]} widths={[400, 640]} sizes="(max-width: 760px) 70vw, 28vw" />)}
     </div>
     <p class="wrap muted small">{s.moments.removeQ} <a class="u" href="mailto:info@orangetree.events?subject=Photo%20removal">{s.moments.remove}</a></p>
@@ -188,6 +188,7 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
   .story .b { padding: 22px; } .story h3 { font-size: 24px; }
 
   .moments { padding-block: 56px; }
+  .strip:focus-visible { outline: 2px solid var(--peach); outline-offset: -2px; }
   .strip { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 24px var(--pad); }
   .strip :global(img) { flex: 0 0 auto; width: min(70vw, 420px); aspect-ratio: 4 / 3; object-fit: cover; border-radius: 16px; scroll-snap-align: start; }
   .u { color: var(--coral); text-decoration: underline; }

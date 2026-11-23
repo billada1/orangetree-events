@@ -95,10 +95,13 @@ const first = photos[heroSlides[0].key];
   .ctl { position: relative; width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 28px; padding-bottom: 28px; }
   .ctl-row { display: flex; align-items: center; gap: 10px; }
   .round { font: inherit; font-size: 14px; font-weight: 600; min-width: 44px; height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid rgba(245,239,232,.45); background: rgba(13,11,10,.45); color: var(--ink); cursor: pointer; }
-  .dots { display: flex; align-items: center; gap: 8px; margin-left: 8px; }
-  .dot { width: 10px; height: 10px; padding: 0; border: 0; border-radius: 999px; background: rgba(245,239,232,.45); cursor: pointer; transition: width .5s cubic-bezier(.22,1,.36,1), background .5s; position: relative; }
-  .dot::after { content: ''; position: absolute; inset: -12px -4px; }
-  .dot[aria-current="true"] { width: 28px; background: var(--accent); }
+  .dots { display: flex; align-items: center; gap: 0; margin-left: 4px; }
+  /* 24px hit area (WCAG 2.2 target size); the visible dot is drawn inside it. */
+  .dot { width: 24px; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; display: grid; place-items: center; transition: width .5s cubic-bezier(.22,1,.36,1); }
+  .dot::before { content: ''; width: 10px; height: 10px; border-radius: 999px; background: rgba(245,239,232,.45); transition: width .5s cubic-bezier(.22,1,.36,1), background .5s; }
+  .dot[aria-current="true"] { width: 36px; }
+  .dot[aria-current="true"]::before { width: 28px; background: var(--accent); }
+  .dot:focus-visible { outline: 2px solid var(--peach); outline-offset: 0; border-radius: 999px; }
   .cap { margin: 0; font-size: 13px; color: var(--ink-2); text-align: right; }
   .fx { color: var(--faint); }
   @media (max-width: 760px) { .dots { display: none; } .cap { flex-basis: 100%; text-align: left; } }
