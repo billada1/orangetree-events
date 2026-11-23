@@ -89,9 +89,9 @@ $body .= "\nMessage:\n" . $message . "\n\n-- \nSent from orangetree.events/{$src
 
 $cfg = ot_config();
 $to = (string)($cfg['ENQUIRY_TO'] ?? 'info@orangetree.events');
-// Brevo needs its verified sender (info@). For mail(), use a separate website@ address: info@ is a Gmail
+// Send from website@ (a Brevo-verified sender on our authenticated domain), not info@: info@ is a Gmail
 // "send as" alias, so messages from info@ to info@ are filed as sent by you and are easy to miss.
-$from = (string)($cfg['ENQUIRY_FROM'] ?? 'info@orangetree.events');
+$from = (string)($cfg['ENQUIRY_FROM'] ?? 'website@orangetree.events');
 $mailFrom = (string)($cfg['ENQUIRY_MAIL_FROM'] ?? 'website@orangetree.events');
 $subjectText = ($src === 'contact' ? 'Contact: ' : 'Enquiry: ') . $types[$type] . ' · ' . $name . ($fields['Organisation'] ? ' (' . $fields['Organisation'] . ')' : '');
 
