@@ -1,6 +1,7 @@
 export interface Artist {
   slug: string;
   name: string;
+  aka?: string; // real name or other name, shown under the stage name
   role: { en: string; tr: string };
   bio?: { en: string[]; tr: string[] };
   facts?: { label: { en: string; tr: string }; value: string }[];
@@ -69,7 +70,7 @@ const list: Artist[] = [
   { slug: 'ugur-aslan', image: 'ugur-aslan', name: 'Uğur Aslan', role: { en: 'Singer and actor', tr: 'Şarkıcı ve oyuncu' } },
   { slug: 'ekin-uzunlar', image: 'ekin-uzunlar', name: 'Ekin Uzunlar', role: { en: 'Black Sea folk singer and kemençe player', tr: 'Karadeniz müziği sanatçısı, kemençe' } },
   { slug: 'muharrem-aslan', image: 'muharrem-aslan', name: 'Muharrem Aslan', local: true, instagram: 'muharremaslanofficial', role: { en: 'Musician and music therapist: Sounds of Anatolia', tr: 'Müzisyen ve müzik terapisti: Anadolu’nun Sesleri' } },
-  { slug: 'dj-ilka', image: 'dj-ilka', name: 'DJ Ilka', local: true, instagram: 'dj.ilka', role: { en: 'DJ, Turkish Vibes resident', tr: 'DJ, Turkish Vibes’ın DJ’i' } },
+  { slug: 'dj-ilka', image: 'dj-ilka', name: 'DJ Ilka', aka: 'İlker Aydın', local: true, instagram: 'dj.ilka', role: { en: 'DJ, Turkish Vibes resident', tr: 'DJ, Turkish Vibes’ın DJ’i' } },
   { slug: 'dj-ada', image: 'dj-ada', name: 'DJ Göksel Ada', local: true, instagram: 'djada_goksel', role: { en: 'DJ, Turkish Vibes resident', tr: 'DJ, Turkish Vibes’ın DJ’i' } },
   { slug: 'dj-gurbz', name: 'DJ Gurbz', local: true, instagram: 'djgurbuzaslan', role: { en: 'DJ', tr: 'DJ' } },
   { slug: 'dj-baki', name: 'DJ Baki', local: true, role: { en: 'DJ', tr: 'DJ' } },

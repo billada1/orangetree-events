@@ -74,6 +74,7 @@ const ld = {
       <div class="hd">
         <p class="eyebrow"><a href={href(lang, '/artists/')}>{s.nav.artists}</a> · {a.local ? s.artistsUi.local : s.artistsUi.visiting}</p>
         <h1 class:list={['name', { keep: /[a-z][A-Z]/.test(a.name) }]}>{a.name}</h1>
+        {a.aka && <p class="aka">{a.aka}</p>}
         <p class="role">{a.role[lang]}</p>
         {shows.length > 0 && (
           <ul class="chips" role="list">
@@ -291,6 +292,7 @@ const ld = {
   .soc a { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); transition: background .2s, transform .2s; }
   .soc a:hover, .soc a:focus-visible { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
   svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; } svg .f { fill: currentColor; stroke: none; }
+  .aka { margin: -6px 0 10px; font-size: 18px; letter-spacing: .04em; color: rgba(255,240,230,.75); }
   .portrait { flex: 0 0 auto; width: min(360px, 32vw); margin: 0; animation: nm 1.6s cubic-bezier(.22,1,.36,1) .15s both; }
   .portrait :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 20%; border-radius: 22px; box-shadow: 0 40px 100px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08); }
   .portrait.wide { width: min(560px, 42vw); }
