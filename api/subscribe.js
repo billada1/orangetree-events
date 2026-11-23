@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
   const attributes = {}; // language is carried by the list (EN or TR)
   const listId = Number(lang === 'tr' ? process.env.BREVO_LIST_TR : process.env.BREVO_LIST_EN);
-  const doi = Number(process.env.BREVO_DOI_TEMPLATE_ID || 0);
+  const doi = Number(process.env.BREVO_DOI_TEMPLATE_ID || 0) || 3; // Brevo template #3, double opt-in (EN+TR)
   const headers = { 'api-key': process.env.BREVO_API_KEY || '', 'content-type': 'application/json', accept: 'application/json' };
   try {
     const url = doi ? 'https://api.brevo.com/v3/contacts/doubleOptinConfirmation' : 'https://api.brevo.com/v3/contacts';

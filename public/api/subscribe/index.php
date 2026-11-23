@@ -35,7 +35,8 @@ if ($key === '') { error_log('subscribe: missing Brevo config'); $go($back . '?e
 // Language is carried by the list itself (EN or TR), so no custom Brevo attributes are needed.
 $attributes = new stdClass();
 $listId = (int)($lang === 'tr' ? ($cfg['BREVO_LIST_TR'] ?? 0) : ($cfg['BREVO_LIST_EN'] ?? 0));
-$doi = (int)($cfg['BREVO_DOI_TEMPLATE_ID'] ?? 0);
+// Brevo template #3 "Mailing list double opt-in (EN+TR)" (tagged optin). Config can override it; 0 there means use #3.
+$doi = (int)($cfg['BREVO_DOI_TEMPLATE_ID'] ?? 0) ?: 3;
 $host = $_SERVER['HTTP_HOST'] ?? 'orangetree.events';
 
 if ($doi) {
