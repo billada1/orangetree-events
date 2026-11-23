@@ -10,6 +10,7 @@ export interface EventItem {
   date?: string;
   year?: string;
   doors?: string; // 24 h local time, e.g. '19:00'
+  ends?: string; // 24 h local time it finishes ('01:00' = after midnight); schema.org endDate, default doors + 4 h
   venue: string;
   address?: string;
   kind: Kind;
@@ -44,7 +45,7 @@ export function trDative(n: number): string {
 
 export const events: EventItem[] = [
   {
-    slug: 'nye-2027', kind: 'nye', date: '2026-12-31', doors: '19:00',
+    slug: 'nye-2027', kind: 'nye', date: '2026-12-31', doors: '19:00', ends: '01:00',
     title: { en: 'NYE 2027 · ATAM’s 15th year', tr: 'Yılbaşı 2027 · ATAM’ın 15. yılı' },
     venue: 'The Renaissance, Piano Room, Lidcombe', address: '3 New St E, Lidcombe NSW 2141',
     partner: 'ATAM', artists: ['tahir-bilgic', 'dj-ilka'],
@@ -53,13 +54,13 @@ export const events: EventItem[] = [
     image: 'nye2025stage',
   },
   {
-    slug: 'mahmut-orhan-zuri-2026', poster: 'mahmut-orhan-zuri-2026', kind: 'supported', date: '2026-12-19',
+    slug: 'mahmut-orhan-zuri-2026', poster: 'mahmut-orhan-zuri-2026', kind: 'supported', date: '2026-12-19', partner: 'ZURI', externalUrl: 'https://ra.co/events/2548217',
     title: { en: 'Mahmut Orhan at ZURI Festival Sydney', tr: 'Mahmut Orhan, ZURI Festival Sydney' },
     venue: 'White Bay Power Station, Rozelle', artists: ['mahmut-orhan'],
     note: { en: 'With Francis Mercier, Marten Lou and more.', tr: 'Francis Mercier, Marten Lou ve daha fazlası ile.' },
   },
   {
-    slug: 'nida-rock-2026', poster: 'nida-rock-2026', kind: 'supported', date: '2026-11-27',
+    slug: 'nida-rock-2026', poster: 'nida-rock-2026', kind: 'supported', date: '2026-11-27', partner: 'Nida Rock',
     title: { en: 'Nida Rock & friends', tr: 'Nida Rock & friends' },
     venue: 'Peppers The Hills Lodge, Castle Hill', artists: ['nida-rock'],
     note: { en: 'Live Turkish music with special guests Özgür and Kübra.', tr: 'Özel konuklar Özgür ve Kübra ile canlı Türkçe müzik.' },
