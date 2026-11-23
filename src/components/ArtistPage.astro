@@ -66,9 +66,9 @@ const ld = {
 ---
 <Base lang={lang} title={a.name} description={desc} jsonLd={ld} overlayHeader={!!(ph || posterImg)} noindex={!a.bio && shows.length === 0}>
   <section class:list={['top', { plain: !ph && !posterImg }]}>
-    {ph && !framed && <Image src={ph} alt={a.name} widths={[640, 1024, 1600]} sizes="100vw" class={`bg fp-${a.slug}`} loading="eager" fetchpriority="high" />}
+    {ph && !framed && <Image src={ph} alt={a.name} widths={[480, 768, 1024, 1600]} sizes="100vw" quality={70} class={`bg fp-${a.slug}`} loading="eager" fetchpriority="high" />}
     {framed && <Image src={ph!} alt="" widths={[320]} sizes="100vw" class="bg blur" loading="eager" />}
-    {posterImg && <Image src={posterImg} alt="" widths={[480, 960]} sizes="100vw" class="bg blur" loading="eager" />}
+    {posterImg && <Image src={posterImg} alt="" widths={[240, 480]} sizes="100vw" quality={50} class="bg blur" loading="eager" />}
     {(ph || posterImg) && <div class="shade" aria-hidden="true"></div>}
     <div class="wrap in">
       <div class="hd">

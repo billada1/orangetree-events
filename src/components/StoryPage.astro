@@ -27,7 +27,7 @@ const ld = {
 <Base lang={lang} title={fm.title} description={fm.excerpt} image={heroImg.src} jsonLd={ld} hasTranslation={translated}>
   <div class="progress" aria-hidden="true"></div>
   <section class="top">
-    <Image src={hero.src} alt={hero.poster ? '' : hero.alt} widths={[640, 1024, 1600]} sizes="100vw" class:list={['bg', { blur: hero.poster }]} loading="eager" fetchpriority="high" />
+    <Image src={hero.src} alt={hero.poster ? '' : hero.alt} widths={[480, 768, 1024, 1600]} sizes="100vw" quality={70} class:list={['bg', { blur: hero.poster }]} loading="eager" fetchpriority="high" />
     <div class="shade" aria-hidden="true"></div>
     <div class="in">
       <p class="eyebrow">{s.stories.fromArchive} · <time datetime={date}>{fmtDate(date, lang, { weekday: true })}</time></p>
@@ -41,7 +41,7 @@ const ld = {
   </article>
   {fm.wide && (() => { const w = storyImage(fm.wide, lang); return (
     <figure class="wide reveal">
-      <Image src={w.src} alt={w.alt} widths={[800, 1328]} sizes="(max-width: 1440px) 100vw, 1328px" />
+      <Image src={w.src} alt={w.alt} widths={[480, 800, 1328]} sizes="(max-width: 1440px) 100vw, 1328px" quality={72} />
     </figure>); })()}
   {fm.timeline && (
     <section class="tl reveal" aria-labelledby="tl-h">
@@ -51,7 +51,7 @@ const ld = {
   )}
   {fm.gallery && (
     <section class="gal reveal" aria-label={s.stories.photos}>
-      {fm.gallery.map((k) => { const g = storyImage(k, lang); return <Image src={g.src} alt={g.alt} widths={[480, 900]} sizes="(max-width: 760px) 100vw, 50vw" class:list={[{ contain: g.poster }]} />; })}
+      {fm.gallery.map((k) => { const g = storyImage(k, lang); return <Image src={g.src} alt={g.alt} widths={[360, 540, 720, 900]} sizes="(max-width: 760px) calc(100vw - 40px), 50vw" quality={72} class:list={[{ contain: g.poster }]} />; })}
     </section>
   )}
   <div class="end">

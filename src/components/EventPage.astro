@@ -26,8 +26,8 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
 <Base lang={lang} title={e.title[lang]} description={desc} jsonLd={ld ?? undefined} noindex={!!e.confirm && !e.date}>
   <section class:list={['top', { withPoster: !!poster }]}>
     {poster
-      ? <Image src={poster} alt="" widths={[480, 960]} sizes="100vw" class="bg blur" loading="eager" />
-      : <Image src={ph.src} alt={ph.alt[lang]} widths={[640, 1024, 1600]} sizes="100vw" class="bg" loading="eager" fetchpriority="high" />}
+      ? <Image src={poster} alt="" widths={[240, 480]} sizes="100vw" quality={50} class="bg blur" loading="eager" />
+      : <Image src={ph.src} alt={ph.alt[lang]} widths={[480, 768, 1024, 1600]} sizes="100vw" quality={70} class="bg" loading="eager" fetchpriority="high" />}
     <div class="shade" aria-hidden="true"></div>
     <div class="wrap in">
       <div class="txt">

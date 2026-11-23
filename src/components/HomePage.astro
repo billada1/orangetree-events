@@ -43,7 +43,7 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
     <div class="on-grid">
       {featured && (
         <article class="feature reveal">
-          <Image src={photos[featured.image ?? 'nye2025stage'].src} alt={photos[featured.image ?? 'nye2025stage'].alt[lang]} widths={[640, 960, 1280]} sizes="(max-width: 900px) 100vw, 60vw" class="bg" />
+          <Image src={photos[featured.image ?? 'nye2025stage'].src} alt={photos[featured.image ?? 'nye2025stage'].alt[lang]} widths={[480, 720, 960, 1280]} sizes="(max-width: 900px) 100vw, 60vw" quality={70} class="bg" />
           <div class="shade" aria-hidden="true"></div>
           <div class="body">
             <p class="pill"><span class="dotp" aria-hidden="true"></span>{s.on.onSale}</p>
@@ -105,7 +105,7 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
     <div class="cards">
       {storyCards.map((x) => (
         <article class="card story reveal">
-          <Image src={storyImage(x.fm.hero, lang).src} alt="" widths={[480, 720]} sizes="(max-width: 760px) 100vw, 33vw" />
+          <Image src={storyImage(x.fm.hero, lang).src} alt="" widths={[360, 480, 720]} sizes="(max-width: 760px) calc(100vw - 40px), 33vw" />
           <div class="b">
             <p class="tag">{s.stories.fromArchive} · {fmtDate(isoDate(x.fm.date), lang)}</p>
             <h3><a href={href(lang, `/stories/${x.slug}/`)}>{x.fm.title}</a></h3>
