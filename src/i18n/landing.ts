@@ -1,7 +1,7 @@
 // Copy for the two search landing pages. Facts here must match src/data (events, artists); lists are built from data.
 import type { Lang } from './ui';
 
-export type Topic = 'concerts' | 'nye';
+export type Topic = 'concerts' | 'nye' | 'comedy' | 'dance' | 'tour';
 type QA = { q: string; a: string; ev?: string }; // ev: only shown while that event is upcoming
 type Copy = { slug: string; title: string; meta: string; eyebrow: string; h1: string; lead: string; upH: string; upNone: string; histH: string; histP: string; artistsH: string; faqH: string; faq: QA[]; joinH: string; joinP: string; crumb: string };
 
@@ -88,6 +88,122 @@ export const landing: Record<Topic, Record<Lang, Copy>> = {
         { ev: 'nye-2027', q: 'Takvimime ekleyebilir miyim?', a: 'Evet. Etkinlik sayfasında Apple, Outlook ve telefon için takvim dosyası ile Google Takvim bağlantısı var.' },
       ],
       joinH: 'Gelecek yıl için ilk haberi alın', joinP: 'Erken masa fırsatları ve sanatçı haberleri, Türkçe ya da İngilizce.',
+    },
+  },
+  comedy: {
+    en: {
+      slug: '/turkish-comedy-sydney/', crumb: 'Turkish comedy in Sydney',
+      title: 'Turkish comedy and stand-up in Sydney',
+      meta: 'Turkish comedy, stand-up and one-man shows in Sydney: Yılmaz Erdoğan’s Münaşaka, Erkan Kolçak Köstendil, Tahir Bilgiç and the earthquake appeal benefit at the Enmore.',
+      eyebrow: 'Comedy · Sydney', h1: 'Turkish comedy in Sydney',
+      lead: 'Stand-up, storytelling and one-man shows from Türkiye and from Sydney’s own Turkish community, from Yılmaz Erdoğan’s Münaşaka at the Seymour Centre to a benefit night at the Enmore Theatre hosted by Tahir Bilgiç.',
+      upH: 'Coming up', upNone: 'No comedy nights are on sale right now. Join the mailing list and you’ll hear first.',
+      histH: 'Comedy nights so far', histP: 'Shows we presented, supported or helped run.',
+      artistsH: 'Comedians and performers',
+      faqH: 'Questions',
+      faq: [
+        { q: 'Are the shows in Turkish?', a: 'Shows by visiting artists from Türkiye, such as Yılmaz Erdoğan and Erkan Kolçak Köstendil, are in Turkish. Sydney comedian Tahir Bilgiç performs in English.' },
+        { q: 'Where are Turkish comedy shows held in Sydney?', a: 'Recent nights have been at the Seymour Centre, the Enmore Theatre and C3 Church in Silverwater. Each event page has the venue and the ticket seller.' },
+        { q: 'Is there comedy at New Year’s Eve?', a: 'Tahir Bilgiç is MC for NYE 2027 with ATAM in Lidcombe.', ev: 'nye-2027' },
+        { q: 'How do I hear about the next show?', a: 'Join our mailing list in English or Turkish. New shows and early-bird tickets go there first.' },
+      ],
+      joinH: 'Hear about the next show first', joinP: 'New comedy nights and early-bird tickets, in English or Türkçe.',
+    },
+    tr: {
+      slug: '/turkish-comedy-sydney/', crumb: 'Sydney’de Türk stand-up',
+      title: 'Sydney’de Türkçe stand-up ve komedi',
+      meta: 'Sydney’de Türkçe stand-up, komedi ve tek kişilik gösteriler: Yılmaz Erdoğan’ın Münaşaka’sı, Erkan Kolçak Köstendil, Tahir Bilgiç ve Enmore’daki deprem yardım gecesi.',
+      eyebrow: 'Komedi · Sydney', h1: 'Sydney’de Türkçe stand-up',
+      lead: 'Türkiye’den ve Sydney’deki Türk toplumundan stand-up, hikâye anlatıcılığı ve tek kişilik gösteriler: Seymour Centre’daki Münaşaka’dan, Tahir Bilgiç’in sunduğu Enmore Theatre’daki yardım gecesine.',
+      upH: 'Yaklaşan etkinlikler', upNone: 'Şu anda satışta olan bir komedi gecesi yok. E-posta listemize katılın, ilk siz duyun.',
+      histH: 'Bugüne kadarki komedi geceleri', histP: 'Sunduğumuz, desteklediğimiz ya da düzenlenmesine yardım ettiğimiz gösteriler.',
+      artistsH: 'Komedyenler ve sanatçılar',
+      faqH: 'Sık sorulanlar',
+      faq: [
+        { q: 'Gösteriler Türkçe mi?', a: 'Yılmaz Erdoğan ve Erkan Kolçak Köstendil gibi Türkiye’den gelen sanatçıların gösterileri Türkçe. Sydneyli komedyen Tahir Bilgiç İngilizce sahne alıyor.' },
+        { q: 'Sydney’de Türkçe komedi gösterileri nerede yapılıyor?', a: 'Son gösteriler Seymour Centre, Enmore Theatre ve Silverwater’daki C3 Church’te yapıldı. Her etkinlik sayfasında mekân ve bilet satıcısı yazıyor.' },
+        { q: 'Yılbaşında komedi var mı?', a: 'Tahir Bilgiç, Lidcombe’da ATAM ile Yılbaşı 2027’nin sunucusu.', ev: 'nye-2027' },
+        { q: 'Bir sonraki gösteriyi nasıl duyarım?', a: 'Türkçe ya da İngilizce e-posta listemize katılın. Yeni gösteriler ve erken bilet fırsatları önce oraya gelir.' },
+      ],
+      joinH: 'Bir sonraki gösteriyi ilk siz duyun', joinP: 'Yeni komedi geceleri ve erken bilet fırsatları, Türkçe ya da İngilizce.',
+    },
+  },
+  dance: {
+    en: {
+      slug: '/turkish-dance-nights-sydney/', crumb: 'Turkish dance nights in Sydney',
+      title: 'Turkish DJ and dance nights in Sydney',
+      meta: 'Turkish dance nights and DJ parties in Sydney: Turkish Vibes, GECCE club nights, New Year’s Eve with DJ Ilka and Mahmut Orhan at ZURI Festival.',
+      eyebrow: 'DJs · Sydney', h1: 'Turkish dance nights in Sydney',
+      lead: 'Turkish pop, dance hits and old-school R&B on Sydney dance floors, from Turkish Vibes at the Coolibah to GECCE club nights in Darlinghurst and Potts Point, and the DJs who play our New Year’s Eves.',
+      upH: 'Coming up', upNone: 'No dance nights are on sale right now. Join the mailing list and you’ll hear first.',
+      histH: 'Dance nights so far', histP: 'Nights we presented or helped promote, and New Year’s Eves with our resident DJs.',
+      artistsH: 'DJs who’ve played our nights',
+      faqH: 'Questions',
+      faq: [
+        { q: 'What music do they play?', a: 'Turkish pop and dance hits, with old-school R&B at Turkish Vibes. Mahmut Orhan plays his own deep house.' },
+        { q: 'Are dance nights 18+?', a: 'Club nights are at licensed venues and are usually 18+. New Year’s Eve with ATAM is a dinner event with children’s tickets. Each event page has the age rule.' },
+        { q: 'Who are the DJs?', a: 'DJ Ilka (Ilker Aydın) and DJ Göksel Ada were the Turkish Vibes residents and play our New Year’s Eves. DJ Gurbz and DJ Baki have also played NYE with ATAM.' },
+        { q: 'How do I hear about the next night?', a: 'Join our mailing list in English or Turkish. New nights and early-bird tickets go there first.' },
+      ],
+      joinH: 'Hear about the next night first', joinP: 'New dance nights and early-bird tickets, in English or Türkçe.',
+    },
+    tr: {
+      slug: '/turkish-dance-nights-sydney/', crumb: 'Sydney’de Türkçe dans geceleri',
+      title: 'Sydney’de Türkçe DJ ve dans geceleri',
+      meta: 'Sydney’de Türkçe dans geceleri ve DJ partileri: Turkish Vibes, GECCE kulüp geceleri, DJ Ilka ile yılbaşı ve ZURI Festival’de Mahmut Orhan.',
+      eyebrow: 'DJ’ler · Sydney', h1: 'Sydney’de Türkçe dans geceleri',
+      lead: 'Sydney’nin dans pistlerinde Türkçe pop, dans hitleri ve old-school R&B: Coolibah’daki Turkish Vibes’tan Darlinghurst ve Potts Point’teki GECCE kulüp gecelerine, yılbaşı gecelerimizde çalan DJ’lere kadar.',
+      upH: 'Yaklaşan etkinlikler', upNone: 'Şu anda satışta olan bir dans gecesi yok. E-posta listemize katılın, ilk siz duyun.',
+      histH: 'Bugüne kadarki dans geceleri', histP: 'Sunduğumuz ya da tanıtımına katkı verdiğimiz geceler ve DJ’lerimizle yılbaşı geceleri.',
+      artistsH: 'Gecelerimizde çalan DJ’ler',
+      faqH: 'Sık sorulanlar',
+      faq: [
+        { q: 'Hangi müzikler çalıyor?', a: 'Türkçe pop ve dans hitleri; Turkish Vibes’ta old-school R&B de var. Mahmut Orhan kendi deep house setini çalıyor.' },
+        { q: 'Dans gecelerinde yaş sınırı var mı?', a: 'Kulüp geceleri alkol ruhsatlı mekânlarda yapılıyor ve genellikle 18 yaş sınırı var. ATAM ile yılbaşı ise çocuk bileti de olan yemekli bir gece. Her gecenin yaş kuralı etkinlik sayfasında yazıyor.' },
+        { q: 'DJ’ler kim?', a: 'DJ Ilka (Ilker Aydın) ve DJ Göksel Ada, Turkish Vibes’ın DJ’leriydi ve yılbaşı gecelerimizde çalıyor. DJ Gurbz ve DJ Baki de ATAM ile yılbaşında çaldı.' },
+        { q: 'Bir sonraki geceyi nasıl duyarım?', a: 'Türkçe ya da İngilizce e-posta listemize katılın. Yeni geceler ve erken bilet fırsatları önce oraya gelir.' },
+      ],
+      joinH: 'Bir sonraki geceyi ilk siz duyun', joinP: 'Yeni dans geceleri ve erken bilet fırsatları, Türkçe ya da İngilizce.',
+    },
+  },
+  tour: {
+    en: {
+      slug: '/bring-turkish-artists-to-australia/', crumb: 'Bring Turkish artists to Australia',
+      title: 'Bring Turkish artists to Sydney and Australia',
+      meta: 'For artists, managers and tour promoters: Orange Tree Events has presented, co-presented and promoted Turkish concerts and comedy in Sydney since 2014. Track record, venues and how to work with us.',
+      eyebrow: 'For artists and promoters', h1: 'Bring Turkish artists to Australia',
+      lead: 'We present, co-present and promote Turkish and multicultural concerts and comedy in Sydney, and we have worked on tour dates in Melbourne. If you are planning an Australian tour, we can be your Sydney partner.',
+      upH: 'Our track record since 2014', upNone: 'Venues we have worked with in Sydney:',
+      histH: 'Shows we presented and promoted', histP: 'From Teoman Rockfest at The Star to Buray at Liberty Hall. The full archive, with filters, is on the past events page.',
+      artistsH: 'Artists we have worked with',
+      faqH: 'Questions',
+      faq: [
+        { q: 'How can we work together?', a: 'We can present the show (fee or guarantee), co-present and share the result, or promote a show you run. We are open to other ideas too.' },
+        { q: 'What do you need from us?', a: 'The artist or show, the genre, your preferred dates or tour window, the cities, the expected audience size and links to an EPK, music or video.' },
+        { q: 'How do you reach the audience?', a: 'Social media, our English and Turkish mailing list, our website, community partners such as ATAM, and help with ticketing.' },
+        { q: 'Which cities do you cover?', a: 'We are based in Sydney and have worked on tour dates in Melbourne. Tell us your full tour plan and we will say where we can help.' },
+        { q: 'How quickly will you reply?', a: 'Someone from our team reads every expression of interest and usually replies within two business days.' },
+      ],
+      joinH: 'Tell us about your tour', joinP: 'Send an expression of interest and download our brochures for artists, promoters and sponsors.',
+    },
+    tr: {
+      slug: '/bring-turkish-artists-to-australia/', crumb: 'Türk sanatçıları Avustralya’ya getirin',
+      title: 'Türk sanatçıları Sydney’ye ve Avustralya’ya getirin',
+      meta: 'Sanatçılar, menajerler ve turne organizatörleri için: Orange Tree Events 2014’ten bu yana Sydney’de Türk konserlerini ve stand-up gösterilerini sunuyor, birlikte sunuyor ve tanıtıyor. Deneyimimiz, mekânlar ve birlikte çalışma.',
+      eyebrow: 'Sanatçılar ve organizatörler için', h1: 'Türk sanatçıları Avustralya’ya getirin',
+      lead: 'Sydney’de Türk ve çok kültürlü konserleri ve stand-up gösterilerini sunuyor, birlikte sunuyor ve tanıtıyoruz; Melbourne’daki turne tarihlerinde de çalıştık. Bir Avustralya turnesi planlıyorsanız Sydney ortağınız olabiliriz.',
+      upH: '2014’ten bu yana deneyimimiz', upNone: 'Sydney’de birlikte çalıştığımız mekânlar:',
+      histH: 'Sunduğumuz ve tanıttığımız geceler', histP: 'The Star’daki Teoman Rockfest’ten Liberty Hall’daki Buray konserine. Filtrelerle birlikte tüm arşiv, geçmiş etkinlikler sayfasında.',
+      artistsH: 'Birlikte çalıştığımız sanatçılar',
+      faqH: 'Sık sorulanlar',
+      faq: [
+        { q: 'Nasıl birlikte çalışabiliriz?', a: 'Gösteriyi biz sunabiliriz (ücret ya da garanti), birlikte sunup sonucu paylaşabiliriz ya da sizin düzenlediğiniz gösteriyi tanıtabiliriz. Başka fikirlere de açığız.' },
+        { q: 'Bizden neye ihtiyacınız var?', a: 'Sanatçı ya da gösteri, tür, tercih ettiğiniz tarihler ya da turne dönemi, şehirler, beklenen seyirci sayısı ve basın dosyası, müzik ya da video bağlantıları.' },
+        { q: 'Seyirciye nasıl ulaşıyorsunuz?', a: 'Sosyal medya, Türkçe ve İngilizce e-posta listemiz, web sitemiz, ATAM gibi topluluk ortaklarımız ve biletleme desteği.' },
+        { q: 'Hangi şehirlerde çalışıyorsunuz?', a: 'Sydney merkezliyiz ve Melbourne’daki turne tarihlerinde de çalıştık. Turne planınızın tamamını anlatın, nerede yardımcı olabileceğimizi söyleyelim.' },
+        { q: 'Ne kadar sürede yanıt veriyorsunuz?', a: 'Her ön başvuruyu ekibimizden biri okur ve genellikle iki iş günü içinde yanıtlar.' },
+      ],
+      joinH: 'Turnenizi anlatın', joinP: 'Ön başvuru gönderin; sanatçılar, organizatörler ve sponsorlar için broşürlerimizi indirin.',
     },
   },
 };

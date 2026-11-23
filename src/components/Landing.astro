@@ -15,16 +15,32 @@ const c = landing[topic][lang];
 const s = t(lang);
 const site = Astro.site!;
 
-const isNye = topic === 'nye';
-const up = upcoming().filter((e) => (isNye ? e.kind === 'nye' : e.kind !== 'nye'));
-const extra = isNye ? [] : upcoming().filter((e) => e.kind === 'nye');
-const hist = (isNye ? past().filter((e) => e.kind === 'nye') : past().filter((e) => e.kind === 'presented'))
-  .sort((a, b) => (b.date ?? b.year ?? '').localeCompare(a.date ?? a.year ?? ''));
-const artistSlugs = [...new Set((isNye ? events.filter((e) => e.kind === 'nye') : events.filter((e) => e.kind !== 'nye' && !isUpcoming(e))).flatMap((e) => e.artists ?? []))];
-const people = artistSlugs.map(artistBySlug).filter(Boolean).map((a) => ({ a: a!, img: artistImage(a!) }))
+// What each page lists. Upcoming = on-sale events; hist = past nights; who = past events whose artists we show.
+const COMEDY = ['munasaka-2017', 'earthquake-appeal-comedy-2023', 'erkan-kolcak-kostendil-2019'];
+const DANCE = ['turkish-vibes-2018', 'turkish-vibes-2019', 'gecce-2023', 'gecce-spring-2023'];
+type Sel = { up: (e: EventItem) => boolean; hist: (e: EventItem) => boolean; who: (e: EventItem) => boolean; photo: string; pastLink: string };
+const sel: Record<Topic, Sel> = {
+  concerts: { up: (e) => e.kind !== 'nye', hist: (e) => e.kind === 'presented', who: (e) => e.kind !== 'nye', photo: 'heroStage', pastLink: '/events/#past-events' },
+  nye: { up: (e) => e.kind === 'nye', hist: (e) => e.kind === 'nye', who: (e) => e.kind === 'nye', photo: 'nye2025stage', pastLink: '/events/?type=nye#past-events' },
+  comedy: { up: (e) => (e.artists ?? []).some((a) => ['tahir-bilgic', 'yilmaz-erdogan', 'erkan-kolcak-kostendil'].includes(a)), hist: (e) => COMEDY.includes(e.slug), who: (e) => COMEDY.includes(e.slug), photo: 'yilmazOvation', pastLink: '/events/#past-events' },
+  dance: { up: (e) => e.kind === 'nye' || (e.artists ?? []).some((a) => a.startsWith('dj-') || a === 'mahmut-orhan'), hist: (e) => DANCE.includes(e.slug) || (e.kind === 'nye' && (e.artists ?? []).some((a) => a.startsWith('dj-'))), who: (e) => DANCE.includes(e.slug) || e.kind === 'nye' || (e.artists ?? []).some((a) => a.startsWith('dj-') || a === 'mahmut-orhan'), photo: 'nye2023floor', pastLink: '/events/#past-events' },
+  tour: { up: () => false, hist: (e) => e.kind === 'presented' || e.kind === 'promotion', who: (e) => e.kind !== 'nye', photo: 'stageWide', pastLink: '/events/#past-events' },
+};
+const T = sel[topic];
+const up = upcoming().filter(T.up);
+const extra = topic === 'concerts' ? upcoming().filter((e) => e.kind === 'nye') : [];
+const hist = past().filter(T.hist).sort((a, b) => (b.date ?? b.year ?? '').localeCompare(a.date ?? a.year ?? ''));
+const artistSlugs = [...new Set(events.filter((e) => T.who(e) && !isUpcoming(e)).flatMap((e) => e.artists ?? []))];
+const onlyDjs = topic === 'dance';
+const people = artistSlugs.filter((a) => !onlyDjs || a.startsWith('dj-') || a === 'mahmut-orhan').map(artistBySlug).filter(Boolean).map((a) => ({ a: a!, img: artistImage(a!) }))
   .sort((x, y) => Number(!!y.img) - Number(!!x.img));
+const isTour = topic === 'tour';
+// Short venue names for the track-record list (one entry per building).
+const venueName = (v: string) => { const n = v.split(',')[0].trim(); return /^Marquee/.test(n) ? 'The Star' : /^The Renaissance/.test(n) ? 'The Renaissance, Lidcombe' : n; };
+const venues = [...new Set(past().filter((e) => e.kind === 'presented' || e.kind === 'promotion' || e.kind === 'nye').map((e) => venueName(e.venue)).filter((v) => v && !/confirm|teyit/i.test(v)))];
+const counts = { presented: past().filter((e) => e.kind === 'presented').length, promotion: past().filter((e) => e.kind === 'promotion').length, supported: past().filter((e) => e.kind === 'supported').length, nye: past().filter((e) => e.kind === 'nye').length };
 const faq = c.faq.filter((f) => !f.ev || (eventBySlug(f.ev) && isUpcoming(eventBySlug(f.ev)!)));
-const hero = photos[isNye ? 'nye2025stage' : 'heroStage'];
+const hero = photos[T.photo];
 const when = (e: EventItem) => (e.date ? fmtDate(e.date, lang, { weekday: true }) + (e.doors ? ` · ${s.on.doors} ${e.doors.replace(':', lang === 'tr' ? '.' : ':')}` : '') : e.year ?? '');
 const url = new URL(href(lang, c.slug), site).href;
 const jsonLd = [
@@ -48,6 +64,20 @@ const jsonLd = [
     </div>
   </section>
 
+  {isTour ? (
+    <section class="wrap block" aria-labelledby="up-h">
+      <h2 id="up-h" class="h2">{c.upH}</h2>
+      <dl class="stats">
+        <div><dt>{s.past.stat.presented}</dt><dd>{counts.presented}</dd></div>
+        <div><dt>{s.past.stat.promotion}</dt><dd>{counts.promotion}</dd></div>
+        <div><dt>{s.past.stat.supported}</dt><dd>{counts.supported}</dd></div>
+        <div><dt>{s.past.stat.nye}</dt><dd>{counts.nye}</dd></div>
+      </dl>
+      <p class="muted sub">{c.upNone}</p>
+      <ul class="venues">{venues.map((v) => <li>{v}</li>)}</ul>
+      <p><a class="btn btn-primary" href={href(lang, '/work-with-us/?topic=concert')}>{c.joinH} →</a></p>
+    </section>
+  ) : (
   <section class="wrap block" aria-labelledby="up-h">
     <h2 id="up-h" class="h2">{c.upH}</h2>
     {up.length || extra.length ? (
@@ -72,6 +102,7 @@ const jsonLd = [
       </ul>
     ) : <p class="lead">{c.upNone}</p>}
   </section>
+  )}
 
   {people.length > 0 && (
     <section class="wrap block" aria-labelledby="ar-h">
@@ -99,7 +130,7 @@ const jsonLd = [
         </li>
       ))}
     </ol>
-    <p><a class="btn btn-ghost" href={href(lang, isNye ? '/events/?type=nye#past-events' : '/events/#past-events')}>{s.nav.past} →</a></p>
+    <p><a class="btn btn-ghost" href={href(lang, T.pastLink)}>{s.nav.past} →</a></p>
   </section>
 
   <section class="wrap block" aria-labelledby="faq-h">
@@ -115,12 +146,13 @@ const jsonLd = [
     <div class="card jc">
       <h2 id="join-h" class="h2">{c.joinH}</h2>
       <p class="muted">{c.joinP}</p>
+      {isTour ? <p class="jf"><a class="btn btn-primary" href={href(lang, '/work-with-us/?topic=concert')}>{lang === 'tr' ? 'Ön başvuru gönderin' : 'Send an expression of interest'}</a> <a class="btn btn-ghost" href={href(lang, '/work-with-us/')}>{lang === 'tr' ? 'Broşürler' : 'Brochures'}</a></p> : (
       <form action="/api/subscribe/" method="post" class="jf">
         <label class="sr-only" for="lp-email">{s.on.email}</label>
         <input id="lp-email" class="field" type="email" name="email" autocomplete="email" required placeholder={s.on.emailPh} />
         <input type="hidden" name="lang" value={lang} /><input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button class="btn btn-primary" type="submit">{s.on.notify}</button>
-      </form>
+      </form>)}
     </div>
   </section>
 </Base>
@@ -164,6 +196,13 @@ const jsonLd = [
   .faq details[open] summary::after { transform: rotate(45deg); }
   .faq p { margin: 0 0 18px; color: var(--ink-2); line-height: 1.7; max-width: 70ch; }
   .join { padding-bottom: 96px; }
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin: 28px 0; }
+  .stats div { display: flex; flex-direction: column-reverse; border-top: 2px solid var(--accent); padding-top: 12px; }
+  .stats dd { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(40px, 5vw, 64px); line-height: 1; }
+  .stats dt { color: var(--muted); font-size: 15px; }
+  .venues { list-style: none; margin: 0 0 24px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .venues li { padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; font-size: 15px; color: var(--ink-2); }
+  @media (max-width: 760px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .jc { padding: 32px; }
   .jf { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
   .jf .field { flex: 1 1 260px; }

@@ -55,6 +55,7 @@ const send = isContact ? C.send : E.send;
           <a class="btn btn-ghost btn-sm" href={pdf('artists')} download>↓ {E.brochureArtists}</a>
           <a class="btn btn-ghost btn-sm" href={pdf('sponsors')} download>↓ {E.brochureSponsors}</a>
         </p>
+        {!isContact && <p class="muted small"><a href={href(lang, '/bring-turkish-artists-to-australia/')}>{lang === 'tr' ? 'Deneyimimiz, mekânlar ve birlikte çalıştığımız sanatçılar →' : 'Our track record, venues and the artists we have worked with →'}</a></p>}
       </div>
       {isContact
         ? <ul class="quick" role="list">
