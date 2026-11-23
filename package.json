@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/tr-case.mjs",
     "preview": "astro preview",
     "check": "astro check",
     "build:wpx": "astro build && node scripts/htaccess.mjs"
