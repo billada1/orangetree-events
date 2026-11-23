@@ -89,8 +89,10 @@ $body .= "\nMessage:\n" . $message . "\n\n-- \nSent from orangetree.events/{$src
 
 $cfg = ot_config();
 $to = (string)($cfg['ENQUIRY_TO'] ?? 'info@orangetree.events');
-// Sender must be a real, verified mailbox on our domain (Brevo-verified and DKIM-signed).
+// Brevo needs its verified sender (info@). For mail(), use a separate website@ address: info@ is a Gmail
+// "send as" alias, so messages from info@ to info@ are filed as sent by you and are easy to miss.
 $from = (string)($cfg['ENQUIRY_FROM'] ?? 'info@orangetree.events');
+$mailFrom = (string)($cfg['ENQUIRY_MAIL_FROM'] ?? 'website@orangetree.events');
 $subjectText = ($src === 'contact' ? 'Contact: ' : 'Enquiry: ') . $types[$type] . ' · ' . $name . ($fields['Organisation'] ? ' (' . $fields['Organisation'] . ')' : '');
 
 // 1) Brevo transactional API (authenticated domain, best inbox placement). 2) Fallback: PHP mail().
@@ -112,7 +114,7 @@ if (!empty($cfg['BREVO_API_KEY'])) {
 }
 if ($via === 'none') {
   $headers = implode("\r\n", [
-    'From: Orange Tree Events website <' . $from . '>',
+    'From: Orange Tree Events website <' . $mailFrom . '>',
     'Reply-To: ' . $email,
     'MIME-Version: 1.0',
     'Content-Type: text/plain; charset=UTF-8',
@@ -120,7 +122,7 @@ if ($via === 'none') {
     'X-Mailer: orangetree.events',
   ]);
   $subject = '=?UTF-8?B?' . base64_encode($subjectText) . '?=';
-  if (mail($to, $subject, $body, $headers, '-f' . $from)) $via = 'mail'; else error_log('enquiry: mail() failed');
+  if (mail($to, $subject, $body, $headers, '-f' . $mailFrom)) $via = 'mail'; else error_log('enquiry: mail() failed');
 }
 
 // Keep a private copy (deny-all folder) so nothing is lost if delivery fails; note how it was sent.
