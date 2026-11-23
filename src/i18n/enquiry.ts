@@ -129,7 +129,7 @@ const tr: typeof en = {
   help: 'Nasıl yardımcı olabiliriz?', helpOpts: ['Sosyal medya paylaşımları', 'E-posta listemize duyuru', 'Web sitemizde yer alma', 'Birlikte sunma', 'Topluluğa ulaşma', 'Biletleme konusunda destek'],
   sponsorH: 'Sponsorluk',
   interest: 'Neyle ilgileniyorsunuz?', interestOpts: ['Yılbaşı gecesi', 'Büyük konserler', 'Bütün bir sezon', 'Topluluk ve kültür geceleri', 'Ayni destek (ödül, hizmet)'],
-  budget: 'Bütçe aralığı', budgetOpts: ['$1.000’ın altı', '$1.000-2.500', '$2.500-5.000', '$5.000-10.000', '$10.000’ın üstü', 'Ayni destek'],
+  budget: 'Bütçe aralığı', budgetOpts: ['1.000 dolardan az', '$1.000-2.500', '$2.500-5.000', '$5.000-10.000', '10.000 dolardan fazla', 'Ayni destek'],
   goals: 'Hedefler (isteğe bağlı)', goalsPh: 'Örneğin: marka bilinirliği, müşteri ağırlama, ürün tanıtımı',
   message: 'Biraz daha anlatın', messagePh: 'Tarihler, fikirler, sorular; iyi bir yanıt vermemize yardımcı olacak her şey.',
   consent: 'Orange Tree Events bu başvuruyla ilgili benimle iletişime geçebilir.',

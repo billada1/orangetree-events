@@ -21,7 +21,7 @@ const also: L = { en: 'Also', tr: 'Ayrıca' };
 export const extra: Record<string, ArtistExtra> = {
   'dj-ilka': { own: true, bio: {
     en: ['DJ Ilka (İlker Aydın) is a Sydney DJ and MC. He played the first Turkish Vibes nights in 2018 and 2019, opened for maNga and Eypio at the Metro Theatre in 2019 and has DJed New Year’s Eve with ATAM.', 'His sets mix Turkish pop and dance classics with R&B and club hits.'],
-    tr: ['DJ Ilka (İlker Aydın), Sydney’li bir DJ ve MC. 2018 ve 2019’daki ilk Turkish Vibes gecelerinde çaldı, 2019’da Metro Theatre’da maNga ve Eypio’dan önce sahne aldı ve ATAM ile yılbaşı gecelerinde DJ’lik yaptı.', 'Setlerinde Türkçe pop ve dans klasiklerini R&B ve kulüp hitleriyle karıştırıyor.'],
+    tr: ['DJ Ilka (İlker Aydın), Sydneyli bir DJ ve MC. 2018 ve 2019’daki ilk Turkish Vibes gecelerinde çaldı, 2019’da Metro Theatre’da maNga ve Eypio’dan önce sahne aldı ve ATAM ile yılbaşı gecelerinde DJ’lik yaptı.', 'Setlerinde Türkçe pop ve dans klasiklerini R&B ve kulüp hitleriyle karıştırıyor.'],
   } },
   'mahmut-orhan': { official: true, spotify: '3t8WiyalpvnB9AObcMufiE' },
   'ugur-aslan': { spotify: '1N3YNAiksTC8Cal5dKsqyV' },

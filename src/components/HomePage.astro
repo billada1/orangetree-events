@@ -31,7 +31,7 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
 <Base lang={lang} jsonLd={up.map((e) => eventJsonLd(e, lang, Astro.site!)).filter(Boolean) as object[]}>
   <Hero lang={lang} />
 
-  <div class="marquee" aria-label={lang === 'tr' ? 'Sydney’e getirdiğimiz sanatçılar' : 'Artists we’ve brought to Sydney'}>
+  <div class="marquee" aria-label={lang === 'tr' ? 'Sydney’ye getirdiğimiz sanatçılar' : 'Artists we’ve brought to Sydney'}>
     <ul class="track">
       {[...marquee, ...marquee].map((n, i) => <li aria-hidden={i >= marquee.length ? 'true' : undefined}>{n}<img src="/emblem.svg" alt="" width="22" height="25" /></li>)}
     </ul>

@@ -1,5 +1,5 @@
 ---
-title: "Turkish Vibes: Coolibah’ta iki gece"
+title: "Turkish Vibes: Coolibah’da iki gece"
 date: 2019-11-02
 event: turkish-vibes-2019
 artist: dj-ilka
