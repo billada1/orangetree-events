@@ -21,10 +21,21 @@ export function initAnalytics() {
   gtag('js', new Date());
   gtag('config', id, { allow_google_signals: false, allow_ad_personalization_signals: false });
 
-  const s = document.createElement('script');
-  s.async = true;
-  s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
-  document.head.appendChild(s);
+  // Events queue in dataLayer straight away; the Google script itself loads after the page has settled
+  // (or on the first tap, scroll or key press), so it never competes with first paint or input.
+  let loaded = false;
+  const load = () => {
+    if (loaded) return;
+    loaded = true;
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(id)}`;
+    document.head.appendChild(s);
+  };
+  const opts = { once: true, passive: true } as const;
+  ['pointerdown', 'keydown', 'scroll'].forEach((t) => addEventListener(t, load, opts));
+  const later = () => setTimeout(() => ('requestIdleCallback' in window ? (window as any).requestIdleCallback(load, { timeout: 3000 }) : load()), 4000);
+  if (document.readyState === 'complete') later(); else addEventListener('load', later, { once: true });
 
   // Key events: form sends land on /thanks/ with a marker in the address.
   const q = new URLSearchParams(location.search);
@@ -37,5 +48,7 @@ export function initAnalytics() {
   document.addEventListener('click', (e) => {
     const a = (e.target as Element).closest?.('a[data-ticket]') as HTMLAnchorElement | null;
     if (a) gtag('event', 'begin_checkout', { event_slug: a.dataset.ticket, link_url: a.href });
+    const c = (e.target as Element).closest?.('a[data-cal]') as HTMLAnchorElement | null;
+    if (c) gtag('event', 'add_to_calendar', { method: c.dataset.cal, page_path: location.pathname });
   });
 }

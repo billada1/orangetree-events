@@ -3,9 +3,11 @@ import { Image } from 'astro:assets';
 import { past, type Kind } from '../data/events';
 import { posterFor } from '../data/media';
 import { roleLine } from '../data/roles';
+import { artistBySlug } from '../data/artists';
 import { t, href, type Lang } from '../i18n/ui';
-interface Props { lang: Lang; headingLevel?: 'h1' | 'h2' }
-const { lang, headingLevel = 'h2' } = Astro.props;
+interface Props { lang: Lang; headingLevel?: 'h1' | 'h2'; compact?: boolean }
+// compact: the home page shows the latest years only, with a link to the full, filterable archive.
+const { lang, headingLevel = 'h2', compact = false } = Astro.props;
 const s = t(lang);
 const list = past();
 const kinds: Kind[] = ['presented', 'nye', 'fundraiser', 'promotion', 'supported'];
@@ -17,7 +19,14 @@ for (const e of list) {
   groups.get(y)!.push(e);
 }
 for (const list of groups.values()) list.sort((x, y) => (y.date ?? '').localeCompare(x.date ?? ''));
-const order = [...groups.keys()].sort((a, b) => (a === 'tbc' ? 1 : b === 'tbc' ? -1 : b.localeCompare(a)));
+const allYears = [...groups.keys()].sort((a, b) => (a === 'tbc' ? 1 : b === 'tbc' ? -1 : b.localeCompare(a)));
+const order = compact ? allYears.filter((y) => y !== 'tbc').slice(0, 2) : allYears;
+const yearOf = (e: (typeof list)[number]) => e.date?.slice(0, 4) ?? e.year ?? 'tbc';
+const names = (e: (typeof list)[number]) => (e.artists ?? []).map((a) => artistBySlug(a)?.name).filter(Boolean) as string[];
+const artistOpts = [...new Set(list.flatMap((e) => e.artists ?? []))]
+  .map((slug) => ({ slug, name: artistBySlug(slug)?.name ?? slug }))
+  .sort((a, b) => a.name.localeCompare(b.name, lang === 'tr' ? 'tr' : 'en'));
+const fold = (x: string) => x.toLocaleLowerCase(lang === 'tr' ? 'tr' : 'en').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ı/g, 'i');
 const dateLabel = (e: (typeof list)[number]) => {
   if (e.date) { const d = new Date(e.date + 'T12:00:00Z'); return `${d.getUTCDate()} ${s.months[d.getUTCMonth()]}`; }
   return e.year ?? s.past.dateToConfirm;
@@ -35,17 +44,32 @@ const YH = headingLevel === 'h1' ? 'h2' : 'h3';
     <div><dt>{s.past.stat.supported}</dt><dd>{counts.supported}</dd></div>
     <div><dt>{s.past.stat.promotion}</dt><dd>{counts.promotion}</dd></div>
   </dl>
-  <div class="chips" role="group" aria-label={s.past.filter} data-chips hidden>
-    <button type="button" class="chip" data-k="all" aria-pressed="true">{s.past.all} <span class="n">{list.length}</span></button>
-    {kinds.map((k) => <button type="button" class="chip" data-k={k} aria-pressed="false">{s.kindsPlural[k]} <span class="n">{counts[k]}</span></button>)}
-  </div>
-  <p class="sr-only" aria-live="polite" data-live></p>
+  {!compact && <noscript><style>.filters { display: none; }</style></noscript>}
+  {compact ? null : (
+    <form class="filters" data-filters role="search" aria-label={s.past.filter} onsubmit="return false">
+      <div class="chips" role="group" aria-label={s.past.filter}>
+        <button type="button" class="chip" data-k="all" aria-pressed="true">{s.past.all} <span class="n">{list.length}</span></button>
+        {kinds.filter((k) => counts[k]).map((k) => <button type="button" class="chip" data-k={k} aria-pressed="false">{s.kindsPlural[k]} <span class="n">{counts[k]}</span></button>)}
+      </div>
+      <div class="fields">
+        <label class="f"><span>{s.past.search}</span><input type="search" name="q" placeholder={s.past.searchPh} autocomplete="off" enterkeyhint="search" /></label>
+        <label class="f"><span>{s.past.year}</span>
+          <select name="year"><option value="">{s.past.allYears}</option>{allYears.filter((y) => y !== 'tbc').map((y) => <option value={y}>{y}</option>)}</select>
+        </label>
+        <label class="f"><span>{s.past.artist}</span>
+          <select name="artist"><option value="">{s.past.allArtists}</option>{artistOpts.map((a) => <option value={a.slug}>{a.name}</option>)}</select>
+        </label>
+        <p class="count" aria-live="polite" data-live></p>
+        <button type="button" class="clear" data-clear hidden>{s.past.clear}</button>
+      </div>
+    </form>
+  )}
   {order.map((y) => (
-    <div class="year" data-year>
+    <div class="year" data-group>
       <YH class="yh">{y === 'tbc' ? s.past.toConfirm : y}</YH>
       <ul>
         {groups.get(y)!.map((e) => (
-          <li class="row" data-kind={e.kind}>
+          <li class="row" data-kind={e.kind} data-year={yearOf(e)} data-artists={(e.artists ?? []).join(' ')} data-q={fold([e.title.en, e.title.tr, e.venue ?? '', ...names(e)].join(' '))}>
             <span class="date">{dateLabel(e)}</span>
             <span class="thumb" aria-hidden="true">{posterFor(e) ? <Image src={posterFor(e)!} alt="" width={64} height={80} fit="cover" /> : <img src="/emblem.svg" alt="" width="28" height="32" />}</span>
             <span class="what">
@@ -58,28 +82,67 @@ const YH = headingLevel === 'h1' ? 'h2' : 'h3';
       </ul>
     </div>
   ))}
-  <p class="note">{s.past.confirmNote}</p>
+  {!compact && <p class="none" data-none hidden>{s.past.none}</p>}
+  {compact ? <p class="all"><a class="btn btn-ghost" href={href(lang, '/events/#past-events')}>{s.past.seeAll(list.length)}</a></p> : <p class="note">{s.past.confirmNote}</p>}
 </section>
 
 <script>
+  // Progressive enhancement: without JavaScript every past event is listed. Filters keep their state in the address
+  // (?type=&year=&artist=&q=), so a filtered view can be shared or bookmarked.
   document.querySelectorAll<HTMLElement>('.archive').forEach((root) => {
-    const chips = root.querySelector<HTMLElement>('[data-chips]');
-    const live = root.querySelector<HTMLElement>('[data-live]');
-    if (!chips) return;
-    chips.hidden = false;
-    const apply = (k: string) => {
+    const form = root.querySelector<HTMLFormElement>('[data-filters]');
+    if (!form) return;
+    const live = root.querySelector<HTMLElement>('[data-live]')!;
+    const none = root.querySelector<HTMLElement>('[data-none]');
+    const clear = root.querySelector<HTMLButtonElement>('[data-clear]')!;
+    const q = form.elements.namedItem('q') as HTMLInputElement;
+    const year = form.elements.namedItem('year') as HTMLSelectElement;
+    const artist = form.elements.namedItem('artist') as HTMLSelectElement;
+    const lang = document.documentElement.lang === 'tr' ? 'tr' : 'en';
+    const fold = (x: string) => x.toLocaleLowerCase(lang).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ı/g, 'i');
+    const fmt = (n: number) => (lang === 'tr' ? `${n} etkinlik` : n === 1 ? '1 event' : `${n} events`);
+    let kind = 'all';
+
+    const apply = (push = true) => {
+      const words = fold(q.value.trim()).split(/\s+/).filter(Boolean);
       let n = 0;
-      root.querySelectorAll<HTMLElement>('[data-year]').forEach((y) => {
+      root.querySelectorAll<HTMLElement>('[data-group]').forEach((g) => {
         let any = false;
-        y.querySelectorAll<HTMLElement>('.row').forEach((r) => { const on = k === 'all' || r.dataset.kind === k; r.hidden = !on; if (on) { any = true; n++; } });
-        y.hidden = !any;
+        g.querySelectorAll<HTMLElement>('.row').forEach((r) => {
+          const d = r.dataset;
+          const on = (kind === 'all' || d.kind === kind) && (!year.value || d.year === year.value)
+            && (!artist.value || (d.artists ?? '').split(' ').includes(artist.value))
+            && words.every((w) => (d.q ?? '').includes(w));
+          r.hidden = !on;
+          if (on) { any = true; n++; }
+        });
+        g.hidden = !any;
       });
-      chips.querySelectorAll<HTMLButtonElement>('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.k === k)));
-      if (live) live.textContent = String(n);
+      form.querySelectorAll<HTMLButtonElement>('.chip').forEach((c) => c.setAttribute('aria-pressed', String(c.dataset.k === kind)));
+      live.textContent = fmt(n);
+      if (none) none.hidden = n > 0;
+      const active = kind !== 'all' || !!year.value || !!artist.value || !!words.length;
+      clear.hidden = !active;
+      if (push) {
+        const u = new URL(location.href);
+        for (const [k, v] of [['type', kind === 'all' ? '' : kind], ['year', year.value], ['artist', artist.value], ['q', q.value.trim()]]) v ? u.searchParams.set(k, v) : u.searchParams.delete(k);
+        history.replaceState(null, '', u);
+      }
     };
-    chips.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.chip'); if (b) apply(b.dataset.k!); });
-    const fromHash = new URLSearchParams(location.search).get('type');
-    if (fromHash) apply(fromHash);
+
+    form.addEventListener('click', (e) => { const b = (e.target as HTMLElement).closest<HTMLButtonElement>('.chip'); if (b) { kind = b.dataset.k!; apply(); } });
+    year.addEventListener('change', () => apply());
+    artist.addEventListener('change', () => apply());
+    let tm = 0;
+    q.addEventListener('input', () => { clearTimeout(tm); tm = window.setTimeout(() => apply(), 120); });
+    clear.addEventListener('click', () => { kind = 'all'; q.value = ''; year.value = ''; artist.value = ''; apply(); q.focus(); });
+
+    const p = new URLSearchParams(location.search);
+    if (p.get('type') && form.querySelector(`.chip[data-k="${CSS.escape(p.get('type')!)}"]`)) kind = p.get('type')!;
+    if (p.get('year')) year.value = p.get('year')!;
+    if (p.get('artist')) artist.value = p.get('artist')!;
+    if (p.get('q')) q.value = p.get('q')!;
+    apply(false);
   });
 </script>
 
@@ -90,8 +153,18 @@ const YH = headingLevel === 'h1' ? 'h2' : 'h3';
   .stats div { display: flex; flex-direction: column-reverse; border-top: 2px solid var(--accent); padding-top: 12px; }
   .stats dd { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(40px, 5vw, 64px); line-height: 1; }
   .stats dt { color: var(--muted); font-size: 15px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
-  .chips[hidden] { display: none; }
+  .filters { margin-bottom: 28px; }
+  .filters[hidden] { display: none; }
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+  .fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.4fr) auto auto; gap: 12px 16px; align-items: end; }
+  .f { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--muted); }
+  .f input, .f select { font: inherit; font-size: 16px; color: var(--ink); background: #1C1815; border: 1px solid var(--line); border-radius: 12px; padding: 11px 14px; min-height: 46px; width: 100%; }
+  .f input:focus-visible, .f select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .count { margin: 0; padding-bottom: 12px; font-size: 14px; color: var(--ink-2); white-space: nowrap; }
+  .clear { font: inherit; font-size: 14px; background: none; border: 0; color: var(--peach); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 0 0 12px; min-height: 24px; }
+  .clear[hidden] { display: none; }
+  .none { padding: 24px 0; color: var(--ink-2); }
+  .all { margin-top: 24px; }
   .year { display: grid; grid-template-columns: 120px 1fr; gap: 0 24px; border-top: 1px solid var(--line); padding: 18px 0; }
   .year[hidden] { display: none; }
   .yh { font-size: 32px; font-weight: 800; color: var(--accent); }
@@ -111,6 +184,7 @@ const YH = headingLevel === 'h1' ? 'h2' : 'h3';
   .note { font-size: 14px; color: var(--muted); margin-top: 18px; }
   @media (max-width: 760px) {
     .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .fields { grid-template-columns: 1fr 1fr; } .fields .f:first-child { grid-column: 1 / -1; }
     .year { grid-template-columns: 1fr; }
     .row { flex-wrap: wrap; gap: 4px 12px; padding: 12px 0; }
     .date { flex: 0 0 auto; } .what { flex-basis: 100%; order: 3; }

@@ -1,15 +1,13 @@
-@import '@fontsource-variable/manrope';
-@import '@fontsource-variable/dosis';
-@import '@fontsource-variable/newsreader';
+@import './fonts.css';
 @import './focus.css';
 
 :root {
   --bg: #0D0B0A; --surface: #171412; --line: #2A2522; --line-2: #4A423C;
   --ink: #F5EFE8; --ink-2: #E2D8CE; --muted: #B5ABA1; --faint: #8C8178;
   --accent: #EE5A3A; --accent-ink: #14110F; --coral: #FF8466; --peach: #FFB199; --gold: #F2C14E; --mint: #9FD3C7;
-  --display: 'Dosis Variable', 'Manrope Variable', system-ui, sans-serif;
-  --serif: 'Newsreader Variable', Georgia, 'Iowan Old Style', serif;
-  --body: 'Manrope Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --display: 'Dosis Variable', 'Dosis Fallback', system-ui, sans-serif;
+  --serif: 'Newsreader Variable', 'Newsreader Fallback', Georgia, 'Iowan Old Style', serif;
+  --body: 'Manrope Variable', 'Manrope Fallback', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --pad: clamp(20px, 4vw, 56px);
   --max: 1328px;
   --ease: cubic-bezier(.2, .7, .2, 1);

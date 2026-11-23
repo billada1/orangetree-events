@@ -5,10 +5,10 @@ import { t, href, type Lang } from '../i18n/ui';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const s = t(lang);
-// One optimised WebP per slide for the canvas; the first slide is also a real <picture> so the page paints (and ranks) without JavaScript.
+// Two WebP sizes per slide for the canvas (phones get the smaller one); the first slide is also a real <picture> so the page paints (and ranks) without JavaScript.
 const slides = await Promise.all(heroSlides.map(async (h) => {
-  const img = await getImage({ src: photos[h.key].src, width: 1920, format: 'webp', quality: 72 });
-  return { src: img.src, cap: h.cap[lang], alt: photos[h.key].alt[lang], px: h.px };
+  const [small, big] = await Promise.all([1100, 1920].map((width) => getImage({ src: photos[h.key].src, width, format: 'webp', quality: 72 })));
+  return { src: small.src, big: big.src, cap: h.cap[lang], alt: photos[h.key].alt[lang], px: h.px };
 }));
 const first = photos[heroSlides[0].key];
 ---
@@ -79,7 +79,7 @@ const first = photos[heroSlides[0].key];
   .hero { position: relative; height: 100svh; min-height: 640px; max-height: 920px; display: flex; flex-direction: column; justify-content: flex-end; overflow: hidden; background: var(--bg); }
   .hero :global(.still), .stage { position: absolute; inset: 0; width: 100%; height: 100%; }
   .hero :global(.still img), .hero :global(img.still) { width: 100%; height: 100%; object-fit: cover; }
-  .stage { opacity: 0; transition: opacity 1.4s ease; }
+  .stage { opacity: 0; transition: opacity 1.4s ease; transform-origin: 50% 50%; will-change: transform; }
   .stage.on { opacity: 1; }
   .shade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,11,10,.85) 0%, rgba(13,11,10,.25) 62%), linear-gradient(180deg, rgba(13,11,10,.55) 0%, rgba(13,11,10,0) 28%, rgba(13,11,10,.95) 100%); }
   .content { position: relative; width: 100%; }
@@ -88,9 +88,10 @@ const first = photos[heroSlides[0].key];
   .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
   .eq-row { display: flex; align-items: center; gap: 12px; }
   .eq { display: inline-flex; align-items: flex-end; gap: 3px; height: 22px; }
-  .eq span { width: 4px; border-radius: 2px; background: var(--accent); animation: eq 1.6s ease-in-out infinite alternate; }
+  .eq span { width: 4px; height: 22px; border-radius: 2px; background: var(--accent); transform-origin: 50% 100%; animation: eq 1.6s ease-in-out infinite alternate; }
   .eq span:nth-child(2) { animation-delay: -.3s; } .eq span:nth-child(3) { animation-delay: -.6s; } .eq span:nth-child(4) { animation-delay: -.15s; }
-  @keyframes eq { from { height: 4px; } to { height: 22px; } }
+  /* transform, not height: runs on the compositor instead of re-laying out the page every frame */
+  @keyframes eq { from { transform: scaleY(.18); } to { transform: scaleY(1); } }
   .ctl { position: relative; width: 100%; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-top: 28px; padding-bottom: 28px; }
   .ctl-row { display: flex; align-items: center; gap: 10px; }
   .round { font: inherit; font-size: 14px; font-weight: 600; min-width: 44px; height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid rgba(245,239,232,.45); background: rgba(13,11,10,.45); color: var(--ink); cursor: pointer; }
@@ -101,5 +102,5 @@ const first = photos[heroSlides[0].key];
   .cap { margin: 0; font-size: 13px; color: var(--ink-2); text-align: right; }
   .fx { color: var(--faint); }
   @media (max-width: 760px) { .dots { display: none; } .cap { flex-basis: 100%; text-align: left; } }
-  @media (prefers-reduced-motion: reduce) { .intro { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .intro { display: none; } .eq span { animation: none; transform: scaleY(.6); } }
 </style>
