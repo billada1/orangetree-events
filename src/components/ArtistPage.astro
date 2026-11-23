@@ -44,27 +44,70 @@ const others = artists.filter((x) => x.slug !== a.slug && x.local === a.local);
 const more = [...others.filter((x) => artistImage(x)), ...others.filter((x) => !artistImage(x))].slice(0, 10);
 const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(Boolean).slice(0, 2).map((w) => w[0].toLocaleUpperCase('tr')).join('');
 
+// Artists without a written bio get a short factual one built from our own event records (no invented details).
+const pastShows = shows.filter((e) => !isUpcoming(e));
+const listTitles = (l: Lang) => pastShows.slice(0, 3).map((e) => e.title[l] + (e.date ? ` (${e.date.slice(0, 4)})` : '')).join(l === 'tr' ? '; ' : '; ');
+const autoBio = (l: Lang): string[] => {
+  const n = pastShows.length, next = upcoming[0];
+  const out: string[] = [];
+  const one = pastShows[0], y1 = one?.date?.slice(0, 4) ?? one?.year;
+  if (n === 1) out.push(l === 'tr'
+    ? `${a.name}, ${y1 ? y1 + ' yılında ' : ''}Orange Tree Events gecelerinden “${one.title.tr}” etkinliğinde sahne aldı.`
+    : `${a.name} played ${one.title.en}${y1 ? ` in ${y1}` : ''}, one of the nights Orange Tree Events has presented, promoted or supported.`);
+  else if (n) out.push(l === 'tr'
+    ? `${a.name}, Orange Tree Events’in sunduğu, tanıttığı ya da desteklediği ${n} gecede sahne aldı; ilk kez ${firstYear} yılında. Bu geceler arasında: ${listTitles('tr')}.`
+    : `${a.name} has appeared at ${n} ${n === 1 ? 'night' : 'nights'} presented, promoted or supported by Orange Tree Events, first in ${firstYear}. These include ${listTitles('en')}.`);
+  if (next) out.push(l === 'tr'
+    ? `Sıradaki: ${next.title.tr}, ${fmtDate(next.date!, 'tr', { weekday: true })}, ${next.venue}.`
+    : `Next: ${next.title.en}, ${fmtDate(next.date!, 'en', { weekday: true })}, ${next.venue}.`);
+  return out;
+};
+const bio = a.bio ?? (shows.length ? { en: autoBio('en'), tr: autoBio('tr') } : undefined);
+const facts = a.facts ?? (pastShows.length ? [
+  { label: { en: 'Nights with Orange Tree', tr: 'Orange Tree ile geceler' }, value: String(pastShows.length) },
+  { label: { en: 'First night with us', tr: 'Bizimle ilk gece' }, value: firstYear },
+] : undefined);
+
 const sections = [
-  a.bio && { id: 'about', label: s.artist.about },
+  bio && { id: 'about', label: s.artist.about },
   (sp || yt || !a.local) && { id: 'listen', label: P.listen },
   shows.length > 0 && { id: 'shows', label: s.artist.withUs },
   gal.length > 0 && { id: 'photos', label: P.gallery },
 ].filter(Boolean) as { id: string; label: string }[];
 
-const desc = a.bio?.[lang][0] ?? `${a.name} · ${a.role[lang]} · ${s.siteName}`;
+const desc = (bio?.[lang][0] ?? `${a.name} · ${a.role[lang]} · ${s.siteName}`).slice(0, 300);
 const sameAs = [
   a.instagram && `https://www.instagram.com/${a.instagram}/`,
   a.spotify && `https://open.spotify.com/artist/${a.spotify}`,
   a.youtube && `https://www.youtube.com/channel/${a.youtube}`,
   wikiUrl,
 ].filter(Boolean);
-const ld = {
-  '@context': 'https://schema.org', '@type': a.slug === 'manga' || /band|grup|duo|ikili/i.test(a.role.en) ? 'MusicGroup' : 'Person',
-  name: a.name, description: desc, url: new URL((lang === 'tr' ? '/tr' : '') + `/artists/${a.slug}/`, Astro.site!).href,
+const isGroup = a.slug === 'manga' || /band|grup|duo|ikili/i.test(a.role.en);
+const pageUrl = new URL((lang === 'tr' ? '/tr' : '') + `/artists/${a.slug}/`, Astro.site!).href;
+const imgAbs = ph ? new URL((await getImage({ src: ph, width: 1200, format: 'jpg' })).src, Astro.site!).href : undefined;
+const evLd = shows.filter((e) => e.date).map((e) => ({
+  '@type': 'Event', name: e.title[lang], startDate: e.date,
+  location: { '@type': 'Place', name: e.venue, address: { '@type': 'PostalAddress', addressLocality: 'Sydney', addressRegion: 'NSW', addressCountry: 'AU' } },
+  url: new URL((lang === 'tr' ? '/tr' : '') + `/events/${e.slug}/`, Astro.site!).href,
+}));
+const ld = [{
+  '@context': 'https://schema.org', '@type': isGroup ? 'MusicGroup' : 'Person',
+  name: a.name, description: desc, url: pageUrl,
+  ...(a.aka ? { alternateName: a.aka } : {}),
+  ...(imgAbs ? { image: imgAbs } : {}),
+  ...(isGroup ? {} : { jobTitle: a.role[lang] }),
+  ...(evLd.length ? (isGroup ? { event: evLd } : { performerIn: evLd }) : {}),
   ...(sameAs.length ? { sameAs } : {}),
-};
+}, {
+  '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: s.siteName, item: new URL(href(lang, '/'), Astro.site!).href },
+    { '@type': 'ListItem', position: 2, name: s.nav.artists, item: new URL(href(lang, '/artists/'), Astro.site!).href },
+    { '@type': 'ListItem', position: 3, name: a.name, item: pageUrl },
+  ],
+}];
+const pageTitle = `${a.name} · ${a.role[lang]}`;
 ---
-<Base lang={lang} title={a.name} description={desc} jsonLd={ld} overlayHeader={!!(ph || posterImg)} noindex={!a.bio && shows.length === 0}>
+<Base lang={lang} title={pageTitle} description={desc} jsonLd={ld} overlayHeader={!!(ph || posterImg)} noindex={!bio}>
   <section class:list={['top', { plain: !ph && !posterImg }]}>
     {ph && !framed && <Image src={ph} alt={a.name} widths={[480, 768, 1024, 1600]} sizes="100vw" quality={70} class={`bg fp-${a.slug}`} loading="eager" fetchpriority="high" />}
     {framed && <Image src={ph!} alt="" widths={[320]} sizes="100vw" class="bg blur" loading="eager" />}
@@ -105,11 +148,11 @@ const ld = {
   )}
 
   <div class="wrap body">
-    {a.bio && (
+    {bio && (
       <section id="about" class="about reveal" aria-labelledby="ab-h">
         <div>
           <h2 id="ab-h" class="h3">{s.artist.about}</h2>
-          {a.bio[lang].map((p, i) => <p class:list={['lead', { first: i === 0 }]}>{p}</p>)}
+          {bio[lang].map((p, i) => <p class:list={['lead', { first: i === 0 }]}>{p}</p>)}
           {(wikiUrl || a.credit || a.official || a.own) && (
             <p class="src">
               {wikiUrl && <>{P.source}: <a href={wikiUrl} rel="noopener" target="_blank">Wikipedia</a></>}
@@ -120,7 +163,7 @@ const ld = {
             </p>
           )}
         </div>
-        {a.facts && <dl class="facts">{a.facts.map((f) => <div><dt>{f.label[lang]}</dt><dd>{f.value}</dd></div>)}</dl>}
+        {facts && <dl class="facts">{facts.map((f) => <div><dt>{f.label[lang]}</dt><dd>{f.value}</dd></div>)}</dl>}
       </section>
     )}
 
