@@ -1,7 +1,8 @@
 ---
 import { getImage, Picture } from 'astro:assets';
 import { photos, heroSlides } from '../data/photos';
-import { t, href, type Lang } from '../i18n/ui';
+import { t, href, fmtDate, type Lang } from '../i18n/ui';
+import { upcoming } from '../data/events';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const s = t(lang);
@@ -11,6 +12,12 @@ const slides = await Promise.all(heroSlides.map(async (h) => {
   return { src: small.src, big: big.src, cap: h.cap[lang], alt: photos[h.key].alt[lang], px: h.px };
 }));
 const first = photos[heroSlides[0].key];
+// "Next up" chips: the next two dated events, so December's nights are one tap from the top of the page.
+const dated = upcoming().filter((e) => e.date);
+// Our own on-sale night first (NYE in December), then the soonest other night.
+const own = dated.find((e) => e.tickets?.url && (e.kind === 'nye' || e.kind === 'presented'));
+const nextUp = (own ? [own, ...dated.filter((e) => e !== own)] : dated).slice(0, 2);
+const mon = (iso: string) => new Intl.DateTimeFormat(lang === 'tr' ? 'tr-TR' : 'en-AU', { month: 'short', timeZone: 'UTC' }).format(new Date(iso + 'T12:00:00Z'));
 ---
 <div class="intro" data-intro aria-hidden="true">
   <svg viewBox="0 0 200 330" width="190" height="314">
@@ -42,6 +49,17 @@ const first = photos[heroSlides[0].key];
       <a class="btn btn-primary" href="#whats-on">{s.hero.cta}</a>
       <a class="btn btn-ghost" href={href(lang, '/events/')}>{s.nav.past}</a>
     </div>
+    {nextUp.length > 0 && (
+      <ul class="next" aria-label={lang === 'tr' ? 'Sıradaki etkinlikler' : 'Next up'}>
+        {nextUp.map((e) => (
+          <li><a href={href(lang, `/events/${e.slug}/`)} data-next-up={e.slug}>
+            <span class="nd" aria-hidden="true"><b>{Number(e.date!.slice(8, 10))}</b><span>{mon(e.date!)}</span></span>
+            <span class="nt"><span class="nn">{e.title[lang]}</span><span class="nm"><span class="sr-only">{fmtDate(e.date!, lang, { weekday: true })} · </span>{e.venue.split(',')[0]}{e.tickets && <> · {e.tickets.label[lang].split(/[·.,]/)[0].trim()}</>}</span></span>
+            <span class="na" aria-hidden="true">→</span>
+          </a></li>
+        ))}
+      </ul>
+    )}
   </div>
   <div class="wrap ctl">
     <div class="ctl-row">
@@ -86,6 +104,15 @@ const first = photos[heroSlides[0].key];
   h1 { font-weight: 700; font-size: clamp(34px, 5vw, 76px); line-height: .98; letter-spacing: .02em; max-width: 18ch; }
   .lead { margin: 20px 0 0; max-width: 560px; font-size: clamp(17px, 1.6vw, 20px); }
   .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+  .next { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+  .next a { display: flex; align-items: center; gap: 12px; padding: 8px 16px 8px 8px; border-radius: 16px; background: rgba(13,11,10,.55); border: 1px solid rgba(245,239,232,.18); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); text-decoration: none; color: var(--ink); max-width: 420px; transition: border-color .3s, background .3s, transform .3s; }
+  .next a:hover { border-color: var(--peach); background: rgba(13,11,10,.75); transform: translateY(-1px); }
+  .nd { flex: 0 0 auto; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: var(--accent); color: #fff; line-height: 1; }
+  .nd b { font-family: var(--display); font-size: 20px; font-weight: 800; } .nd span { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+  .nt { display: flex; flex-direction: column; min-width: 0; } .nn { font-weight: 700; font-size: 15px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .nm { font-size: 13px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .na { color: var(--peach); margin-left: auto; }
+  @media (max-width: 760px) { .next { flex-direction: column; } .next a { max-width: none; } }
+  @media (prefers-reduced-motion: reduce) { .next a { transition: none; } }
   .eq-row { display: flex; align-items: center; gap: 12px; }
   .eq { display: inline-flex; align-items: flex-end; gap: 3px; height: 22px; }
   .eq span { width: 4px; height: 22px; border-radius: 2px; background: var(--accent); transform-origin: 50% 100%; animation: eq 1.6s ease-in-out infinite alternate; }
