@@ -14,7 +14,11 @@ const { lang, e } = Astro.props;
 const s = t(lang);
 const up = isUpcoming(e);
 const poster = posterFor(e);
-const ph = photos[e.image ?? (e.kind === 'nye' ? 'nye2023screen' : 'stageWide')];
+// The event's own photo, or for NYE a past NYE photo shown as decoration. Other nights without a poster or
+// photo get a designed brand header rather than an unrelated stock photo.
+const own = e.image ? photos[e.image] : undefined;
+const ph = own ?? (e.kind === 'nye' ? photos.nye2023screen : undefined);
+const phAlt = own ? own.alt[lang] : '';
 const role = roleLine(e, lang);
 const performers = (e.artists ?? []).map(artistBySlug).filter(Boolean);
 const evLd = eventJsonLd(e, lang, Astro.site!);
@@ -36,10 +40,12 @@ const icsHref = href(lang, `/events/${e.slug}.ics`);
 const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join('. ');
 ---
 <Base lang={lang} title={e.title[lang]} description={desc} jsonLd={ld} noindex={!!e.confirm && !e.date}>
-  <section class:list={['top', { withPoster: !!poster }]}>
+  <section class:list={['top', { withPoster: !!poster, plain: !poster && !ph }]}>
     {poster
       ? <Image src={poster} alt="" widths={[240, 480]} sizes="100vw" quality={50} class="bg blur" loading="eager" />
-      : <Image src={ph.src} alt={ph.alt[lang]} widths={[480, 768, 1024, 1600]} sizes="100vw" quality={70} class="bg" loading="eager" fetchpriority="high" />}
+      : ph
+        ? <Image src={ph.src} alt={phAlt} widths={[480, 768, 1024, 1600]} sizes="100vw" quality={70} class="bg" loading="eager" fetchpriority="high" />
+        : <div class="bg brandbg" aria-hidden="true"></div>}
     <div class="shade" aria-hidden="true"></div>
     <div class="wrap in">
       <div class="txt">
@@ -131,6 +137,10 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
   .in { position: relative; width: 100%; padding-bottom: 48px; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
   .txt { min-width: 0; }
   .role { margin: 10px 0 0; font-weight: 600; color: var(--peach); }
+  .top.plain { min-height: 420px; height: 52vh; }
+  .brandbg { background: radial-gradient(120% 90% at 85% 10%, rgba(240,90,40,.45), transparent 60%), radial-gradient(90% 80% at 0% 100%, rgba(191,62,30,.35), transparent 65%), #1A1311; }
+  .brandbg::after { content: ''; position: absolute; right: 6%; top: 50%; width: min(34vw, 320px); aspect-ratio: 490 / 566; transform: translateY(-55%); background: url(/emblem.svg) no-repeat center / contain; opacity: .16; }
+  @media (max-width: 900px) { .brandbg::after { width: 52vw; right: -6vw; top: 38%; } }
   .top.withPoster { min-height: 680px; height: auto; max-height: none; padding-top: 120px; }
   .top :global(.blur) { filter: blur(40px) saturate(1.3) brightness(.55); transform: scale(1.2); }
   .poster { flex: 0 0 auto; margin: 0 0 8px; transform: rotate(2.5deg); transition: transform .5s cubic-bezier(.2,.8,.2,1); animation: drop-in 1.2s cubic-bezier(.22,1,.36,1) both .2s; }
