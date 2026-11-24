@@ -9,6 +9,7 @@ import { posterFor, artistImage } from '../data/media';
 import { roleLine } from '../data/roles';
 import { googleCalUrl } from '../lib/calendar';
 import Signup from './Signup.astro';
+import Countdown from './Countdown.astro';
 import { t, href, fmtDate, type Lang } from '../i18n/ui';
 interface Props { lang: Lang; e: EventItem }
 const { lang, e } = Astro.props;
@@ -96,6 +97,7 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
       )}
       {up && e.tickets && (
         <div class="tix">
+          {e.tickets.url && e.date && <div class="cdw"><p class="small muted">{lang === 'tr' ? 'Kapıların açılmasına' : 'Doors open in'}</p><Countdown lang={lang} target={`${e.date}T${e.doors ?? '19:00'}:00+11:00`} /></div>}
           <p class="price">{e.tickets.label[lang]}</p>
           {e.tickets.url ? (<>
             <a class="btn btn-primary book" href={e.tickets.url} rel="noopener" data-ticket={e.slug}>{s.event.book} <span aria-hidden="true">↗</span></a>
@@ -143,6 +145,7 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
   .txt { min-width: 0; }
   .role { margin: 10px 0 0; font-weight: 600; color: var(--peach); }
   .sgn { margin-top: 56px; }
+  .cdw { margin-bottom: 16px; } .cdw p { margin: 0 0 8px; }
   .top.plain { min-height: 420px; height: 52vh; }
   .brandbg { background: radial-gradient(120% 90% at 85% 10%, rgba(240,90,40,.45), transparent 60%), radial-gradient(90% 80% at 0% 100%, rgba(191,62,30,.35), transparent 65%), #1A1311; }
   .brandbg::after { content: ''; position: absolute; right: 6%; top: 50%; width: min(34vw, 320px); aspect-ratio: 490 / 566; transform: translateY(-55%); background: url(/emblem.svg) no-repeat center / contain; opacity: .16; }

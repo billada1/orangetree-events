@@ -1,6 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import { t, href, otherLangPath, type Lang } from '../i18n/ui';
+import { events, isUpcoming } from '../data/events';
 interface Props { lang: Lang; overlay?: boolean }
 const { lang, overlay = true } = Astro.props;
 const s = t(lang);
@@ -9,6 +10,10 @@ const links = [
   [href(lang, '/#whats-on'), s.nav.on], [href(lang, '/events/'), s.nav.past], [href(lang, '/artists/'), s.nav.artists],
   [href(lang, '/stories/'), s.nav.stories], [href(lang, '/#giving-back'), s.nav.giving], [href(lang, '/work-with-us/'), s.nav.partner],
 ];
+// Ticket push: while our own New Year's Eve is on sale, the header button goes straight to it.
+// A small script restores the default once the night has passed, in case the site isn't rebuilt that day.
+const push = events.find((e) => e.kind === 'nye' && isUpcoming(e) && e.tickets?.url);
+const cta = push ? { href: href(lang, `/events/${push.slug}/`), label: lang === 'tr' ? 'Yılbaşı biletleri' : 'NYE tickets', until: `${push.date}T23:59:00+11:00` } : null;
 const cur = (u: string) => (path === u ? 'page' : undefined);
 ---
 <header class:list={['hdr', { overlay }]}>
@@ -21,12 +26,13 @@ const cur = (u: string) => (path === u ? 'page' : undefined);
   <div class="right">
     <a class="lang" href={otherLangPath(lang, path)} hreflang={lang === 'en' ? 'tr' : 'en'} lang={lang === 'en' ? 'tr' : 'en'}>{lang === 'en' ? 'TR' : 'EN'}<span class="sr-only"> · {s.switchTo}</span></a>
     <a class="tix" href={href(lang, '/contact/')} aria-current={cur(href(lang, '/contact/'))}>{s.footer.contact}</a>
-    <a class="btn btn-primary btn-sm" href={href(lang, '/#whats-on')}>{s.nav.getTickets}</a>
+    <a class="btn btn-primary btn-sm" href={cta?.href ?? href(lang, '/#whats-on')} data-until={cta?.until} data-def-href={href(lang, '/#whats-on')} data-def-label={s.nav.getTickets}>{cta?.label ?? s.nav.getTickets}</a>
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="site-menu">{s.nav.menu}</button>
   </div>
   <div id="site-menu" class="menu" hidden>
     <button class="close" type="button">{s.nav.close}</button>
     <nav aria-label={s.nav.main}>
+      {cta && <a class="push" href={cta.href} data-until={cta.until}>{cta.label} →</a>}
       {links.map(([u, l]) => <a href={u}>{l}</a>)}
       <a href={href(lang, '/contact/')}>{s.footer.contact}</a>
       <a href={href(lang, '/my-tickets/')}>{s.nav.tickets}</a>
@@ -36,6 +42,10 @@ const cur = (u: string) => (path === u ? 'page' : undefined);
 </header>
 
 <script>
+  document.querySelectorAll<HTMLAnchorElement>('.hdr [data-until]').forEach((a) => {
+    if (Date.now() <= Date.parse(a.dataset.until!)) return;
+    if (a.dataset.defHref) { a.href = a.dataset.defHref; a.textContent = a.dataset.defLabel ?? a.textContent; } else a.remove();
+  });
   const btn = document.querySelector<HTMLButtonElement>('.menu-btn');
   const menu = document.getElementById('site-menu');
   const close = menu?.querySelector<HTMLButtonElement>('.close');
@@ -59,6 +69,7 @@ const cur = (u: string) => (path === u ? 'page' : undefined);
   .nav { display: flex; flex-wrap: wrap; gap: 4px 26px; font-size: 15px; font-weight: 500; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
   .nav a[aria-current="page"] { color: var(--coral); }
   .right { display: flex; align-items: center; gap: 18px; font-size: 14px; font-weight: 600; }
+  .menu nav .push { color: var(--accent); }
   .menu-btn { display: none; font: inherit; font-weight: 600; color: var(--ink); background: rgba(13,11,10,.6); border: 1.5px solid var(--line-2); border-radius: 999px; padding: 10px 16px; cursor: pointer; }
   .menu { position: fixed; inset: 0; z-index: 50; background: var(--bg); padding: 24px var(--pad); display: flex; flex-direction: column; }
   .menu[hidden] { display: none; }
