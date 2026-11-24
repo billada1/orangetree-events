@@ -39,9 +39,13 @@ const related = events.filter((x) => x.slug !== e.slug && !(x.confirm && !x.date
 const when = e.date ? fmtDate(e.date, lang, { weekday: true }) + (e.doors ? ` · ${s.on.doors} ${e.doors.replace(':', lang === 'tr' ? '.' : ':')}` : '') : (e.year ?? s.past.dateToConfirm);
 const gcal = up && e.date ? googleCalUrl(e, lang) : null;
 const icsHref = href(lang, `/events/${e.slug}.ics`);
-const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join('. ');
+const baseDesc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join('. ');
+const desc = baseDesc.length >= 70 ? baseDesc : `${baseDesc}. ${lang === 'tr' ? 'Orange Tree Events arşivinden bir gece: 2014’ten beri Sydney’de Türk konserleri, stand-up ve yılbaşı.' : 'A night from the Orange Tree Events archive: Turkish concerts, comedy and New Year’s Eve in Sydney since 2014.'}`;
+// Two nights with the same name (e.g. Nida Rock Akustik 2021 and 2024) get the year in the page title.
+const sameName = events.filter((x) => x.title[lang] === e.title[lang]).length > 1;
+const pageTitle = sameName ? `${e.title[lang]} (${(e.date ?? e.year ?? '').slice(0, 4)})` : e.title[lang];
 ---
-<Base lang={lang} title={e.title[lang]} description={desc} jsonLd={ld} noindex={!!e.confirm && !e.date}>
+<Base lang={lang} title={pageTitle} description={desc} jsonLd={ld} noindex={!!e.confirm && !e.date}>
   <section class:list={['top', { withPoster: !!poster, plain: !poster && !ph }]}>
     {poster
       ? <Image src={poster} alt="" widths={[240, 480]} sizes="100vw" quality={50} class="bg blur" loading="eager" />

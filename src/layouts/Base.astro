@@ -27,7 +27,9 @@ const canonical = new URL(path, site).href;
 const enPath = lang === 'en' ? path : otherLangPath('tr', path);
 const trPath = lang === 'tr' ? path : otherLangPath('en', path);
 const fullTitle = title ? `${title} · ${s.siteName}` : `${s.siteName} · ${s.tagline}`;
-const desc = description ?? s.metaDescription;
+// Search snippets show about 155 characters: trim long descriptions at a word boundary.
+const clip = (t: string) => (t.length <= 160 ? t : t.slice(0, 157).replace(/[\s,.;:·-]+\S*$/, '') + '…');
+const desc = clip(description ?? s.metaDescription);
 const ogImage = new URL(image ?? '/og-default.jpg', site).href;
 const org = {
   '@context': 'https://schema.org', '@type': 'Organization', name: 'Orange Tree Events',
