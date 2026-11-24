@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import Signup from './Signup.astro';
+import { events, isUpcoming } from '../data/events';
+import { t, href, fmtDate, type Lang } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const s = t(lang);
+const tr = lang === 'tr';
+const next = events.filter((e) => isUpcoming(e) && e.date).sort((a, b) => a.date!.localeCompare(b.date!)).slice(0, 3);
+const title = tr ? 'E-posta listemize katılın' : 'Join the mailing list';
+const desc = tr
+  ? 'Orange Tree Events e-posta listesi: Sydney’deki Türk konserleri, yılbaşı ve topluluk geceleri için erken haber ve masa fırsatları.'
+  : 'The Orange Tree Events mailing list: first notice and early tables for Turkish concerts, New Year’s Eve and community nights in Sydney.';
+---
+<Base lang={lang} title={title} description={desc} overlayHeader={false}>
+  <div class="wrap pg">
+    <Signup lang={lang} id="subscribe" big heading={tr ? 'Gecelerimizden önce siz haberdar olun' : 'Hear about our nights first'} />
+    {next.length > 0 && (
+      <section class="up" aria-labelledby="up-h">
+        <h2 id="up-h" class="sub">{tr ? 'Sırada' : 'Coming up'}</h2>
+        <ul>{next.map((e) => <li><a href={href(lang, `/events/${e.slug}/`)}><span class="d">{fmtDate(e.date!, lang, { weekday: true })}</span><span class="n">{e.title[lang]}</span></a></li>)}</ul>
+      </section>
+    )}
+    <p class="muted small since">{tr ? 'Orange Tree Events, 2014’ten beri Sydney’de. ' : 'Orange Tree Events, Sydney since 2014. '}<a href={href(lang, '/events/')}>{s.nav.past}</a></p>
+  </div>
+</Base>
+<style>
+  .pg { padding-block: 120px 96px; }
+  .up { margin-top: 48px; }
+  .up ul { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
+  .up a { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; padding: 16px 18px; border: 1px solid var(--line); border-radius: 16px; }
+  .up a:hover { border-color: var(--accent); }
+  .up .d { color: var(--peach); font-size: 14px; min-width: 220px; }
+  .up .n { font-weight: 600; }
+  .since { margin-top: 32px; } .since a { text-decoration: underline; }
+</style>

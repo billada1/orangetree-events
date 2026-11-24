@@ -8,6 +8,7 @@ import { eventJsonLd } from '../data/schema';
 import { posterFor, artistImage } from '../data/media';
 import { roleLine } from '../data/roles';
 import { googleCalUrl } from '../lib/calendar';
+import Signup from './Signup.astro';
 import { t, href, fmtDate, type Lang } from '../i18n/ui';
 interface Props { lang: Lang; e: EventItem }
 const { lang, e } = Astro.props;
@@ -111,6 +112,10 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
       )}
     </aside>
   </div>
+  {!(up && e.tickets) && (
+    <div class="wrap sgn"><Signup lang={lang} id="ev-signup" event={e.slug}
+      heading={up ? undefined : (lang === 'tr' ? 'Bir dahaki geceyi kaçırmayın' : 'Don’t miss the next one')} /></div>
+  )}
   {related.length > 0 && (
     <section class="wrap rel" aria-labelledby="rel-h">
       <h2 id="rel-h" class="sub">{lang === 'tr' ? 'Benzer geceler' : 'More nights like this'}</h2>
@@ -137,6 +142,7 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
   .in { position: relative; width: 100%; padding-bottom: 48px; display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; }
   .txt { min-width: 0; }
   .role { margin: 10px 0 0; font-weight: 600; color: var(--peach); }
+  .sgn { margin-top: 56px; }
   .top.plain { min-height: 420px; height: 52vh; }
   .brandbg { background: radial-gradient(120% 90% at 85% 10%, rgba(240,90,40,.45), transparent 60%), radial-gradient(90% 80% at 0% 100%, rgba(191,62,30,.35), transparent 65%), #1A1311; }
   .brandbg::after { content: ''; position: absolute; right: 6%; top: 50%; width: min(34vw, 320px); aspect-ratio: 490 / 566; transform: translateY(-55%); background: url(/emblem.svg) no-repeat center / contain; opacity: .16; }

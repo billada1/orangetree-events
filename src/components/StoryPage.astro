@@ -23,6 +23,7 @@ const ld = {
   image: new URL(heroImg.src, Astro.site!).href, author: { '@type': 'Organization', name: 'Orange Tree Events' },
   publisher: { '@type': 'Organization', name: 'Orange Tree Events', logo: { '@type': 'ImageObject', url: new URL('/emblem.svg', Astro.site!).href } },
 };
+import Signup from './Signup.astro';
 ---
 <Base lang={lang} title={fm.title} description={fm.excerpt} image={heroImg.src} jsonLd={ld} hasTranslation={translated}>
   <div class="progress" aria-hidden="true"></div>
@@ -58,9 +59,11 @@ const ld = {
     <p class="muted small">{s.moments.removeQ} <a class="u" href="mailto:info@orangetree.events?subject=Photo%20removal">{s.moments.remove}</a></p>
     {ev && <a class="card nxt" href={href(lang, `/events/${ev.slug}/`)}><span class="muted small">{evUp ? (lang === 'tr' ? 'Sıradaki gece' : 'Next up') : (lang === 'tr' ? 'Etkinlik' : 'The event')}</span><span class="t">{ev.title[lang]} →</span></a>}
     {artist && <a class="card nxt" href={href(lang, `/artists/${artist.slug}/`)}><span class="muted small">{s.event.seeArtist}</span><span class="t">{artist.name} →</span></a>}
+    <div class="sgnw"><Signup lang={lang} id="st-signup" /></div>
   </div>
 </Base>
 <style>
+  .sgnw { margin-top: 20px; }
   .progress { position: fixed; inset: 0 0 auto 0; height: 4px; z-index: 40; background: var(--accent); transform-origin: 0 50%; transform: scaleX(0); }
   @supports (animation-timeline: scroll()) { .progress { animation: prog linear both; animation-timeline: scroll(root); } }
   @keyframes prog { to { transform: scaleX(1); } }
