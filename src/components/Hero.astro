@@ -107,7 +107,7 @@ const mon = (iso: string) => new Intl.DateTimeFormat(lang === 'tr' ? 'tr-TR' : '
   .next { list-style: none; margin: 22px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
   .next a { display: flex; align-items: center; gap: 12px; padding: 8px 16px 8px 8px; border-radius: 16px; background: rgba(13,11,10,.55); border: 1px solid rgba(245,239,232,.18); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); text-decoration: none; color: var(--ink); max-width: 420px; transition: border-color .3s, background .3s, transform .3s; }
   .next a:hover { border-color: var(--peach); background: rgba(13,11,10,.75); transform: translateY(-1px); }
-  .nd { flex: 0 0 auto; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: var(--accent); color: #fff; line-height: 1; }
+  .nd { flex: 0 0 auto; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 12px; background: #BF3E1E; color: #fff; line-height: 1; } /* darker than --accent so the small month text passes 4.5:1 */
   .nd b { font-family: var(--display); font-size: 20px; font-weight: 800; } .nd span { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
   .nt { display: flex; flex-direction: column; min-width: 0; } .nn { font-weight: 700; font-size: 15px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .nm { font-size: 13px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .na { color: var(--peach); margin-left: auto; }
