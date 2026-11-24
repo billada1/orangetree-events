@@ -58,6 +58,12 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
   <div class="wrap grid">
     <div>
       {e.note && <p class="lead">{e.note[lang]}</p>}
+      {up && e.included && (
+        <>
+          <h2 class="sub">{lang === 'tr' ? 'Bilete dahil' : 'What’s included'}</h2>
+          <ul class="incl">{e.included[lang].map((x) => <li>{x}</li>)}</ul>
+        </>
+      )}
       {!up && <p class="muted">{s.event.past}{e.soldOut && <> · {s.past.soldOut}</>}</p>}
       {e.confirm && <p class="muted">{s.past.confirmNote}</p>}
       {performers.length > 0 && (
@@ -141,6 +147,9 @@ const desc = [e.title[lang], when, e.venue, e.note?.[lang]].filter(Boolean).join
   .perf { list-style: none; padding: 0; margin: 0; } .perf li { display: flex; align-items: center; gap: 14px; padding: 10px 0; border-bottom: 1px solid var(--line); } .perf a { font-weight: 700; }
   .perf :global(.pav) { flex: 0 0 48px; width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
   .pav0 { display: grid; place-items: center; background: #2A2522; color: var(--peach); font-size: 15px; font-weight: 700; }
+  .incl { margin: 0 0 8px; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px 20px; }
+  .incl li { position: relative; padding-left: 22px; color: var(--ink-2); }
+  .incl li::before { content: ''; position: absolute; left: 2px; top: .6em; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
   .rel { padding-block: 8px 96px; }
   .rl { list-style: none; margin: 16px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
   .rl a { display: flex; gap: 14px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 16px; text-decoration: none; transition: border-color .2s, background .2s; height: 100%; }

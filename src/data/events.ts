@@ -23,6 +23,7 @@ export interface EventItem {
   image?: string; // key in photos map
   soldOut?: boolean;
   tickets?: { label: { en: string; tr: string }; from: number; url?: string; via?: string }; // upcoming events only
+  included?: { en: string[]; tr: string[] }; // what a ticket includes (newsletter and event page)
   externalUrl?: string; // supported events sell elsewhere
   confirm?: boolean; // details still being checked
 }
@@ -50,6 +51,10 @@ export const events: EventItem[] = [
     venue: 'The Renaissance, Piano Room, Lidcombe', address: '3 New St E, Lidcombe NSW 2141',
     partner: 'ATAM', artists: ['tahir-bilgic', 'dj-ilka'],
     note: { en: 'An All White & Summer night: meze and a three-course dinner, beer, wine and soft drinks, Tahir Bilgiç as MC, DJ Ilka until late, arcade games, raffle prizes and the midnight countdown. Proceeds go to Our Shared Home, ATAM’s community premises project.', tr: 'Beyaz ve yaz temalı bir gece: meze ve üç çeşit akşam yemeği, bira, şarap ve meşrubat, sunucu Tahir Bilgiç, gece boyu DJ Ilka, oyunlar, çekiliş ve geri sayım. Gelir ATAM’ın topluluk merkezi projesi Ortak Evimiz’e gidiyor.' },
+    included: {
+      en: ['Meze and a three-course dinner', 'Beer, wine and soft drinks', 'Tahir Bilgiç as MC', 'DJ Ilka until late', 'Arcade games and raffle prizes', 'The midnight countdown'],
+      tr: ['Meze ve üç çeşit akşam yemeği', 'Bira, şarap ve meşrubat', 'Sunucu Tahir Bilgiç', 'Gece boyu DJ Ilka', 'Oyunlar ve çekiliş', 'Geri sayım'],
+    },
     tickets: { label: { en: 'General $150 · VIP $180 · Children 5 to 11 from $75', tr: 'Genel $150 · VIP $180 · 5-11 yaş çocuk $75’ten' }, from: 150, url: 'https://atam.asn.au/nye27/', via: 'ATAM' },
     image: 'nye2025stage',
   },
