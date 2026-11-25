@@ -101,7 +101,7 @@ async function build() {
   const heroFile = ownPhoto || posterFile || (feature.kind === 'nye' ? 'src/assets/photos/nye-2025-stage.webp' : '');
   let heroH = 320;
   if (posterFile) { const m = await sharp(posterFile).metadata(); heroH = Math.round(600 * (m.height ?? 320) / (m.width ?? 600)); }
-  const heroUrl = heroFile ? await img(heroFile, `${issue}-hero`, 600, posterFile ? undefined : 320) : '';
+  const heroUrl = heroFile ? await img(heroFile, `${issue}-hero-${feature.slug}`, 600, posterFile ? undefined : 320) : '';
   const fUrl = utm(`/events/${feature.slug}/`, 'feature');
   const tix = feature.tickets?.url && TR ? feature.tickets.url.replace(/^(https:\/\/atam\.asn\.au)\/(?!tr\/)/, '$1/tr/') : feature.tickets?.url;
   const bookUrl = tix ? utm(tix, 'feature-book') : fUrl;
