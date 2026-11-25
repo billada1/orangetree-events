@@ -28,7 +28,7 @@ const icons: Record<string, string> = {
 const biz = 'concert promotion sponsor venue media';
 const stats = {
   presented: events.filter((e) => e.kind === 'presented').length,
-  nye: events.filter((e) => e.kind === 'nye').length,
+  nye: events.filter((e) => e.kind === 'nye' && !e.cancelled).length,
   artists: artists.length,
   since: '2014',
 };

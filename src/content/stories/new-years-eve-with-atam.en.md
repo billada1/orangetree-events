@@ -15,4 +15,4 @@ The night that welcomed 2020 sold out. The Turkish-Balkan band KINTALA and DJ Gu
 
 For 2022 and 2023, the Turkish Vibes resident DJs, Ilka and Ada, were on deck all night. The night that welcomed 2023 also marked ATAM’s tenth year, and the raffle prizes included a return ticket to Türkiye.
 
-This year is ATAM’s fifteenth. NYE 2027 is an All White & Summer night in the same room: meze and a three-course dinner, Tahir Bilgiç as MC, DJ Ilka until late, and the countdown together. Proceeds go to Our Shared Home, ATAM’s community premises project.
+This year is ATAM’s fifteenth. NYE 2027 was planned for the same room, but the ATAM committee decided not to hold it this year. We hope to see you at future nights.

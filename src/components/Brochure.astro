@@ -19,7 +19,7 @@ const tr = lang === 'tr';
 const url = `https://orangetree.events${tr ? '/tr' : ''}/work-with-us/${kind === 'sponsors' ? '#sponsor' : ''}`;
 const qr = await QRCode.toString(url, { type: 'svg', margin: 0, color: { dark: '#14110F', light: '#0000' } });
 
-const n = (k: string) => events.filter((e) => e.kind === k).length;
+const n = (k: string) => events.filter((e) => e.kind === k && !e.cancelled).length;
 const stats = [
   [String(n('presented')), tr ? 'sunduğumuz konser ve gösteri' : 'shows presented'],
   [String(n('nye')), tr ? 'yılbaşı gecesi' : 'New Year’s Eves'],

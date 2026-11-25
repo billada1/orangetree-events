@@ -33,7 +33,7 @@ const ld = evLd ? [evLd, crumbs] : [crumbs];
 // Related nights: shared artists first, then the same kind, nearest in time. Internal links for visitors and search.
 const k = (x: EventItem) => x.date ?? x.year ?? '';
 const shared = (x: EventItem) => (x.artists ?? []).filter((a) => e.artists?.includes(a)).length;
-const related = events.filter((x) => x.slug !== e.slug && !(x.confirm && !x.date))
+const related = events.filter((x) => x.slug !== e.slug && !x.cancelled && !(x.confirm && !x.date))
   .map((x) => ({ x, score: shared(x) * 10 + (x.kind === e.kind ? 3 : 0) + (x.partner && x.partner === e.partner ? 2 : 0) - Math.abs(Number(k(x).slice(0, 4) || 0) - Number(k(e).slice(0, 4) || 0)) * 0.1 }))
   .filter((r) => r.score > 0).sort((a, b) => b.score - a.score).slice(0, 4).map((r) => r.x);
 const when = e.date ? fmtDate(e.date, lang, { weekday: true }) + (e.doors ? ` · ${s.on.doors} ${e.doors.replace(':', lang === 'tr' ? '.' : ':')}` : '') : (e.year ?? s.past.dateToConfirm);
@@ -76,7 +76,7 @@ const pageTitle = sameName ? `${e.title[lang]} (${(e.date ?? e.year ?? '').slice
           <ul class="incl">{e.included[lang].map((x) => <li>{x}</li>)}</ul>
         </>
       )}
-      {!up && <p class="muted">{s.event.past}{e.soldOut && <> · {s.past.soldOut}</>}</p>}
+      {!up && !e.cancelled && <p class="muted">{s.event.past}{e.soldOut && <> · {s.past.soldOut}</>}</p>}
       {e.confirm && <p class="muted">{s.past.confirmNote}</p>}
       {performers.length > 0 && (
         <>

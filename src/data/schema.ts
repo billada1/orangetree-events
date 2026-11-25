@@ -59,7 +59,7 @@ export function eventJsonLd(e: EventItem, lang: Lang, site: URL) {
   const offers = offersOf(e, url);
   return {
     '@context': 'https://schema.org', '@type': 'Event', name: e.title[lang], startDate: start, endDate: endOf(e), url,
-    eventStatus: 'https://schema.org/EventScheduled', eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    eventStatus: e.cancelled ? 'https://schema.org/EventCancelled' : 'https://schema.org/EventScheduled', eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     location: { '@type': 'Place', name: e.venue || 'Sydney', address: { '@type': 'PostalAddress', ...(e.address ? { streetAddress: e.address } : {}), addressLocality: 'Sydney', addressRegion: 'NSW', addressCountry: 'AU' } },
     image: imageOf(e, site),
     description: e.note?.[lang] ?? fallback,

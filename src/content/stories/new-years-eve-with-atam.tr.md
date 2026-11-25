@@ -15,4 +15,4 @@ Son on yılın büyük bölümünde yılın son gecesi, Lidcombe’daki tek bir 
 
 2022 ve 2023’te Turkish Vibes’ın DJ’leri Ilka ve Ada bütün gece sahnedeydi. 2023’ü karşıladığımız gece aynı zamanda ATAM’ın 10. yılıydı; çekiliş ödülleri arasında Türkiye’ye gidiş-dönüş bilet de vardı.
 
-Bu yıl ATAM’ın 15. yılı. Yılbaşı 2027, aynı salonda beyaz ve yaz temalı bir gece: meze ve üç çeşit akşam yemeği, sunucu Tahir Bilgiç, gece boyu DJ Ilka ve birlikte geri sayım. Gelir, ATAM’ın topluluk merkezi projesi Ortak Evimiz’e gidiyor.
+Bu yıl ATAM’ın 15. yılı. Yılbaşı 2027 aynı salonda planlanmıştı, ancak ATAM Yönetim Kurulu bu yıl düzenlememe kararı aldı. Gelecek gecelerde görüşmek dileğiyle.

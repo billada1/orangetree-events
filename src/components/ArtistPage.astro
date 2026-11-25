@@ -45,7 +45,7 @@ const more = [...others.filter((x) => artistImage(x)), ...others.filter((x) => !
 const initials = (n: string) => n.replace(/^DJ\s+/i, '').split(/[\s&]+/).filter(Boolean).slice(0, 2).map((w) => w[0].toLocaleUpperCase('tr')).join('');
 
 // Artists without a written bio get a short factual one built from our own event records (no invented details).
-const pastShows = shows.filter((e) => !isUpcoming(e));
+const pastShows = shows.filter((e) => !e.cancelled && !isUpcoming(e));
 const listTitles = (l: Lang) => pastShows.slice(0, 3).map((e) => e.title[l] + (e.date ? ` (${e.date.slice(0, 4)})` : '')).join(l === 'tr' ? '; ' : '; ');
 const autoBio = (l: Lang): string[] => {
   const n = pastShows.length, next = upcoming[0];

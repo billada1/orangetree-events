@@ -26,6 +26,7 @@ export interface EventItem {
   included?: { en: string[]; tr: string[] }; // what a ticket includes (newsletter and event page)
   externalUrl?: string; // supported events sell elsewhere
   confirm?: boolean; // details still being checked
+  cancelled?: boolean; // called off: its page says so; it leaves upcoming lists, the archive and artist pages
 }
 
 const nye = (welcome: number) => ({
@@ -50,12 +51,8 @@ export const events: EventItem[] = [
     title: { en: 'NYE 2027 · ATAM’s 15th year', tr: 'Yılbaşı 2027 · ATAM’ın 15. yılı' },
     venue: 'The Renaissance, Piano Room, Lidcombe', address: '3 New St E, Lidcombe NSW 2141',
     partner: 'ATAM', artists: ['tahir-bilgic', 'dj-ilka'],
-    note: { en: 'An All White & Summer night: meze and a three-course dinner, beer, wine and soft drinks, Tahir Bilgiç as MC, DJ Ilka until late, arcade games, raffle prizes and the midnight countdown. Proceeds go to Our Shared Home, ATAM’s community premises project.', tr: 'Beyaz ve yaz temalı bir gece: meze ve üç çeşit akşam yemeği, bira, şarap ve meşrubat, sunucu Tahir Bilgiç, gece boyu DJ Ilka, oyunlar, çekiliş ve geri sayım. Gelir ATAM’ın topluluk merkezi projesi Ortak Evimiz’e gidiyor.' },
-    included: {
-      en: ['Meze and a three-course dinner', 'Beer, wine and soft drinks', 'Tahir Bilgiç as MC', 'DJ Ilka until late', 'Arcade games and raffle prizes', 'The midnight countdown'],
-      tr: ['Meze ve üç çeşit akşam yemeği', 'Bira, şarap ve meşrubat', 'Sunucu Tahir Bilgiç', 'Gece boyu DJ Ilka', 'Oyunlar ve çekiliş', 'Geri sayım'],
-    },
-    tickets: { label: { en: 'General $150 · VIP $180 · Children 5 to 11 from $75', tr: 'Genel $150 · VIP $180 · 5-11 yaş çocuk $75’ten' }, from: 150, url: 'https://atam.asn.au/nye27/', via: 'ATAM' },
+    note: { en: 'Cancelled. The ATAM committee decided not to hold New Year’s Eve this year. Thank you to everyone who planned to join us; we hope to see you at future nights.', tr: 'İptal edildi. ATAM Yönetim Kurulu bu yıl yılbaşı gecesi düzenlememe kararı aldı. Bize katılmayı planlayan herkese teşekkür ederiz; gelecek gecelerde görüşmek dileğiyle.' },
+    cancelled: true,
     image: 'nye2025stage',
   },
   {
@@ -126,7 +123,7 @@ export function sydneyToday(): string {
   return new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
 }
 
-export const isUpcoming = (e: EventItem, today = sydneyToday()) => !!e.date && e.date >= today;
+export const isUpcoming = (e: EventItem, today = sydneyToday()) => !e.cancelled && !!e.date && e.date >= today;
 export const upcoming = () => events.filter((e) => isUpcoming(e)).sort((a, b) => a.date!.localeCompare(b.date!));
-export const past = () => events.filter((e) => !isUpcoming(e));
+export const past = () => events.filter((e) => !e.cancelled && !isUpcoming(e));
 export const eventBySlug = (slug: string) => events.find((e) => e.slug === slug);
