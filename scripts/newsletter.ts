@@ -64,7 +64,7 @@ async function img(src: string, name: string, w: number, h?: number) {
 const poster = (slug: string) => [`src/assets/posters/${slug}.jpg`, `src/assets/posters/${slug}.png`, `src/assets/posters/${slug}.webp`].find(existsSync);
 
 // ---------- data ----------
-const up = events.filter((e) => e.date && e.date >= send).sort((a, b) => a.date!.localeCompare(b.date!));
+const up = events.filter((e) => e.date && !e.cancelled && e.date >= send).sort((a, b) => a.date!.localeCompare(b.date!));
 const feature = up.find((e) => e.slug === arg('feature')) ?? up.find((e) => e.tickets?.url && (e.kind === 'nye' || e.kind === 'presented')) ?? up[0];
 const others = up.filter((e) => e !== feature).slice(0, 3);
 const fmt = (iso: string, o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(TR ? 'tr-TR' : 'en-AU', { timeZone: 'UTC', ...o }).format(new Date(iso + 'T12:00:00Z'));
@@ -95,8 +95,13 @@ const section = (inner: string, pad = '32px 36px') => `<tr><td class="px" style=
 async function build() {
   if (!feature) throw new Error(`No events on or after ${send}`);
   const heroSrc = feature.image ? `src/assets/photos/${feature.image.replace(/([a-z])(\d)/g, '$1-$2').replace(/(\d)([a-zA-Z])/g, '$1-$2').replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()}.webp` : '';
-  const heroFile = [heroSrc, 'src/assets/photos/nye-2025-stage.webp'].find((f) => f && existsSync(f))!;
-  const heroUrl = await img(heroFile, `${issue}-hero`, 600, 320);
+  // The night's own photo (cropped 600 × 320); else its poster, uncropped; the NYE stage photo only for NYE nights.
+  const ownPhoto = heroSrc && existsSync(heroSrc) ? heroSrc : '';
+  const posterFile = !ownPhoto && feature.poster ? poster(feature.poster) : undefined;
+  const heroFile = ownPhoto || posterFile || (feature.kind === 'nye' ? 'src/assets/photos/nye-2025-stage.webp' : '');
+  let heroH = 320;
+  if (posterFile) { const m = await sharp(posterFile).metadata(); heroH = Math.round(600 * (m.height ?? 320) / (m.width ?? 600)); }
+  const heroUrl = heroFile ? await img(heroFile, `${issue}-hero`, 600, posterFile ? undefined : 320) : '';
   const fUrl = utm(`/events/${feature.slug}/`, 'feature');
   const tix = feature.tickets?.url && TR ? feature.tickets.url.replace(/^(https:\/\/atam\.asn\.au)\/(?!tr\/)/, '$1/tr/') : feature.tickets?.url;
   const bookUrl = tix ? utm(tix, 'feature-book') : fUrl;
@@ -105,7 +110,7 @@ async function build() {
   const theme = TR ? /^([^:]+):/.exec(feature.note?.tr ?? '')?.[1] : /^An? ([^:]+):/i.exec(feature.note?.en ?? '')?.[1];
   const proceeds = (TR ? /Gelir[^.]*\./ : /Proceeds[^.]*\./).exec(feature.note?.[L] ?? '')?.[0];
 
-  const featureBlock = `<tr><td style="background:${C.card};padding:0;"><a href="${fUrl}"><img src="${heroUrl}" width="600" height="320" alt="${esc(feature.title[L])}" style="display:block;width:100%;max-width:600px;height:auto;border:0;"></a></td></tr>
+  const featureBlock = `${heroUrl ? `<tr><td style="background:${C.card};padding:0;"><a href="${fUrl}"><img src="${heroUrl}" width="600" height="${heroH}" alt="${esc(feature.title[L])}" style="display:block;width:100%;max-width:600px;height:auto;border:0;"></a></td></tr>` : ''}
 <tr><td class="px" style="background:${C.card};padding:30px 36px 24px;">
   ${kicker(feature.kind === 'nye' ? S.nyeKicker : S.coming)}
   <p class="h1" style="margin:0 0 10px;font-family:${F};font-size:30px;line-height:36px;font-weight:800;color:${C.ink};">${esc(feature.title[L])}</p>
