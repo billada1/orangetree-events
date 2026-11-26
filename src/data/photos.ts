@@ -13,6 +13,8 @@ import nye2023screen from '../assets/photos/nye-2023-screen.webp';
 import nye2023floor from '../assets/photos/nye-2023-floor.webp';
 import nye2025stage from '../assets/photos/nye-2025-stage.webp';
 import nye2025floor from '../assets/photos/nye-2025-floor.webp';
+import nye2025tahir from '../assets/photos/nye-2025-tahir.webp';
+import nye2025dance from '../assets/photos/nye-2025-dance.webp';
 import oldLiveBand from '../assets/photos/old-live-band.jpg';
 import oldBwStage from '../assets/photos/old-bw-stage.jpg';
 import oldGuitar from '../assets/photos/old-guitar.jpg';
@@ -48,6 +50,8 @@ export const photos: Record<string, Photo> = {
   korayCrowd: { src: korayCrowd, alt: { en: 'Koray Avcı and a full house in black and white', tr: 'Koray Avcı ve dolu salon, siyah beyaz' } },
   crowdPhones: { src: crowdPhones, alt: { en: 'The audience filming the show on their phones', tr: 'Konseri telefonlarıyla çeken seyirciler' } },
   nye2025floor: { src: nye2025floor, alt: { en: 'A full dance floor at New Year’s Eve', tr: 'Yılbaşı gecesi dolu dans pisti' } },
+  nye2025tahir: { src: nye2025tahir, alt: { en: 'Tahir Bilgiç with the microphone, the band laughing behind him, under the Happy New Year 2025 banner', tr: 'Mikrofon elinde Tahir Bilgiç, arkasında gülen müzisyenler; Mutlu Yıllar 2025 pankartının önünde' } },
+  nye2025dance: { src: nye2025dance, alt: { en: 'Guests dancing hand in hand in front of the New Year 2025 stage at Star Palace', tr: 'Star Palace’ta Yılbaşı 2025 sahnesinin önünde el ele dans eden konuklar' } },
 };
 
 export const heroSlides: { key: string; cap: L; px: number }[] = [

@@ -15,4 +15,6 @@ The night that welcomed 2020 sold out. The Turkish-Balkan band KINTALA and DJ Gu
 
 For 2022 and 2023, the Turkish Vibes resident DJs, Ilka and Ada, were on deck all night. The night that welcomed 2023 also marked ATAM’s tenth year, and the raffle prizes included a return ticket to Türkiye.
 
+To welcome 2025 we moved to Star Palace Reception in Fairfield. Tahir Bilgiç hosted, Halil & Özkan played with a live orchestra and DJ Gurbz kept the floor full. [Read about that night](/stories/nye-2025-star-palace/).
+
 This year is ATAM’s fifteenth. NYE 2027 was planned for the same room, but the ATAM committee decided not to hold it this year. We hope to see you at future nights.

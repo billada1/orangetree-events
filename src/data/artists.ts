@@ -72,7 +72,7 @@ const list: Artist[] = [
   { slug: 'muharrem-aslan', image: 'muharrem-aslan', name: 'Muharrem Aslan', local: true, instagram: 'muharremaslanofficial', role: { en: 'Musician and music therapist: Sounds of Anatolia', tr: 'Müzisyen ve müzik terapisti: Anadolu’nun Sesleri' } },
   { slug: 'dj-ilka', image: 'dj-ilka', name: 'DJ Ilka', aka: 'İlker Aydın', local: true, instagram: 'dj.ilka', role: { en: 'DJ, Turkish Vibes resident', tr: 'DJ, Turkish Vibes’ın DJ’i' } },
   { slug: 'dj-ada', image: 'dj-ada', name: 'DJ Göksel Ada', local: true, instagram: 'djada_goksel', role: { en: 'DJ, Turkish Vibes resident', tr: 'DJ, Turkish Vibes’ın DJ’i' } },
-  { slug: 'dj-gurbz', name: 'DJ Gurbz', local: true, instagram: 'djgurbuzaslan', role: { en: 'DJ', tr: 'DJ' } },
+  { slug: 'dj-gurbz', image: 'dj-gurbz', name: 'DJ Gurbz', local: true, instagram: 'djgurbuzaslan', role: { en: 'DJ', tr: 'DJ' } },
   { slug: 'dj-baki', name: 'DJ Baki', local: true, role: { en: 'DJ', tr: 'DJ' } },
   { slug: 'ekol', image: 'ekol', name: 'EKOL', local: true, role: { en: 'Sydney Turkish band', tr: 'Sydneyli Türk grubu' } },
   { slug: 'kintala', name: 'KINTALA', local: true, role: { en: 'Sydney Turkish-Balkan band', tr: 'Sydneyli Türk-Balkan grubu' } },

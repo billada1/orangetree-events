@@ -15,4 +15,6 @@ Son on yılın büyük bölümünde yılın son gecesi, Lidcombe’daki tek bir 
 
 2022 ve 2023’te Turkish Vibes’ın DJ’leri Ilka ve Ada bütün gece sahnedeydi. 2023’ü karşıladığımız gece aynı zamanda ATAM’ın 10. yılıydı; çekiliş ödülleri arasında Türkiye’ye gidiş-dönüş bilet de vardı.
 
+2025’i karşılamak için Fairfield’daki Star Palace Reception’a taşındık. Sunucu Tahir Bilgiç’ti; Halil & Özkan canlı orkestrayla çaldı, DJ Gurbz pisti hiç boş bırakmadı. [O geceyi okuyun](/tr/stories/nye-2025-star-palace/).
+
 Bu yıl ATAM’ın 15. yılı. Yılbaşı 2027 aynı salonda planlanmıştı, ancak ATAM Yönetim Kurulu bu yıl düzenlememe kararı aldı. Gelecek gecelerde görüşmek dileğiyle.
