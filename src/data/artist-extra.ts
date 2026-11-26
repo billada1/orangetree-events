@@ -27,6 +27,22 @@ export const extra: Record<string, ArtistExtra> = {
   'ugur-aslan': { spotify: '1N3YNAiksTC8Cal5dKsqyV' },
   'ekin-uzunlar': { official: true, spotify: '35ngoeYRyOveM0rPvahkot' },
   'baris-komurcuoglu': { official: true },
+  // Owner, 27 Nov 2026: a page for Nihat Ziyalan, who passed away in Sydney on 11 October 2026 (picture shared by family or friends).
+  'nihat-ziyalan': {
+    bio: {
+      en: [
+        'Nihat Ziyalan was a Yeşilçam actor and poet. Born in Adana in 1936, he played in many Turkish films of the 1960s and 70s.',
+        'He made Sydney his home in 1980 and kept writing poetry here, a much-loved figure in the Turkish community.',
+        'He was our special guest at Meyhane Gecesi with ATAM in November 2025, and appeared with Muharrem Aslan at Sounds of Anatolia in September 2026. He passed away in Sydney on 11 October 2026, aged 90. We remember him with love and respect.',
+      ],
+      tr: [
+        'Nihat Ziyalan, Yeşilçam oyuncusu ve şairdi. 1936’da Adana’da doğdu; 1960’lı ve 70’li yıllarda pek çok Türk filminde rol aldı.',
+        '1980’de Sydney’e yerleşti ve şiir yazmayı burada sürdürdü; Türk toplumunun çok sevilen bir siması oldu.',
+        'Kasım 2025’te ATAM ile düzenlenen Meyhane Gecesi’nin özel konuğuydu; Eylül 2026’da Anadolu’nun Sesleri’nde Muharrem Aslan ile birlikte sahne aldı. 11 Ekim 2026’da, 90 yaşında Sydney’de aramızdan ayrıldı. Onu sevgi ve saygıyla anıyoruz.',
+      ],
+    },
+    facts: [{ label: born, value: '1936, Adana' }, { label: { en: 'Died', tr: 'Vefat' }, value: '11.10.2026, Sydney' }],
+  },
   'muharrem-aslan': { credit: { by: 'Dreamboy3143', licence: 'CC BY-SA 4.0', file: 'Muharrem Aslan.jpge.jpg' } },
   'ilyas-yalcintas': { official: true, spotify: '2ekGsQEkeMtYFA16Jjes2M', youtube: 'UCkIBEEidtlqDC-Le3y7qW5w', wiki: { en: 'İlyas Yalçıntaş', tr: 'İlyas Yalçıntaş' } },
   buray: {

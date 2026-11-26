@@ -16,7 +16,8 @@ const date = isoDate(fm.date);
 const hero = storyImage(fm.hero, lang);
 const ev = fm.event ? eventBySlug(fm.event) : undefined;
 const evUp = ev ? isUpcoming(ev) : false;
-const artist = fm.artist ? artistBySlug(fm.artist) : undefined;
+// Everyone on the night's bill (owner, 27 Nov 2026: Nihat Ziyalan with Nida Rock at Meyhane Gecesi), the story's own artist first.
+const bill = [...new Set([...(fm.artist ? [fm.artist] : []), ...(ev?.artists ?? [])])].map((x) => artistBySlug(x)).filter((x): x is NonNullable<typeof x> => !!x);
 const heroImg = await getImage({ src: hero.src, width: 1200, format: 'jpg' });
 const ld = {
   '@context': 'https://schema.org', '@type': 'Article', headline: fm.title, datePublished: date, inLanguage: st.lang,
@@ -33,7 +34,7 @@ import Signup from './Signup.astro';
     <div class="in">
       <p class="eyebrow">{s.stories.fromArchive} · <time datetime={date}>{fmtDate(date, lang, { weekday: true })}</time></p>
       <h1>{fm.title}</h1>
-      <p class="by">Orange Tree Events{fm.photographer && <> · {lang === 'tr' ? 'Fotoğraflar' : 'Photos'}: {fm.photographer}</>}{artist && <> · <a href={href(lang, `/artists/${artist.slug}/`)}>{artist.name}</a></>}</p>
+      <p class="by">Orange Tree Events{fm.photographer && <> · {lang === 'tr' ? 'Fotoğraflar' : 'Photos'}: {fm.photographer}</>}{bill.map((x) => <> · <a href={href(lang, `/artists/${x.slug}/`)}>{x.name}</a></>)}</p>
     </div>
     {hero.poster && <figure class="pf"><Image src={hero.src} alt={hero.alt} widths={[320, 560]} sizes="(max-width: 760px) 46vw, 280px" loading="eager" /></figure>}
   </section>
@@ -58,7 +59,7 @@ import Signup from './Signup.astro';
   <div class="end">
     <p class="muted small">{s.moments.removeQ} <a class="u" href="mailto:info@orangetree.events?subject=Photo%20removal">{s.moments.remove}</a></p>
     {ev && <a class="card nxt" href={href(lang, `/events/${ev.slug}/`)}><span class="muted small">{evUp ? (lang === 'tr' ? 'Sıradaki gece' : 'Next up') : (lang === 'tr' ? 'Etkinlik' : 'The event')}</span><span class="t">{ev.title[lang]} →</span></a>}
-    {artist && <a class="card nxt" href={href(lang, `/artists/${artist.slug}/`)}><span class="muted small">{s.event.seeArtist}</span><span class="t">{artist.name} →</span></a>}
+    {bill.map((x) => <a class="card nxt" href={href(lang, `/artists/${x.slug}/`)}><span class="muted small">{s.event.seeArtist}</span><span class="t">{x.name} →</span></a>)}
     <div class="sgnw"><Signup lang={lang} id="st-signup" /></div>
   </div>
 </Base>
