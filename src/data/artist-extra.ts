@@ -50,7 +50,30 @@ export const extra: Record<string, ArtistExtra> = {
     },
     facts: [{ label: born, value: '21 August 1991, Trabzon' }, { label: known, value: 'Hüznün Gemileri, Köz, Öptüm Nefesinden' }],
   },
-  'baris-komurcuoglu': { official: true },
+  'serhan-ilbeyi': {
+    bio: {
+      en: [
+        'Serhan İlbeyi is a Turkish singer who performs with his own band, Serhan İlbeyi ve Ekibi. His singles include “Eyvallah” and “Pancar Pezik” (2020) and the medley “Hıçkırık, Hop, Kar Yolla, Yılana Bak” (2022). He played Sydney for a Bayram celebration in April 2023.',
+      ],
+      tr: [
+        'Serhan İlbeyi, “Serhan İlbeyi ve Ekibi” olarak kendi grubuyla sahneye çıkan bir şarkıcı. Teklileri arasında “Eyvallah” ve “Pancar Pezik” (2020) ile “Hıçkırık, Hop, Kar Yolla, Yılana Bak” potpurisi (2022) bulunuyor. Nisan 2023’te bir Bayram eğlencesiyle Sydney’de sahne aldı.',
+      ],
+    },
+    facts: [{ label: known, value: 'Eyvallah, Pancar Pezik' }],
+  },
+  'baris-komurcuoglu': { official: true,
+    bio: {
+      en: [
+        'Barış Kömürcüoğlu is a pop singer and songwriter from İzmir. He began performing and writing his own songs while studying political science at Ankara University, moved to Istanbul in 2002, and became “Popstar Barış” on Türkiye’s first Popstar competition in 2003, where “Bu Gece Son” and “Sessiz Gemi” became his songs.',
+        'His albums İz (2007) and 5 Kalp 1 Nefes (2011) were followed by a long run of singles, from “Pişman Ol” and “Çav Bella” to “Dönmüyorum” and “Sebepsiz Fırtına”. He sang at Colours of Türkiye in Sydney in May 2026.',
+      ],
+      tr: [
+        'Barış Kömürcüoğlu, İzmirli pop şarkıcısı ve söz yazarı. Ankara Üniversitesi Siyasal Bilgiler Fakültesi’ndeyken sahneye çıkıp kendi şarkılarını yazmaya başladı, 2002’de İstanbul’a taşındı ve 2003’te Türkiye’nin ilk Popstar yarışmasında “Popstar Barış” olarak tanındı; “Bu Gece Son” ve “Sessiz Gemi” onunla özdeşleşti.',
+        'İz (2007) ve 5 Kalp 1 Nefes (2011) albümlerinin ardından “Pişman Ol” ve “Çav Bella”dan “Dönmüyorum” ve “Sebepsiz Fırtına”ya uzanan pek çok tekli yayınladı. Mayıs 2026’da Sydney’de Türkiye’nin Renkleri gecesinde sahne aldı.',
+      ],
+    },
+    facts: [{ label: born, value: '1978, İzmir' }, { label: known, value: 'Popstar (2003), Bu Gece Son, Sessiz Gemi' }],
+  },
   // Owner, 27 Nov 2026: a page for Nihat Ziyalan, who passed away in Sydney on 11 October 2026 (picture shared by family or friends).
   'nihat-ziyalan': {
     bio: {
