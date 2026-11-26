@@ -7,6 +7,7 @@
 // --feature  slug of the main event (default: our own on-sale night, else the next event)
 // --story    story slug for "From the archive" (optional)
 // --lang     en (default) or tr: Turkish copy, Turkish page links, writes newsletter-<issue>-tr.html
+// --atam     add the ATAM membership and ATAM Connect block (ATAM's Brevo lists, Dec 2026 onwards)
 // Writes public/email/newsletter-<issue>.html and email-sized images to public/email/nl/.
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import sharp from 'sharp';
@@ -155,6 +156,22 @@ async function build() {
       <p style="margin:0;font-family:${F};font-size:15px;font-weight:700;"><a href="${url}" style="color:${C.orange};text-decoration:none;">${S.read} &rarr;</a> &nbsp;<span style="color:${C.line};">|</span>&nbsp; <a href="${utm('/events/#past-events', 'archive')}" style="color:${C.orange};text-decoration:none;">${S.every} &rarr;</a></p>`);
   }
 
+  // ATAM membership and ATAM Connect (27 Nov 2026): our community partner is welcoming members again.
+  const A = TR ? {
+    k: 'ATAM · Sydney’de 15. yıl', h: 'ATAM ailesine katılın',
+    p: 'Uzun yıllardır birlikte çalıştığımız ATAM, 15. yılında yeniden üye kabul ediyor. Üyelik topluluk etkinliklerinin sürmesine ve ATAM’ın topluluk mekânı projesi Ortak Evimiz’in kurulmasına katkı sağlıyor. Yıllık ücretler 25 dolardan başlıyor; eski üyeler iki dakikada yenileyebilir.',
+    b: 'Üye olun ya da yenileyin', join: 'https://atam.asn.au/tr/uyelik/',
+    c: 'İşletmeniz mi var? ATAM üyeleri ATAM Connect’te ücretsiz ilan veriyor', cUrl: 'https://atam.asn.au/tr/atam-connect/',
+  } : {
+    k: 'ATAM · 15 years in Sydney', h: 'Join the ATAM Family',
+    p: 'ATAM, our long-time community partner, is welcoming members again in its 15th year. Membership keeps community events going and helps build Our Shared Home, ATAM’s community premises project. From $25 a year, and past members can renew in two minutes.',
+    b: 'Join or renew', join: 'https://atam.asn.au/membership/',
+    c: 'Run a business? ATAM members list it free on ATAM Connect', cUrl: 'https://atam.asn.au/connect/',
+  };
+  const atamBlock = process.argv.includes('--atam') ? section(`${kicker(A.k)}${h2(A.h)}${p(A.p, 'margin-bottom:20px;')}
+      ${btn(A.b, utm(A.join, 'atam-membership', true), true, 240)}
+      <p style="margin:18px 0 0;font-family:${F};font-size:15px;line-height:22px;font-weight:700;"><a href="${utm(A.cUrl, 'atam-connect', true)}" style="color:${C.orange};text-decoration:none;">${A.c} &rarr;</a></p>`) : '';
+
   const workBlock = `<tr><td class="px" style="background:${C.dark};padding:30px 36px;">
     ${kicker(S.work, '#FFB199')}
     <p class="h2" style="margin:0 0 8px;font-family:${F};font-size:22px;line-height:28px;font-weight:800;color:#FFFFFF;">${S.workH}</p>
@@ -203,6 +220,7 @@ async function build() {
   ${featureBlock}
   ${alsoBlock}
   ${storyBlock}
+  ${atamBlock}
   ${workBlock}
   <tr><td class="px" style="background:${C.card};border-radius:0 0 20px 20px;padding:26px 36px 30px;font-family:${F};">
     <p style="margin:0 0 12px;font-size:15px;line-height:22px;color:${C.ink2};">${S.thanks}<br><strong style="color:${C.ink};">${S.team}</strong></p>
