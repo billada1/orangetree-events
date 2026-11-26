@@ -208,12 +208,12 @@ export const extra: Record<string, ArtistExtra> = {
       en: [
         'Tahir Bilgiç is an Australian comedian, actor and writer, best known as Habib, the scene-stealing character he played in the SBS comedy Pizza, the Fat Pizza film, Swift and Shift Couriers and Housos. Born in Ankara, he came to Australia as a small child in the mid-1970s and taught history and English before turning to stand-up in 1995.',
         'He co-wrote and starred in the films Fat Pizza, Housos vs Authority and Fat Pizza vs Housos, and co-created the TV comedies Here Come the Habibs and StreetSmart. On stage he has written, directed and starred in his own shows, including Lord of the Kebabs, From Lebanon With Love and Straight Outta Compo. He was voted Sydney Comedian of the Year in 1996.',
-        'With Orange Tree and ATAM he hosted the 2023 comedy night for the Türkiye earthquake appeal and New Year’s Eve at Star Palace in Fairfield, welcoming 2025. He was to host NYE 2027 too, before the night was cancelled.',
+        'With Orange Tree and ATAM he hosted the 2023 comedy night for the Türkiye earthquake appeal, the Republic of Türkiye 100th Year Celebration at Wyatt Park in October 2023, and New Year’s Eve at Star Palace in Fairfield, welcoming 2025. He was to host NYE 2027 too, before the night was cancelled.',
       ],
       tr: [
         'Tahir Bilgiç, Avustralyalı komedyen, oyuncu ve yazar. En çok SBS’in Pizza dizisinde, Fat Pizza filminde, Swift and Shift Couriers ve Housos’ta canlandırdığı, sahneyi çalan karakter Habib ile tanınıyor. Ankara’da doğdu, 1970’lerin ortasında küçük bir çocukken Avustralya’ya geldi; stand-up’a başladığı 1995’ten önce tarih ve İngilizce öğretmenliği yaptı.',
         'Fat Pizza, Housos vs Authority ve Fat Pizza vs Housos filmlerinin hem yazarlarından hem oyuncularından oldu; Here Come the Habibs ve StreetSmart dizilerinin yaratıcılarındandır. Lord of the Kebabs, From Lebanon With Love ve Straight Outta Compo gibi kendi gösterilerini yazdı, yönetti ve sahneledi. 1996’da Sydney’de Yılın Komedyeni seçildi.',
-        'Orange Tree ve ATAM ile 2023’te Türkiye depremi yardım kampanyası için düzenlenen komedi gecesini ve 2025’i karşıladığımız, Fairfield’daki Star Palace’ta yapılan yılbaşı gecesini sundu. Yılbaşı 2027’yi de o gece iptal edilmeden önce o sunacaktı.',
+        'Orange Tree ve ATAM ile 2023’te Türkiye depremi yardım kampanyası için düzenlenen komedi gecesini, Ekim 2023’te Wyatt Park’taki Türkiye Cumhuriyeti’nin 100. Yıl Kutlaması’nı ve 2025’i karşıladığımız, Fairfield’daki Star Palace’ta yapılan yılbaşı gecesini sundu. Yılbaşı 2027’yi de o gece iptal edilmeden önce o sunacaktı.',
       ],
     },
     facts: [
