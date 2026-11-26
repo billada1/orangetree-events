@@ -66,7 +66,8 @@ const list: Artist[] = [
   // Sydney acts
   { slug: 'nida-rock', image: 'nida-rock', name: 'Nida Rock', local: true, instagram: 'nida_rock', role: { en: 'Sydney band: meyhane songs, Anatolian rock and Turkish classics', tr: 'Sydney grubu: meyhane şarkıları, Anadolu rock ve Türkçe klasikler' } },
   { slug: 'austolian-dance-academy', name: 'Austolian Dance Academy', local: true, role: { en: 'Turkish folk dance academy', tr: 'Türk halk dansları akademisi' } },
-  { slug: 'levent-ozkan', image: 'levent-ozkan', name: 'Levent & Özkan', local: true, instagram: 'leventartn', role: { en: 'Sydney duo', tr: 'Sydneyli ikili' } },
+  { slug: 'levent-ozkan', image: 'levent-ozkan', name: 'Levent & Özkan', local: true, instagram: 'leventartn', role: { en: 'Sydney duo; Özkan also plays as Halil & Özkan', tr: 'Sydneyli ikili; Özkan, Halil & Özkan olarak da sahnede' } },
+  { slug: 'halil-ozkan', name: 'Halil & Özkan', local: true, role: { en: 'Sydney duo with live orchestra; Özkan of Levent & Özkan', tr: 'Canlı orkestralı Sydneyli ikili; Levent & Özkan’ın Özkan’ı' } },
   { slug: 'mahmut-orhan', image: 'mahmut-orhan', name: 'Mahmut Orhan', role: { en: 'DJ and producer', tr: 'DJ ve prodüktör' } },
   { slug: 'ugur-aslan', image: 'ugur-aslan', name: 'Uğur Aslan', role: { en: 'Singer and actor', tr: 'Şarkıcı ve oyuncu' } },
   { slug: 'ekin-uzunlar', image: 'ekin-uzunlar', name: 'Ekin Uzunlar', role: { en: 'Black Sea folk singer and kemençe player', tr: 'Karadeniz müziği sanatçısı, kemençe' } },
