@@ -15,6 +15,7 @@ import { stories, isoDate } from '../data/stories';
 import { storyImage } from '../data/media';
 import { t, href, fmtDate, type Lang } from '../i18n/ui';
 import { eventJsonLd } from '../data/schema';
+import ziyalan from '../assets/photos/nihat-ziyalan.jpg';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const s = t(lang);
@@ -26,6 +27,8 @@ const storyCards = stories.filter((x) => x.lang === lang || !stories.some((y) =>
 const moments = ['thankYou', 'nye2023floor', 'nye2025floor', 'crowd', 'queue', 'bwStage', 'nye2025stage'];
 const day = (iso: string) => new Date(iso + 'T12:00:00Z');
 const wk = (iso: string) => new Intl.DateTimeFormat(lang === 'tr' ? 'tr-TR' : 'en-AU', { weekday: 'short', timeZone: 'UTC' }).format(day(iso));
+// In memory of Nihat Ziyalan (owner, 27 Nov 2026): on the home page until the end of the year (the site rebuilds nightly).
+const inMemory = new Date() < new Date('2027-01-01T00:00:00+11:00');
 const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}:00+11:00` : '';
 ---
 <Base lang={lang} jsonLd={up.map((e) => eventJsonLd(e, lang, Astro.site!)).filter(Boolean) as object[]}>
@@ -36,6 +39,20 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
       {[...marquee, ...marquee].map((n, i) => <li aria-hidden={i >= marquee.length ? 'true' : undefined}>{n}<img src="/emblem.svg" alt="" width="22" height="25" /></li>)}
     </ul>
   </div>
+
+  {inMemory && (
+    <section class="wrap memory" aria-labelledby="mem-h">
+      <a class="mem-card" href={href(lang, '/stories/meyhane-gecesi-2025/')}>
+        <Image src={ziyalan} alt="" widths={[300, 600]} sizes="(max-width: 640px) 100vw, 300px" quality={78} class="mem-img" />
+        <span class="mem-body">
+          <span class="eyebrow">{lang === 'tr' ? 'Anısına' : 'In memory'}</span>
+          <h2 class="mem-h" id="mem-h">Nihat Ziyalan · 1936–2026</h2>
+          <span class="mem-p">{lang === 'tr' ? 'Yeşilçam’ın usta oyuncusu ve şair; Meyhane Gecesi’nin özel konuğu. 11 Ekim 2026’da Sydney’de aramızdan ayrıldı. Onu sevgi ve saygıyla anıyoruz.' : 'Yeşilçam actor and poet, and our special guest at Meyhane Gecesi. He passed away in Sydney on 11 October 2026. We remember him with love and respect.'}</span>
+          <span class="mem-go">{lang === 'tr' ? 'Hikâyeyi okuyun' : 'Read the story'} →</span>
+        </span>
+      </a>
+    </section>
+  )}
 
   <section id="whats-on" class="wrap on" aria-labelledby="on-h">
     <p class="eyebrow">{s.on.h}</p>
@@ -140,6 +157,17 @@ const doorsIso = featured?.date ? `${featured.date}T${featured.doors ?? '19:00'}
   .track li { display: flex; align-items: center; gap: 28px; }
   @keyframes marq { to { transform: translateX(-50%); } }
 
+  .memory { padding-block: 56px 0; }
+  .mem-card { display: grid; grid-template-columns: minmax(0, 300px) 1fr; gap: 28px; align-items: center; padding: 20px; border: 1px solid var(--line); border-radius: 24px; background: #120F0D; color: var(--ink); text-decoration: none; transition: border-color .2s; }
+  .mem-card:hover { border-color: var(--peach); color: var(--ink); }
+  .mem-card :global(.mem-img) { width: 100%; height: auto; border-radius: 14px; filter: saturate(.85); }
+  .mem-body { display: grid; gap: 10px; }
+  .mem-body .eyebrow { margin: 0; }
+  .mem-h { font-size: clamp(26px, 3.2vw, 38px); }
+  .mem-p { font: 400 18px/1.6 var(--serif); color: var(--ink-2); max-width: 56ch; }
+  .mem-go { font-weight: 700; color: var(--coral); }
+  .mem-card:hover .mem-go { text-decoration: underline; }
+  @media (max-width: 640px) { .mem-card { grid-template-columns: 1fr; gap: 18px; padding: 14px; } }
   .on { padding-block: 96px 40px; }
   .on-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; margin-top: 32px; }
   .feature { position: relative; border-radius: 28px; overflow: hidden; min-height: 560px; display: flex; align-items: flex-end; }
