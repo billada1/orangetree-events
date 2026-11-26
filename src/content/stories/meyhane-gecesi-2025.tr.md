@@ -17,4 +17,8 @@ Müzik, meyhane şarkıları, Anadolu rock ve Türkçe klasikler arasında rahat
 
 Gecenin özel konuğu, Yeşilçam’ın usta oyuncusu ve şair Nihat Ziyalan’dı. 1936’da Adana’da doğan Ziyalan, 1960’lı ve 70’li yıllarda pek çok filmde rol aldı; 1980’de Sydney’e yerleşti ve şiir yazmayı burada sürdürdü. 11 Ekim 2026’da, 90 yaşında Sydney’de vefat etti. Bu geceyi bizimle paylaştığı için minnettarız; onu sevgi ve saygıyla anıyoruz.
 
+![İleri yaşlarında gülümseyen Nihat Ziyalan ve 1970’lerden bir filmde genç oyuncu olarak bir karesi](../../assets/photos/nihat-ziyalan.jpg)
+
+*Nihat Ziyalan (1936–2026), ileri yaşlarında ve 1970’lerde beyazperdede.*
+
 Meyhane Gecesi: Nida Makamında’yı Orange Tree Events, ATAM ile birlikte sundu.

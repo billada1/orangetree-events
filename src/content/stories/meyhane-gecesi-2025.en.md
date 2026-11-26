@@ -17,4 +17,8 @@ The music came from Nida Rock, the Sydney band that moves easily between meyhane
 
 Our special guest that night was Nihat Ziyalan, the Yeşilçam actor and poet. Born in Adana in 1936, he played in many Turkish films of the 1960s and 70s, then made Sydney his home in 1980 and kept writing poetry here. He passed away in Sydney on 11 October 2026, aged 90. We are grateful he shared this night with us, and remember him with love and respect.
 
+![Nihat Ziyalan smiling in later years, beside a still of him as a young actor in a 1970s film](../../assets/photos/nihat-ziyalan.jpg)
+
+*Nihat Ziyalan (1936–2026), in later years and on screen in the 1970s.*
+
 Orange Tree Events presented Meyhane Gecesi: Nida Makamında with ATAM.

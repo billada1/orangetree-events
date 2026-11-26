@@ -81,6 +81,11 @@ import Signup from './Signup.astro';
   .prose { max-width: 760px; margin: 0 auto; padding: 72px var(--pad) 24px; font: 400 21px/1.7 var(--serif); color: #E9E1D8; }
   .prose :global(p) { margin: 0 0 24px; }
   .prose :global(p:first-child) { font-size: 25px; line-height: 1.55; color: var(--ink); }
+  /* A picture in a story's text (a markdown image on its own line), shown at its own size, and an italic line
+     straight after it as its caption (owner, 27 Nov 2026: the Nihat Ziyalan photos). */
+  .prose :global(p:has(> img:only-child)) { margin: 44px 0 12px; }
+  .prose :global(p > img:only-child) { display: block; width: 100%; max-width: 600px; height: auto; margin: 0 auto; border-radius: 14px; box-shadow: 0 24px 48px rgba(0,0,0,.45); }
+  .prose :global(p:has(> img:only-child) + p:has(> em:only-child)) { margin: 0 auto 44px; max-width: 600px; text-align: center; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
   .wide { max-width: var(--max); margin: 48px auto; padding: 0 var(--pad); }
   .wide :global(img) { width: 100%; height: clamp(320px, 52vw, 680px); object-fit: cover; border-radius: 20px; }
   .tl { max-width: 760px; margin: 0 auto; padding: 24px var(--pad) 48px; }
