@@ -19,6 +19,7 @@ export interface EventItem {
   partner?: string; // co-presenter (with co: true) or the organiser we worked with
   co?: boolean; // co-presented: shown as "Presented with <partner>"
   poster?: string; // file name in src/assets/posters (without .jpg)
+  posterTr?: string; // the Turkish poster, when the night had one
   story?: string; // story slug
   image?: string; // key in photos map
   soldOut?: boolean;
@@ -47,7 +48,7 @@ export function trDative(n: number): string {
 
 export const events: EventItem[] = [
   {
-    slug: 'nye-2027', kind: 'nye', date: '2026-12-31', doors: '19:00', ends: '01:00',
+    slug: 'nye-2027', poster: 'nye-2027', posterTr: 'nye-2027-tr', kind: 'nye', date: '2026-12-31', doors: '19:00', ends: '01:00',
     title: { en: 'NYE 2027 · ATAM’s 15th year', tr: 'Yılbaşı 2027 · ATAM’ın 15. yılı' },
     venue: 'The Renaissance, Piano Room, Lidcombe', address: '3 New St E, Lidcombe NSW 2141',
     partner: 'ATAM', artists: ['tahir-bilgic', 'dj-ilka'],

@@ -205,9 +205,39 @@ export const extra: Record<string, ArtistExtra> = {
   'tahir-bilgic': {
     wiki: { en: 'Tahir Bilgiç' },
     bio: {
-      en: ['Tahir Bilgiç is an Australian comedian and actor. He has written, directed and starred in live shows including Lord of the Kebabs, From Lebanon With Love and Straight Outta Compo, appeared in Australian film and TV, and co-created Here Come the Habibs.'],
-      tr: ['Tahir Bilgiç, Avustralyalı komedyen ve oyuncu. Lord of the Kebabs, From Lebanon With Love ve Straight Outta Compo gibi gösterileri yazdı, yönetti ve sahneledi; Avustralya film ve dizilerinde rol aldı ve Here Come the Habibs’in yaratıcılarından biri oldu.'],
+      en: [
+        'Tahir Bilgiç is an Australian comedian, actor and writer, best known as Habib, the scene-stealing character he played in the SBS comedy Pizza, the Fat Pizza film, Swift and Shift Couriers and Housos. Born in Ankara, he came to Australia as a small child in the mid-1970s and taught history and English before turning to stand-up in 1995.',
+        'He co-wrote and starred in the films Fat Pizza, Housos vs Authority and Fat Pizza vs Housos, and co-created the TV comedies Here Come the Habibs and StreetSmart. On stage he has written, directed and starred in his own shows, including Lord of the Kebabs, From Lebanon With Love and Straight Outta Compo. He was voted Sydney Comedian of the Year in 1996.',
+        'With Orange Tree he hosted the 2023 comedy night for the Türkiye earthquake appeal, and was to host NYE 2027 with ATAM before the night was cancelled.',
+      ],
+      tr: [
+        'Tahir Bilgiç, Avustralyalı komedyen, oyuncu ve yazar. En çok SBS’in Pizza dizisinde, Fat Pizza filminde, Swift and Shift Couriers ve Housos’ta canlandırdığı, sahneyi çalan karakter Habib ile tanınıyor. Ankara’da doğdu, 1970’lerin ortasında küçük bir çocukken Avustralya’ya geldi; stand-up’a başladığı 1995’ten önce tarih ve İngilizce öğretmenliği yaptı.',
+        'Fat Pizza, Housos vs Authority ve Fat Pizza vs Housos filmlerinin hem yazarlarından hem oyuncularından oldu; Here Come the Habibs ve StreetSmart dizilerinin yaratıcılarındandır. Lord of the Kebabs, From Lebanon With Love ve Straight Outta Compo gibi kendi gösterilerini yazdı, yönetti ve sahneledi. 1996’da Sydney’de Yılın Komedyeni seçildi.',
+        'Orange Tree ile 2023’te Türkiye depremi yardım kampanyası için düzenlenen komedi gecesini sundu; ATAM ile Yılbaşı 2027’yi de o gece iptal edilmeden önce o sunacaktı.',
+      ],
     },
-    facts: [{ label: born, value: '12 December 1970' }, { label: known, value: 'Here Come the Habibs' }],
+    facts: [
+      { label: born, value: 'Ankara' },
+      { label: known, value: 'Habib in Pizza, Fat Pizza and Housos' },
+      { label: also, value: 'Co-creator of Here Come the Habibs' },
+    ],
+  },
+  'mahmut-orhan': {
+    wiki: { en: 'Mahmut Orhan' },
+    bio: {
+      en: [
+        'Mahmut Orhan is a Turkish DJ and record producer from Bursa, known for melodic deep house and nu-disco that brings Eastern instruments into dance music. He started DJing as a teenager in Bursa and moved to Istanbul in 2011.',
+        'His instrumental “Age of Emotions” (2015) first took him abroad. “Feel”, with singer Sena Şener, followed in 2016 on Ultra Music and charted across Europe, and “6 Days” (2018) topped charts in several countries. His album Pangea came out in 2024.',
+      ],
+      tr: [
+        'Mahmut Orhan, Doğu enstrümanlarını dans müziğine taşıyan melodik deep house ve nu-disco işleriyle tanınan Bursalı DJ ve prodüktör. Bursa’da gençken DJ’liğe başladı, 2011’de İstanbul’a taşındı.',
+        'Enstrümantal “Age of Emotions” (2015) onu ilk kez yurt dışına taşıdı. Ardından Sena Şener ile yaptığı “Feel” 2016’da Ultra Music’ten çıktı ve Avrupa’da listelere girdi; “6 Days” (2018) birçok ülkede listelerin zirvesine yerleşti. Pangea albümü 2024’te yayımlandı.',
+      ],
+    },
+    facts: [
+      { label: born, value: '11 January 1993, Bursa' },
+      { label: known, value: 'Feel, 6 Days, Age of Emotions' },
+      { label: awards, value: 'Altın Kelebek, Best DJ (2022)' },
+    ],
   },
 };

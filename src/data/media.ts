@@ -9,7 +9,8 @@ const load = (mods: Record<string, { default: ImageMetadata }>) =>
 export const posters = load(import.meta.glob<{ default: ImageMetadata }>('../assets/posters/*.{jpg,jpeg,png,webp}', { eager: true }));
 const artistImgs = load(import.meta.glob<{ default: ImageMetadata }>('../assets/artists/*.{jpg,jpeg,png,webp}', { eager: true }));
 
-export const posterFor = (e: EventItem): ImageMetadata | undefined => (e.poster ? posters[e.poster] : undefined);
+export const posterFor = (e: EventItem, lang?: 'en' | 'tr'): ImageMetadata | undefined =>
+  (lang === 'tr' && e.posterTr && posters[e.posterTr]) || (e.poster ? posters[e.poster] : undefined);
 
 // Artist picture: a clean photo of the artist only (never a poster). Without one, pages show a designed monogram.
 export function artistImage(a: Artist): { src: ImageMetadata; poster: boolean } | undefined {
@@ -20,7 +21,7 @@ export function artistImage(a: Artist): { src: ImageMetadata; poster: boolean } 
 // Every poster with its event, newest first, for the poster wall.
 export const posterWall = () =>
   events
-    .filter((e) => e.poster && posters[e.poster])
+    .filter((e) => !e.cancelled && e.poster && posters[e.poster])
     .sort((a, b) => (b.date ?? b.year ?? '').localeCompare(a.date ?? a.year ?? ''))
     .map((e) => ({ e, src: posters[e.poster!] }));
 

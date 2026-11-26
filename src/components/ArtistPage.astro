@@ -28,7 +28,7 @@ const wide = !!ph && ph.width / ph.height > 1.3;
 type G = { src: ImageMetadata; alt: string; poster: boolean };
 const gal: G[] = [
   ...(a.gallery ?? []).filter((k) => photos[k]).map((k) => ({ src: photos[k].src, alt: photos[k].alt[lang], poster: false })),
-  ...shows.filter((e) => posterFor(e)).map((e) => ({ src: posterFor(e)!, alt: `${lang === 'tr' ? 'Afiş' : 'Poster'}: ${e.title[lang]}`, poster: true })),
+  ...shows.filter((e) => posterFor(e, lang)).map((e) => ({ src: posterFor(e, lang)!, alt: `${lang === 'tr' ? 'Afiş' : 'Poster'}: ${e.title[lang]}${e.cancelled ? (lang === 'tr' ? ' (iptal edildi)' : ' (cancelled)') : ''}`, poster: true })),
 ];
 const galFull = await Promise.all(gal.map((g) => getImage({ src: g.src, width: Math.min(1600, g.src.width), format: 'webp' })));
 
@@ -204,7 +204,7 @@ const pageTitle = `${a.name} · ${a.role[lang]}`;
         <h2 id="sh-h" class="h3">{s.artist.withUs}</h2>
         <ol class="tl">
           {shows.map((e) => {
-            const pf = posterFor(e);
+            const pf = posterFor(e, lang);
             const rl = roleLine(e, lang);
             return (
               <li class="card">
@@ -212,10 +212,10 @@ const pageTitle = `${a.name} · ${a.role[lang]}`;
                   {pf ? <Image src={pf} alt="" widths={[200, 400]} sizes="160px" /> : <span class="mono">{initials(a.name)}</span>}
                 </a>
                 <div class="tx">
-                  <p class="d">{e.date ? fmtDate(e.date, lang, { weekday: true }) : (e.year ?? s.past.dateToConfirm)}{isUpcoming(e) && <span class="up">{s.on.onSale}</span>}</p>
+                  <p class="d">{e.date ? fmtDate(e.date, lang, { weekday: true }) : (e.year ?? s.past.dateToConfirm)}{isUpcoming(e) && !e.cancelled && <span class="up">{s.on.onSale}</span>}</p>
                   <h3><a href={href(lang, `/events/${e.slug}/`)}>{e.title[lang]}</a></h3>
                   {e.venue && <p class="muted">{e.venue}</p>}
-                  <p class="tags"><span class="tag">{kindLabel(e.kind)}</span>{rl && <span class="muted">{rl}</span>}{e.soldOut && <span class="tag so">{s.past.soldOut}</span>}</p>
+                  <p class="tags"><span class="tag">{kindLabel(e.kind)}</span>{rl && <span class="muted">{rl}</span>}{e.soldOut && <span class="tag so">{s.past.soldOut}</span>}{e.cancelled && <span class="tag so">{lang === 'tr' ? 'İptal edildi' : 'Cancelled'}</span>}</p>
                   <p class="btns">
                     <a class="btn btn-ghost btn-sm" href={href(lang, `/events/${e.slug}/`)}>{P.details}</a>
                     {e.story && <a class="btn btn-ghost btn-sm" href={href(lang, `/stories/${e.story}/`)}>{s.stories.read}</a>}

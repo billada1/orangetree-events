@@ -82,7 +82,7 @@ const list: Artist[] = [
   { slug: 'mehmet-erdem', image: 'mehmet-erdem', name: 'Mehmet Erdem', instagram: 'mehmetmusic', role: singer },
   { slug: 'burak-bulut', image: 'burak-bulut', name: 'Burak Bulut', instagram: 'burakkbulut23', role: singer },
   { slug: 'serhan-ilbeyi', image: 'serhan-ilbeyi', name: 'Serhan İlbeyi', instagram: 'serhanilbeyi', role: { en: 'Singer', tr: 'Şarkıcı' } },
-  { slug: 'tahir-bilgic', image: 'tahir-bilgic', instagram: 'tahircomedian', name: 'Tahir Bilgiç', role: comedian },
+  { slug: 'tahir-bilgic', image: 'tahir-bilgic', instagram: 'tahircomedian', name: 'Tahir Bilgiç', local: true, role: comedian },
 ];
 
 // Merge bios, facts and listening links (own data wins).

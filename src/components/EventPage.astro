@@ -15,7 +15,7 @@ interface Props { lang: Lang; e: EventItem }
 const { lang, e } = Astro.props;
 const s = t(lang);
 const up = isUpcoming(e);
-const poster = posterFor(e);
+const poster = posterFor(e, lang);
 // The event's own photo, or for NYE a past NYE photo shown as decoration. Other nights without a poster or
 // photo get a designed brand header rather than an unrelated stock photo.
 const own = e.image ? photos[e.image] : undefined;
@@ -61,8 +61,9 @@ const pageTitle = sameName ? `${e.title[lang]} (${(e.date ?? e.year ?? '').slice
         {role && <p class="role">{role}</p>}
       </div>
       {poster && (
-        <figure class="poster">
-          <Image src={poster} alt={`${lang === 'tr' ? 'Afiş' : 'Poster'}: ${e.title[lang]}`} widths={[360, 540, 800]} sizes="(max-width: 900px) 70vw, 380px" loading="eager" fetchpriority="high" />
+        <figure class:list={['poster', { off: e.cancelled }]}>
+          <Image src={poster} alt={`${lang === 'tr' ? 'Afiş' : 'Poster'}: ${e.title[lang]}${e.cancelled ? (lang === 'tr' ? ' (iptal edildi)' : ' (cancelled)') : ''}`} widths={[360, 540, 800]} sizes="(max-width: 900px) 70vw, 380px" loading="eager" fetchpriority="high" />
+          {e.cancelled && <span class="stamp" aria-hidden="true">{lang === 'tr' ? 'İptal' : 'Cancelled'}</span>}
         </figure>
       )}
     </div>
@@ -158,6 +159,10 @@ const pageTitle = sameName ? `${e.title[lang]} (${(e.date ?? e.year ?? '').slice
   .top :global(.blur) { filter: blur(40px) saturate(1.3) brightness(.55); transform: scale(1.2); }
   .poster { flex: 0 0 auto; margin: 0 0 8px; transform: rotate(2.5deg); transition: transform .5s cubic-bezier(.2,.8,.2,1); animation: drop-in 1.2s cubic-bezier(.22,1,.36,1) both .2s; }
   .poster:hover { transform: rotate(0) scale(1.02); }
+  .poster.off { position: relative; }
+  .poster.off :global(img) { filter: saturate(.55) brightness(.8); }
+  /* A cancelled night keeps its poster as a record, stamped so its prices and booking link are not taken as live. */
+  .stamp { position: absolute; left: 50%; top: 74%; transform: translate(-50%, -50%) rotate(-12deg); padding: 10px 26px; border: 4px solid #fff; border-radius: 10px; background: #BF3E1E; color: #fff; font-family: var(--display); font-weight: 800; font-size: clamp(26px, 3.2vw, 40px); letter-spacing: .08em; text-transform: uppercase; box-shadow: 0 10px 30px rgba(0,0,0,.45); white-space: nowrap; }
   .poster :global(img) { display: block; width: auto; height: auto; max-width: min(380px, 34vw); max-height: min(520px, 58vh); border-radius: 14px; box-shadow: 0 30px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08); }
   @keyframes drop-in { from { opacity: 0; transform: translateY(24px) rotate(4deg); } to { opacity: 1; transform: rotate(2.5deg); } }
   @media (max-width: 900px) { .in { flex-direction: column-reverse; align-items: flex-start; padding-top: 110px; } .poster :global(img) { max-width: min(300px, 70vw); max-height: 60vh; } .top.withPoster { height: auto; max-height: none; } }
