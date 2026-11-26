@@ -24,8 +24,32 @@ export const extra: Record<string, ArtistExtra> = {
     tr: ['DJ Ilka (İlker Aydın), Sydneyli bir DJ ve MC. 2018 ve 2019’daki ilk Turkish Vibes gecelerinde çaldı, 2019’da Metro Theatre’da maNga ve Eypio’dan önce sahne aldı ve ATAM ile yılbaşı gecelerinde DJ’lik yaptı.', 'Setlerinde Türkçe pop ve dans klasiklerini R&B ve kulüp hitleriyle karıştırıyor.'],
   } },
   'mahmut-orhan': { official: true, spotify: '3t8WiyalpvnB9AObcMufiE' },
-  'ugur-aslan': { spotify: '1N3YNAiksTC8Cal5dKsqyV' },
-  'ekin-uzunlar': { official: true, spotify: '35ngoeYRyOveM0rPvahkot' },
+  'ugur-aslan': { spotify: '1N3YNAiksTC8Cal5dKsqyV',
+    bio: {
+      en: [
+        'Uğur Aslan is a Turkish actor and singer from Reyhanlı in Hatay. Television audiences know him as Eren Komiser in the drama Yargı, and from Kuruluş Osman.',
+        'His singing reached a wide audience on the TV show Şarkılar Bizi Söyler. In 2021 he began staging Afara: Bir Arabesk Müzikali, a musical in which he sings arabesk classics with an eight-piece orchestra and tells his own story between the songs. Afara came to Sydney in May 2026.',
+      ],
+      tr: [
+        'Uğur Aslan, Hatay Reyhanlılı oyuncu ve şarkıcı. Televizyon izleyicileri onu Yargı dizisinin Eren Komiser’i ve Kuruluş Osman’dan tanıyor.',
+        'Sesini geniş kitlelere Şarkılar Bizi Söyler programında duyurdu. 2021’de, sekiz kişilik bir orkestrayla arabesk klasiklerini seslendirip şarkıların arasında kendi hikâyesini anlattığı Afara: Bir Arabesk Müzikali’ni sahnelemeye başladı. Afara, Mayıs 2026’da Sydney’e geldi.',
+      ],
+    },
+    facts: [{ label: born, value: '9 February 1972, Reyhanlı, Hatay' }, { label: known, value: 'Yargı (Eren Komiser), Afara' }],
+  },
+  'ekin-uzunlar': { official: true, spotify: '35ngoeYRyOveM0rPvahkot',
+    bio: {
+      en: [
+        'Ekin Uzunlar is a Black Sea singer and kemençe player from Trabzon. He has played the kemençe since he was eight, when an uncle bought him his first one, and his music joins the region’s traditional sound with Western arrangements.',
+        'His kemençe can be heard on songs by Mustafa Ceceli and Sinan Akçıl, and in 2020 he and Ceceli sang the duet “Öptüm Nefesinden”. His own songs include “Hüznün Gemileri” and “Köz”. In November 2025 he played Sydney in a night remembering Volkan Konak.',
+      ],
+      tr: [
+        'Ekin Uzunlar, Trabzonlu Karadeniz müziği sanatçısı ve kemençeci. Dayısının ona aldığı ilk kemençeyle sekiz yaşında çalmaya başladı; müziğinde yöresel Karadeniz sesini Batı düzenlemeleriyle buluşturuyor.',
+        'Kemençesi Mustafa Ceceli ve Sinan Akçıl’ın şarkılarında duyuluyor; 2020’de Ceceli ile “Öptüm Nefesinden” düetini seslendirdi. Kendi şarkıları arasında “Hüznün Gemileri” ve “Köz” var. Kasım 2025’te Volkan Konak’ı andığı bir geceyle Sydney’de sahne aldı.',
+      ],
+    },
+    facts: [{ label: born, value: '21 August 1991, Trabzon' }, { label: known, value: 'Hüznün Gemileri, Köz, Öptüm Nefesinden' }],
+  },
   'baris-komurcuoglu': { official: true },
   // Owner, 27 Nov 2026: a page for Nihat Ziyalan, who passed away in Sydney on 11 October 2026 (picture shared by family or friends).
   'nihat-ziyalan': {
