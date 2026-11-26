@@ -65,6 +65,7 @@ const list: Artist[] = [
   { slug: 'hakan-altun', image: 'hakan-altun', instagram: 'hakanaltunmusic', name: 'Hakan Altun', role: { en: 'Singer', tr: 'Şarkıcı' } },
   // Sydney acts
   { slug: 'nida-rock', image: 'nida-rock', name: 'Nida Rock', local: true, instagram: 'nida_rock', role: { en: 'Sydney band: meyhane songs, Anatolian rock and Turkish classics', tr: 'Sydney grubu: meyhane şarkıları, Anadolu rock ve Türkçe klasikler' } },
+  { slug: 'austolian-dance-academy', name: 'Austolian Dance Academy', local: true, role: { en: 'Turkish folk dance academy', tr: 'Türk halk dansları akademisi' } },
   { slug: 'levent-ozkan', image: 'levent-ozkan', name: 'Levent & Özkan', local: true, instagram: 'leventartn', role: { en: 'Sydney duo', tr: 'Sydneyli ikili' } },
   { slug: 'mahmut-orhan', image: 'mahmut-orhan', name: 'Mahmut Orhan', role: { en: 'DJ and producer', tr: 'DJ ve prodüktör' } },
   { slug: 'ugur-aslan', image: 'ugur-aslan', name: 'Uğur Aslan', role: { en: 'Singer and actor', tr: 'Şarkıcı ve oyuncu' } },

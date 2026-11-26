@@ -11,7 +11,7 @@ On Sunday 29 October 2023, the hundredth anniversary of the Republic of Türkiye
 
 ATAM played a leading part in organising the day, with Cumberland City Council, Multicultural NSW and the Turkish associations and schools who took part, and Orange Tree Events helped promote it. About 40 volunteers, many of them from ATAM Youth, kept it running.
 
-The day opened with a parade and a Welcome to Country, followed by the national anthems of Australia and Türkiye. Students recited Andımız and folk dancers in traditional costume led the crowd into the halay.
+The day opened with a parade and a Welcome to Country, followed by the national anthems of Australia and Türkiye. Students recited Andımız, the Austolian Dance Academy and other folk dancers took the stage, and dancers in traditional costume led the crowd into the halay.
 
 Tahir Bilgiç was host and MC. DJ Ilka and Levent & Özkan kept the music going through the afternoon, and Nida Rock headlined the evening concert.
 
