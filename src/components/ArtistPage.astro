@@ -121,13 +121,13 @@ const pageTitle = `${a.name} · ${a.role[lang]}`;
         <p class="role">{a.role[lang]}</p>
         {shows.length > 0 && (
           <ul class="chips" role="list">
-            <li>{P.nights(shows.length)}</li>
+            <li>{P.nights(shows.filter((e) => !e.cancelled).length)}</li>
             {firstYear && <li>{P.since(firstYear)}</li>}
           </ul>
         )}
         <div class="acts">
-          {upcoming[0] && <a class="btn btn-primary" href={href(lang, `/events/${upcoming[0].slug}/`)}>{P.next}: {fmtDate(upcoming[0].date!, lang)} →</a>}
-          <a class:list={['btn', upcoming[0] ? 'btn-ghost' : 'btn-primary']} href="#notify">{s.artist.notify}</a>
+          {upcoming[0] && <a class="btn btn-primary" data-next-date={upcoming[0].date} href={href(lang, `/events/${upcoming[0].slug}/`)}>{P.next}: {fmtDate(upcoming[0].date!, lang)} →</a>}
+          <a class:list={['btn', upcoming[0] ? 'btn-ghost' : 'btn-primary']} href="#notify" data-notify>{s.artist.notify}</a>
           <span class="soc">
             {a.instagram && <a href={`https://www.instagram.com/${a.instagram}/`} rel="noopener" target="_blank" aria-label={`Instagram @${a.instagram}`}><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" class="f"/></svg></a>}
             {a.spotify && <a href={`https://open.spotify.com/artist/${a.spotify}`} rel="noopener" target="_blank" aria-label="Spotify"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M7.5 9.5c3-1 6.5-.7 9 .8M8 12.6c2.5-.7 5.2-.4 7.3.8M8.6 15.4c2-.5 4-.3 5.6.6"/></svg></a>}
@@ -136,7 +136,7 @@ const pageTitle = `${a.name} · ${a.role[lang]}`;
           </span>
         </div>
       </div>
-      {framed && <figure class:list={['portrait', { wide }]}><Image src={ph!} alt={a.name} class={`fp-${a.slug}`} widths={[360, 640]} sizes="(max-width: 900px) 70vw, 360px" loading="eager" fetchpriority="high" /></figure>}
+      {framed && <figure class:list={['portrait', { wide }]}><Image src={ph!} alt={a.name} class={`fp-${a.slug}`} widths={wide ? [400, 640, Math.min(960, ph!.width)] : [360, 640]} sizes={wide ? '(max-width: 760px) calc(100vw - 40px), min(640px, 46vw)' : '(max-width: 900px) 70vw, 360px'} loading="eager" fetchpriority="high" /></figure>}
       {posterImg && <figure class="poster"><Image src={posterImg} alt={`${a.name}: ${lang === 'tr' ? 'afiş' : 'poster'}`} widths={[360, 540]} sizes="(max-width: 900px) 60vw, 320px" loading="eager" /></figure>}
     </div>
   </section>
@@ -276,6 +276,12 @@ const pageTitle = `${a.name} · ${a.role[lang]}`;
 </Base>
 
 <script>
+  // A static page keeps a passed show as "Next show" until the next deploy: drop it once its date has passed in Sydney.
+  try {
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Australia/Sydney' }).format(new Date());
+    const nx = document.querySelector<HTMLElement>('[data-next-date]');
+    if (nx && (nx.dataset.nextDate || '') < today) { nx.remove(); document.querySelector('[data-notify]')?.classList.replace('btn-ghost', 'btn-primary'); }
+  } catch {}
   // Click-to-load players: nothing from Spotify or YouTube loads until asked.
   document.querySelectorAll<HTMLElement>('.player[data-src]').forEach((box) => {
     box.querySelector('.load')?.addEventListener('click', () => {
@@ -338,9 +344,9 @@ const pageTitle = `${a.name} · ${a.role[lang]}`;
   .aka { margin: -6px 0 10px; font-size: 18px; letter-spacing: .04em; color: rgba(255,240,230,.75); }
   .portrait { flex: 0 0 auto; width: min(360px, 32vw); margin: 0; animation: nm 1.6s cubic-bezier(.22,1,.36,1) .15s both; }
   .portrait :global(img) { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; object-position: 50% 20%; border-radius: 22px; box-shadow: 0 40px 100px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08); }
-  .portrait.wide { width: min(560px, 42vw); }
+  .portrait.wide { width: min(640px, 46vw); }
   .portrait.wide :global(img) { aspect-ratio: auto; }
-  @media (max-width: 760px) { .in:has(.portrait) { flex-direction: column-reverse; align-items: flex-start; } .portrait { width: min(300px, 70vw); } }
+  @media (max-width: 760px) { .in:has(.portrait) { flex-direction: column-reverse; align-items: flex-start; } .portrait { width: min(300px, 70vw); } .portrait.wide { width: 100%; } }
   .poster { flex: 0 0 auto; width: min(320px, 30vw); margin: 0; transform: rotate(-2deg); }
   .poster :global(img) { display: block; width: auto; max-width: 100%; max-height: min(460px, 55vh); border-radius: 14px; box-shadow: 0 30px 80px rgba(0,0,0,.6); }
 
