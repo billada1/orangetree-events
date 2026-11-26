@@ -15,6 +15,13 @@ import nye2025stage from '../assets/photos/nye-2025-stage.webp';
 import nye2025floor from '../assets/photos/nye-2025-floor.webp';
 import nye2025tahir from '../assets/photos/nye-2025-tahir.webp';
 import nye2025dance from '../assets/photos/nye-2025-dance.webp';
+import r100Crowd from '../assets/photos/r100-crowd.webp';
+import r100Dancers from '../assets/photos/r100-dancers.webp';
+import r100Circle from '../assets/photos/r100-circle.webp';
+import r100Cheering from '../assets/photos/r100-cheering.webp';
+import r100Sikma from '../assets/photos/r100-sikma.webp';
+import r100FlagStage from '../assets/photos/r100-flag-stage.webp';
+import r100Banner from '../assets/photos/r100-banner.webp';
 import oldLiveBand from '../assets/photos/old-live-band.jpg';
 import oldBwStage from '../assets/photos/old-bw-stage.jpg';
 import oldGuitar from '../assets/photos/old-guitar.jpg';
@@ -51,6 +58,13 @@ export const photos: Record<string, Photo> = {
   crowdPhones: { src: crowdPhones, alt: { en: 'The audience filming the show on their phones', tr: 'Konseri telefonlarıyla çeken seyirciler' } },
   nye2025floor: { src: nye2025floor, alt: { en: 'A full dance floor at New Year’s Eve', tr: 'Yılbaşı gecesi dolu dans pisti' } },
   nye2025tahir: { src: nye2025tahir, alt: { en: 'Tahir Bilgiç with the microphone, the band laughing behind him, under the Happy New Year 2025 banner', tr: 'Mikrofon elinde Tahir Bilgiç, arkasında gülen müzisyenler; Mutlu Yıllar 2025 pankartının önünde' } },
+  r100Crowd: { src: r100Crowd, alt: { en: 'A woman in a red Turkish-flag T-shirt waves a large Turkish flag among a cheering crowd at Republic 100', tr: 'Cumhuriyet 100’de tezahürat yapan kalabalığın içinde büyük bir Türk bayrağı sallayan, kırmızı bayraklı tişörtlü bir kadın' } },
+  r100Dancers: { src: r100Dancers, alt: { en: 'Dancers in traditional costume lead a line dance through the crowd as a Turkish flag is held aloft', tr: 'Havaya kaldırılmış bir Türk bayrağı eşliğinde kalabalığın arasından halay başı çeken geleneksel kıyafetli dansçılar' } },
+  r100Circle: { src: r100Circle, alt: { en: 'A large circle of people, some in traditional Anatolian costume, link arms for a folk dance', tr: 'Bazıları geleneksel Anadolu kıyafetli kalabalık bir grup, kol kola girip halay çekiyor' } },
+  r100Cheering: { src: r100Cheering, alt: { en: 'A seated audience raises their arms and cheers at Republic 100', tr: 'Cumhuriyet 100’de kollarını kaldırıp tezahürat yapan seyirciler' } },
+  r100Sikma: { src: r100Sikma, alt: { en: 'Volunteers at the ATAM and Orange Tree sıkma stall under a Republic 100 banner', tr: 'Cumhuriyet 100 pankartının altında ATAM ve Orange Tree sıkma tezgâhındaki gönüllüler' } },
+  r100FlagStage: { src: r100FlagStage, alt: { en: 'A volunteer waves a Turkish flag on the Republic 100 stage at night, an Atatürk portrait in balloons behind', tr: 'Gece, Cumhuriyet 100 sahnesinde Türk bayrağı sallayan bir gönüllü; arkada balonlarla çevrili Atatürk portresi' } },
+  r100Banner: { src: r100Banner, alt: { en: 'Republic 100 banner: Cumhuriyet Bayramı Kutlu Olsun, Sydney, 29.10.2023', tr: 'Cumhuriyet 100 afişi: Cumhuriyet Bayramı Kutlu Olsun, Sydney, 29.10.2023' } },
   nye2025dance: { src: nye2025dance, alt: { en: 'Guests dancing hand in hand in front of the New Year 2025 stage at Star Palace', tr: 'Star Palace’ta Yılbaşı 2025 sahnesinin önünde el ele dans eden konuklar' } },
 };
 
