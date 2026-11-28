@@ -15,6 +15,8 @@ import nye2025stage from '../assets/photos/nye-2025-stage.webp';
 import nye2025floor from '../assets/photos/nye-2025-floor.webp';
 import nye2025tahir from '../assets/photos/nye-2025-tahir.webp';
 import nye2025dance from '../assets/photos/nye-2025-dance.webp';
+import tvHosts from '../assets/photos/turkish-vibes-hosts.webp';
+import tvPlanning from '../assets/photos/turkish-vibes-planning.webp';
 import r100Crowd from '../assets/photos/r100-crowd.webp';
 import r100Dancers from '../assets/photos/r100-dancers.webp';
 import r100Circle from '../assets/photos/r100-circle.webp';
@@ -65,6 +67,8 @@ export const photos: Record<string, Photo> = {
   r100Sikma: { src: r100Sikma, alt: { en: 'Volunteers at the ATAM and Orange Tree sıkma stall under a Republic 100 banner', tr: 'Cumhuriyet 100 pankartının altında ATAM ve Orange Tree sıkma tezgâhındaki gönüllüler' } },
   r100FlagStage: { src: r100FlagStage, alt: { en: 'A volunteer waves a Turkish flag on the Republic 100 stage at night, an Atatürk portrait in balloons behind', tr: 'Gece, Cumhuriyet 100 sahnesinde Türk bayrağı sallayan bir gönüllü; arkada balonlarla çevrili Atatürk portresi' } },
   r100Banner: { src: r100Banner, alt: { en: 'Republic 100 banner: Cumhuriyet Bayramı Kutlu Olsun, Sydney, 29.10.2023', tr: 'Cumhuriyet 100 afişi: Cumhuriyet Bayramı Kutlu Olsun, Sydney, 29.10.2023' } },
+  tvHosts: { src: tvHosts, alt: { en: 'Two hosts smiling at the DJ booth with the Turkish Vibes logo on the screen behind them, 2018', tr: 'Arkadaki ekranda Turkish Vibes logosuyla DJ kabininde gülümseyen iki sunucu, 2018' } },
+  tvPlanning: { src: tvPlanning, alt: { en: 'The Turkish Vibes team around a long table with laptops and flyers, one holding up the poster for the 13 October 2018 night', tr: 'Dizüstü bilgisayarlar ve el ilanlarıyla uzun bir masanın etrafındaki Turkish Vibes ekibi; biri 13 Ekim 2018 gecesinin afişini tutuyor' } },
   nye2025dance: { src: nye2025dance, alt: { en: 'Guests dancing hand in hand in front of the New Year 2025 stage at Star Palace', tr: 'Star Palace’ta Yılbaşı 2025 sahnesinin önünde el ele dans eden konuklar' } },
 };
 

@@ -3,10 +3,10 @@ title: "Turkish Vibes: Coolibah’da iki gece"
 date: 2019-11-02
 event: turkish-vibes-2019
 artist: dj-ilka
-hero: "poster:turkish-vibes-2019"
+hero: tvHosts
 excerpt: "Merrylands’te old-school R&B ve Türkçe dans hitleri; ikinci gece kapalı gişe."
-gallery: ["poster:turkish-vibes-2018", "poster:turkish-vibes-2019"]
-todo: "Gecenin pisti dolduran şarkısını ya da dans pistinden bir fotoğraf ekleyin."
+gallery: ["tvPlanning", "poster:turkish-vibes-2018", "poster:turkish-vibes-2019"]
+todo: "Gecenin pisti dolduran şarkısını ekleyin."
 ---
 
 Turkish Vibes, old-school R&B ile Türkçe dans hitlerini bir araya getiren bir dans gecesiydi.

@@ -90,8 +90,31 @@ export const extra: Record<string, ArtistExtra> = {
     },
     facts: [{ label: born, value: '1936, Adana' }, { label: { en: 'Died', tr: 'Vefat' }, value: '11.10.2026, Sydney' }],
   },
-  'muharrem-aslan': { credit: { by: 'Dreamboy3143', licence: 'CC BY-SA 4.0', file: 'Muharrem Aslan.jpge.jpg' } },
-  'ilyas-yalcintas': { official: true, spotify: '2ekGsQEkeMtYFA16Jjes2M', youtube: 'UCkIBEEidtlqDC-Le3y7qW5w', wiki: { en: 'İlyas Yalçıntaş', tr: 'İlyas Yalçıntaş' } },
+  'muharrem-aslan': { credit: { by: 'Dreamboy3143', licence: 'CC BY-SA 4.0', file: 'Muharrem Aslan.jpge.jpg' },
+    bio: {
+      en: [
+        'Muharrem Aslan is a Sydney-based musician and music therapist from Türkiye. His music joins the sounds of Anatolia with influences from around the world, and he has composed for one of Türkiye’s major national TV channels.',
+        'In Sydney he plays with his band, Dimitri Vouros on bansuri, flute and clarinet and Hugo Powell on bass. In September 2026 we supported his Sounds of Anatolia night.',
+      ],
+      tr: [
+        'Muharrem Aslan, Sydney’de yaşayan Türkiyeli müzisyen ve müzik terapisti. Müziğinde Anadolu’nun seslerini dünyanın dört bir yanından etkilerle buluşturuyor; Türkiye’nin büyük ulusal televizyon kanallarından biri için besteler yaptı.',
+        'Sydney’de, bansuri, flüt ve klarnette Dimitri Vouros ve baste Hugo Powell’dan oluşan grubuyla çalıyor. Eylül 2026’daki Anadolu’nun Sesleri gecesine destek verdik.',
+      ],
+    },
+  },
+  'ilyas-yalcintas': { official: true, spotify: '2ekGsQEkeMtYFA16Jjes2M', youtube: 'UCkIBEEidtlqDC-Le3y7qW5w', wiki: { en: 'İlyas Yalçıntaş', tr: 'İlyas Yalçıntaş' },
+    bio: {
+      en: [
+        'İlyas Yalçıntaş is a Turkish singer-songwriter from Erzincan. His first album, İçimdeki Duman (2016), gathered the songs he had released the year before; the title track’s video, filmed in Greece, has passed 130 million views on YouTube.',
+        '“İncir”, “Nefes”, “Olmazsa Olmazımsın” and “Bu Nasıl Veda” followed as videos, and in 2018 he wrote and sang “Şehrin Yolu” with Feride Hilal Akın. That December he played Sydney with Orange Tree Events.',
+      ],
+      tr: [
+        'İlyas Yalçıntaş, Erzincanlı şarkıcı ve söz yazarı. İlk albümü İçimdeki Duman (2016), bir yıl önce yayınladığı şarkıları bir araya getirdi; Yunanistan’da çekilen albümle aynı adlı şarkının klibi YouTube’da 130 milyonu aşkın kez izlendi.',
+        '“İncir”, “Nefes”, “Olmazsa Olmazımsın” ve “Bu Nasıl Veda” klipleri onu izledi; 2018’de Feride Hilal Akın’la “Şehrin Yolu”nu yazıp seslendirdi. Aynı yılın aralık ayında Orange Tree Events ile Sydney’de sahne aldı.',
+      ],
+    },
+    facts: [{ label: born, value: '7 March 1989, Erzincan' }, { label: known, value: 'İçimdeki Duman, Şehrin Yolu' }],
+  },
   buray: {
     spotify: '1qZ684TB9E1BjH58btdtYd', youtube: 'UCC0ogmiR2DxBMcpBhTitNiA', wiki: { en: 'Buray', tr: 'Buray' },
     credit: { by: 'Vincent Vega', licence: 'CC BY 4.0', file: 'Buray 2024 01.jpg' },
